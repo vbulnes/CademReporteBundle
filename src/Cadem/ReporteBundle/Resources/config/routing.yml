@@ -1,0 +1,7 @@
+cadem_reporte_homepage:
+    pattern:  /
+    defaults: { _controller: CademReporteBundle:Default:index }
+
+cadem_reporte_indicadores:
+    pattern:  /indicadores
+    defaults: { _controller: CademReporteBundle:Default:indicadores }

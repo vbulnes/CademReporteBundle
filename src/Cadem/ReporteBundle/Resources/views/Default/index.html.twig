@@ -1,0 +1,162 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Cadem Reporte{% endblock %}
+
+{% block filtro %}
+	<form id="filtro1" action="" method="post" {{ form_enctype(form) }}>
+		{{ form_widget(form) }}
+
+		<input class="btn btn-primary" type="submit" value="Filtrar" />
+	</form>
+{% endblock %}
+
+{% block body %}
+		<div class="span9">
+			<div class="hero-unit" style="padding:30px">
+				<h3>Indicadores</h3>
+				<div class="row-fluid">
+				{% for item in variables_clientes %}
+					<div class="span3">
+						<div id="i_{{item.variable.nombre}}" style="height: 200px;"></div>
+					</div>
+				{% endfor %}					
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class="span12 well">
+					<span class="label">RANKING</span>
+					<br>
+					<br>
+					<table class="table table-bordered">
+					  <thead>
+						<tr>
+						  <th>#</th>
+						  <th>First Name</th>
+						  <th>Last Name</th>
+						  <th>Username</th>
+						</tr>
+					  </thead>
+					  <tbody>
+						<tr>
+						  <td rowspan="2">1</td>
+						  <td>Mark</td>
+						  <td>Otto</td>
+						  <td>@mdo</td>
+						</tr>
+						<tr>
+						  <td>Mark</td>
+						  <td>Otto</td>
+						  <td>@TwBootstrap</td>
+						</tr>
+						<tr>
+						  <td>2</td>
+						  <td>Jacob</td>
+						  <td>Thornton</td>
+						  <td>@fat</td>
+						</tr>
+						<tr>
+						  <td>3</td>
+						  <td colspan="2">Larry the Bird</td>
+						  <td>@twitter</td>
+						</tr>
+					  </tbody>
+					</table>
+				</div><!--/span-->
+			</div><!--/row-->
+          <div class="row-fluid">
+            <div class="span4">
+              <h3>Actualización 02/03/2013</h3>
+              <p>Se ha trabajado en una actualización con las siguientes características:</p>
+			  <ol>
+					<li>Cambio de color...</li>
+					<li>Cambio de forma</li>
+					<li>Indicador de salas...</li>
+			  </ol>
+              <p><a class="btn" href="#">Ver detalles &raquo;</a></p>
+            </div><!--/span-->
+            <div class="span4">
+              <h3>Heading</h3>
+              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+              <p><a class="btn" href="#">View details &raquo;</a></p>
+            </div><!--/span-->
+            <div class="span4">
+              <h3>Heading</h3>
+              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+              <p><a class="btn" href="#">View details &raquo;</a></p>
+            </div><!--/span-->
+          </div><!--/row-->
+		  
+        </div><!--/span-->
+{% endblock %}
+
+
+{% block javascripts %}
+<script>
+{% for item in variables_clientes %}
+{{"var i_"~item.variable.nombre~";"}}
+{% endfor %}
+
+$(document).ready(function () {
+	$('form#filtro1').submit(function() {
+		$.post( "{{ path('cadem_reporte_indicadores') }}", $(this).serialize(), function(data) {
+				{% for item in variables_clientes %}
+				if (typeof data.{{item.variable.nombre}} != 'undefined'){
+					if ({{"i_"~item.variable.nombre}}.series.length) {
+						{{"i_"~item.variable.nombre}}.series[0].remove();
+					}
+					{{"i_"~item.variable.nombre}}.addSeries(data.{{item.variable.nombre}});
+					{{"i_"~item.variable.nombre}}.setTitle({ text: data.{{item.variable.nombre}}.name});
+				}
+				{% endfor %}
+			},
+		'json');
+		return false;
+	});
+	
+	
+	{% for item in variables_clientes %}
+	{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+		chart: {
+			renderTo: 'i_{{item.variable.nombre}}',
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false
+		},
+		title: {
+			text: '{{item.variable.nombre|capitalize}}'
+		},
+		tooltip: {
+			pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+			percentageDecimals: 1,
+			enabled: false
+		},
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+				dataLabels: {
+					enabled: true,
+					formatter: function() {
+                        return this.point.percentage + ' %';
+                    },
+                    distance: -20,
+                    color:'white'
+				},
+				showInLegend: true
+			}
+		},
+		series: [{
+			type: 'pie',
+			data: [
+				['Sin datos',   100.0],
+				
+			]
+		}],
+		credits: {
+			enabled: false
+		}
+	});
+	{% endfor %}
+});
+ </script>
+{% endblock %}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Error: {{ status_text }}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link href="{{ asset('bundles/cademreporte/css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('bundles/cademreporte/css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+	<style type="text/css">
+		body {
+		  margin: 0;
+		  padding: 60px 20px;
+		  font: 14px/18px "Helvetica Neue", Helvetica, Arial, sans-serif;
+		  color: #fff;
+		  background-color: transparent;
+		}
+		html {
+		  background: #4786b3; /* Old browsers */
+		  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+		  /*background: url(); */
+		  background: -moz-radial-gradient(center, ellipse cover,  #4786b3 0%, #2e5673 100%); /* FF3.6+ */
+		  background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#4786b3), color-stop(100%,#2e5673)); /* Chrome,Safari4+ */
+		  background: -webkit-radial-gradient(center, ellipse cover,  #4786b3 0%,#2e5673 100%); /* Chrome10+,Safari5.1+ */
+		  background: -o-radial-gradient(center, ellipse cover,  #4786b3 0%,#2e5673 100%); /* Opera 12+ */
+		  background: -ms-radial-gradient(center, ellipse cover,  #4786b3 0%,#2e5673 100%); /* IE10+ */
+		  background: radial-gradient(center, ellipse cover,  #4786b3 0%,#2e5673 100%); /* W3C */
+		  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4786b3', endColorstr='#2e5673',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
+		  background-repeat: no-repeat;
+		  background-attachment: fixed;
+		  *background-image: none; /* Reset for IE7 to avoid mixed content warnings */
+		}
+		ol, ul {
+		  padding: 0;
+		  margin: 0;
+		  list-style: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>{{ status_code }} {{ status_text }}: Ups, la página que busca no existe.</h1>
+		<h2>Diríjase al <a style="color:red" href="{{ path('cadem_reporte_homepage') }}">Inicio</a> o <a style="color:red" href="{{ path('fos_user_security_login') }}">Inicie sesion</a> para volver a entrar</h2>
+	</div>
+</body>
+</html>

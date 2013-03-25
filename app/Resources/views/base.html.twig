@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Cadem Reporte{% endblock %}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link href="{{ asset('bundles/cademreporte/css/bootstrap.min.css') }}" rel="stylesheet">
+		<link href="{{ asset('bundles/cademreporte/css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+		<style type="text/css">
+		  body {
+			padding-top: 60px;
+			//padding-bottom: 40px;
+		  }
+		  .sidebar-nav {
+			padding: 9px 0;
+		  }
+
+		  @media (max-width: 980px) {
+			/* Enable use of floated navbar text */
+			.navbar-text.pull-right {
+			  float: none;
+			  padding-left: 5px;
+			  padding-right: 5px;
+			}
+		  }
+		</style>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+		
+		<div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Cadem Reporte</a>
+          <div class="nav-collapse collapse">
+			
+			<div style="margin-top: 0" class="btn-group pull-right navbar-text">
+			  <a class="btn btn-small" href="{{ path('fos_user_profile_show')}}">{{ app.user.username }}</a>
+			  <button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+				<span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu">
+				<li><a href="{{ path('fos_user_profile_show')}}">Perfil</a></li>
+				<li><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}</a></li>
+			  </ul>
+			</div>
+			
+			
+			
+			
+			
+
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header">LOGO CLIENTE</li>
+              <li class="text-center"><img class="img-rounded" alt="140x140" style="width: {{logo.width}}; height: {{logo.height}};" src="{{ asset('bundles/cademreporte/images/'~logo.file) }}"></li>
+              <li class="nav-header">FILTROS</li>
+              <li>{% block filtro %}{% endblock %}</li>
+              <li class="nav-header">NAV</li>
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        
+		
+		{% block body %}{% endblock %}
+		
+		
+		
+      </div><!--/row-->
+
+      <hr style="margin:10px 0">
+
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p style="margin:0"><img class="img-rounded" alt="" style="height: 60px;" src="{{ asset('bundles/cademreporte/images/logocadem.png') }}"><!-- © 2013 Cadem Smart. --> · <a href="#">Privacidad</a> · <a href="#">Términos</a></p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+	
+	
+	
+	
+        
+
+		<script src="{{ asset('bundles/cademreporte/js/jquery-1.9.1.min.js') }}"></script>
+		<script src="{{ asset('bundles/cademreporte/js/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('bundles/cademreporte/js/highcharts.js') }}"></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>
