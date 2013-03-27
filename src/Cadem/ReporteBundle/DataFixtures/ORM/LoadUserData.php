@@ -73,14 +73,56 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$logo2->setHeight('auto');	
 	$logo2->setActivo(true);	
 	$logo2->setCliente($cliente_nestle);
-
-	//Falta la Variable y VariableCliente
+	
+	$var1 = new Variable();
+	$var1->setNombre('quiebre');	
+	$var1->setDescripcion('ausencia de sku según planograma');	
+	$var1->setActivo(true);
+	$var2 = new Variable();
+	$var2->setNombre('presencia');	
+	$var2->setDescripcion('presencia de sku según planograma');	
+	$var2->setActivo(true);		
+	$var3 = new Variable();	
+	$var3->setNombre('precio');	
+	$var3->setDescripcion('precio de sku para período actual');	
+	$var3->setActivo(true);	
 
 	$manager->persist($cliente_soprole);
 	$manager->persist($cliente_nestle);
 	$manager->persist($logo1);
-	$manager->persist($logo2);
-        $manager->flush();
+	$manager->persist($logo2);	
+	$manager->persist($var1);
+	$manager->persist($var2);	
+	$manager->persist($var3);	
+	
+	$varCli1 = new VariableCliente();
+	$varCli1->setCliente($cliente_soprole);	
+	$varCli1->setVariable($var1);		
+	$varCli1->setActivo(true);	
+	$varCli2 = new VariableCliente();
+	$varCli2->setCliente($cliente_soprole);	
+	$varCli2->setVariable($var2);		
+	$varCli2->setActivo(true);		
+	$varCli3 = new VariableCliente();
+	$varCli3->setCliente($cliente_nestle);	
+	$varCli3->setVariable($var1);		
+	$varCli3->setActivo(true);			
+	$varCli4 = new VariableCliente();
+	$varCli4->setCliente($cliente_nestle);	
+	$varCli4->setVariable($var2);		
+	$varCli4->setActivo(true);			
+	$varCli5 = new VariableCliente();
+	$varCli5->setCliente($cliente_nestle);	
+	$varCli5->setVariable($var3);		
+	$varCli5->setActivo(true);			
+	
+	$manager->persist($varCli1);
+	$manager->persist($varCli2);	
+	$manager->persist($varCli3);	
+	$manager->persist($varCli4);	
+	$manager->persist($varCli5);			
 
+	$manager->flush();
     }
 }
+	
