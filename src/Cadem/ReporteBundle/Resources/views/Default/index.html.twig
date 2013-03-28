@@ -3,9 +3,16 @@
 {% block title %}Cadem Reporte{% endblock %}
 
 {% block filtro %}
-	<form id="filtro1" action="" method="post" {{ form_enctype(form) }}>
-		{{ form_widget(form) }}
-
+	<form id="filtros" action="" method="post" >
+		{% for form in forms %}
+			{% if form.Sala is defined %}
+				{{ form_label(form.Sala) }}
+				{{ form_errors(form.Sala) }}
+				{{ form_widget(form.Sala, { 'attr': {'style': 'height:110px'}}) }}
+			{% else %}
+				{{ form_widget(form) }}
+			{% endif %}
+		{% endfor %}
 		<input class="btn btn-primary" type="submit" value="Filtrar" />
 	</form>
 {% endblock %}
@@ -27,7 +34,7 @@
 					<span class="label">RANKING</span>
 					<br>
 					<br>
-					<table class="table table-bordered">
+					<table id="ranking" class="table table-bordered">
 					  <thead>
 						<tr>
 						  <th>#</th>
@@ -97,7 +104,7 @@
 {% endfor %}
 
 $(document).ready(function () {
-	$('form#filtro1').submit(function() {
+	$('form#filtros').submit(function() {
 		$.post( "{{ path('cadem_reporte_indicadores') }}", $(this).serialize(), function(data) {
 				{% for item in variables_clientes %}
 				if (typeof data.{{item.variable.nombre}} != 'undefined'){
@@ -108,6 +115,34 @@ $(document).ready(function () {
 					{{"i_"~item.variable.nombre}}.setTitle({ text: data.{{item.variable.nombre}}.name});
 				}
 				{% endfor %}
+				
+				if (typeof data.ranking != 'undefined'){
+					var tabla = '<table id="ranking" class="table table-bordered"><thead><tr>';
+						
+					for(k in data.ranking.head){
+						tabla = tabla + '<th>'+ data.ranking.head[k] +'</th>';
+					}
+					tabla = tabla + '</tr>  </thead> <tbody>';
+					for(k in data.ranking.body){
+						tabla = tabla + '<tr>';
+						var d = data.ranking.body[k];
+						for(i in d){
+							tabla = tabla + '<td>'+d[i]+'</td>';
+						}
+						tabla = tabla + '</tr>';
+					}
+						
+					tabla = tabla + '</tbody></table>';
+					
+					//SE MUESTRA CON EFECTO
+					var c = $(tabla);
+					c.hide();
+					$('#ranking').fadeOut("slow", function(){
+						$(this).hide();
+					    $(this).replaceWith(c);
+					    c.fadeIn("slow");
+					});
+				}
 			},
 		'json');
 		return false;
@@ -137,7 +172,7 @@ $(document).ready(function () {
 				dataLabels: {
 					enabled: true,
 					formatter: function() {
-                        return this.point.percentage + ' %';
+                        return this.point.percentage.toFixed(1) + ' %';
                     },
                     distance: -20,
                     color:'white'
