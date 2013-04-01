@@ -14,11 +14,11 @@ $loader->register(true);
 */
 
 require_once __DIR__.'/../app/AppKernel.php';
-//require_once __DIR__.'/../app/AppCache.php';
+require_once __DIR__.'/../app/AppCache.php';//ESTA
 
 $kernel = new AppKernel('prod', false);
 $kernel->loadClassCache();
-//$kernel = new AppCache($kernel);
+$kernel = new AppCache($kernel);//ESTA
 Request::enableHttpMethodParameterOverride();
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);

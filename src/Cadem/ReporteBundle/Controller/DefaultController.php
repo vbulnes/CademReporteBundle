@@ -4,6 +4,7 @@ namespace Cadem\ReporteBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
@@ -12,58 +13,33 @@ class DefaultController extends Controller
 	public function indexAction()
     {
 		$defaultData = array();
-		$form_agencia = $this->createFormBuilder($defaultData)
-			->add('Agencia', 'choice', array(
+		$form_periodo = $this->createFormBuilder($defaultData)
+			->add('Periodo', 'choice', array(
 				'choices'   => array(
-						'1' => 'ANTOFAGASTA',
-						'2' => 'COQUIMBO',
-						'3' => 'VALPARAISO',
-						'4' => 'METROPOLITANA'
+						'1' => '2013-03 SEM 1_7',
+						'2' => '2013-03 SEM 8_14',
+						'3' => '2013-03 SEM 15_24',
+						'4' => '2013-03 SEM 25_31'
 				),
 				'required'  => true,
-				'multiple'  => true,
-				'data' => array('1','2','3','4')				
+				'multiple'  => false,
+				'data' => '1'			
 			))
 			->getForm();
-		$form_sala = $this->createFormBuilder($defaultData)
-			->add('Sala', 'choice', array(
+		$form_canal = $this->createFormBuilder($defaultData)
+			->add('Canal', 'choice', array(
 				'choices'   => array(
-						'1' => 'STA ISABEL PADRE LAS CASAS',
-						'2' => 'SOC.KAROMEHI LIMITAD',
-						'3' => 'COMERCIALIZADORA ANDREANI LTDA',
-						'4' => 'SUAREZ Y CIA LTDA',
-						'5' => 'PANIFICADORA LA EURO'
+						'1' => 'SUPERMERCADO',
+						'2' => 'MAYORISTA',
+						'3' => 'MINORISTA'
 				),
 				'required'  => true,
-				'multiple'  => true,
-				'data' => array('1','2','3','4','5')				
-			))
-			->getForm();
-			
-		$form_sku = $this->createFormBuilder($defaultData)
-			->add('SKU', 'choice', array(
-				'choices'   => array(
-						'1' => 'JABON',
-						'2' => 'SHAMPOO',
-						'3' => 'MANTEQUILLA'
-				),
-				'required'  => true,
-				'multiple'  => true,
-				'data' => array('1','2','3')				
+				'multiple'  => false,
+				'data' => '1'			
 			))
 			->getForm();
 			
-		$form_categoria = $this->createFormBuilder($defaultData)
-			->add('Categoria', 'choice', array(
-				'choices'   => array(
-						'1' => 'LIMPIEZA',
-						'2' => 'ALIMENTO'
-				),
-				'required'  => true,
-				'multiple'  => true,
-				'data' => array('1','2')				
-			))
-			->getForm();
+		
 		
 		//PARAMETROS
 		$user = $this->getUser();
@@ -81,34 +57,70 @@ class DefaultController extends Controller
 		$logos = $cliente->getLogos();
 		$variables_clientes = $cliente->getVariablesClientes();
 
-        return $this->render('CademReporteBundle:Default:index.html.twig',
+		
+		//RESPONSE
+		$response = $this->render('CademReporteBundle:Default:index.html.twig',
 		array(
 			'forms' => array(
-				'form_agencia' => $form_agencia->createView(),
-				'form_sala' => $form_sala->createView(),
-				'form_sku' => $form_sku->createView(),
-				'form_categoria' => $form_categoria->createView()
+				'form_periodo' => $form_periodo->createView(),
+				'form_canal' => $form_canal->createView()
 			),
 			'logo' => $logos[0],
 			'variables_clientes' => $variables_clientes )
 		);
+
+		//CACHE
+		$response->setPrivate();
+		$response->setMaxAge(600);
+
+
+		return $response;
+		
+		
+        // return $this->render('CademReporteBundle:Default:index.html.twig',
+		// array(
+			// 'forms' => array(
+				// 'form_periodo' => $form_periodo->createView(),
+				// 'form_canal' => $form_canal->createView()
+			// ),
+			// 'logo' => $logos[0],
+			// 'variables_clientes' => $variables_clientes )
+		// );
     }
 	
 	public function indicadoresAction(Request $request)
     {
-		// $defaultData = array();
-		// $form = $this->createFormBuilder($defaultData)
-			// ->add('Filtro1', 'choice', array(
-				// 'choices'   => array('d1' => 'Dato1', 'd2' => 'Dato2', 'd3' => 'Dato3'),
-				// 'required'  => true,
-				// 'multiple'  => true,
-				// 'data' => array('d1','d2','d3')
-			// ))
-			// ->getForm();
-		// $form->bind($request);
-		// $data = $form->getData();
 		
 		$data = $request->request->all();
+		
+		$min = 0;
+		$max = 100;
+		
+		switch($data['form']['Canal']){
+			case '1':
+				$min = 60;
+				$max = 100;
+			break;
+			case '2':
+				$min = 40;
+				$max = 100;
+			break;
+			case '3':
+				$min = 0;
+				$max = 60;
+			break;
+		}
+		
+		$ranking = array(
+			'head' => array('CATEGORIA','JUMBO','LIDER','TOTTUS','TOTAL'),
+			'body' => array(
+				array("CERVEZA", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+				array("ENERGETICA", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+				array("RON", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
+			)
+		);
+		
+		
 		$responseA = array( 
 				'cobertura' =>	array(
 					'type' => 'pie',
@@ -142,16 +154,8 @@ class DefaultController extends Controller
 							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
 						)
 				),
-				'ranking' => array(
-					'head' => array(
-						'ID', 'SALA', 'PROM', 'PROM ANT', 'DIF'
-					),
-					'body' => array(
-						array('1','STA ISABEL', '91%', '90%', '1'),
-						array('2','SUEAREZ Y CIA', '71%', '90%', '-29'),
-						array('3','LIDER', '81%', '90%', '-9')
-					)
-				)
+				'ranking' => $ranking
+				
 		);
 		$responseB = array( 
 				'cobertura' =>	array(
@@ -185,10 +189,19 @@ class DefaultController extends Controller
 							array('name' => 'Cumple', 'y' => 44.5, 'color' => '#83A931'),
 							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
 						)
-				)
+				),
+				'ranking' => $ranking
 		);
-		if(in_array('1', $data['form']['Agencia'])) return new JsonResponse($responseA);
-		else return new JsonResponse($responseB);
 		
+		//RESPONSE
+		if('1' === $data['form']['Periodo']) $response = new JsonResponse($responseA);
+		else $response = new JsonResponse($responseB);
+		
+		//CACHE
+		$response->setPublic();
+		$response->setSharedMaxAge(600);
+
+
+		return $response;
     }
 }

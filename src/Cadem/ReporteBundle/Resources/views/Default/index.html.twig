@@ -5,13 +5,7 @@
 {% block filtro %}
 	<form id="filtros" action="" method="post" >
 		{% for form in forms %}
-			{% if form.Sala is defined %}
-				{{ form_label(form.Sala) }}
-				{{ form_errors(form.Sala) }}
-				{{ form_widget(form.Sala, { 'attr': {'style': 'height:110px'}}) }}
-			{% else %}
 				{{ form_widget(form) }}
-			{% endif %}
 		{% endfor %}
 		<input class="btn btn-primary" type="submit" value="Filtrar" />
 	</form>
@@ -20,7 +14,7 @@
 {% block body %}
 		<div class="span9">
 			<div class="hero-unit" style="padding:30px">
-				<h3>Indicadores</h3>
+				<!-- <h3>Indicadores</h3> -->
 				<div class="row-fluid">
 				{% for item in variables_clientes %}
 					<div class="span3">
@@ -31,9 +25,9 @@
 			</div>
 			<div class="row-fluid">
 				<div class="span12 well">
-					<span class="label">RANKING</span>
-					<br>
-					<br>
+					<!-- <span class="label">RANKING</span> -->
+					<!-- <br>
+					<br> -->
 					<table id="ranking" class="table table-bordered">
 					  <thead>
 						<tr>
