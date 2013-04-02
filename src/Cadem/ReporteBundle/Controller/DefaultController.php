@@ -71,7 +71,7 @@ class DefaultController extends Controller
 
 		//CACHE
 		$response->setPrivate();
-		$response->setMaxAge(600);
+		$response->setMaxAge(1);
 
 
 		return $response;
@@ -91,7 +91,7 @@ class DefaultController extends Controller
 	public function indicadoresAction(Request $request)
     {
 		
-		$data = $request->request->all();
+		$data = $request->query->all();
 		
 		$min = 0;
 		$max = 100;
@@ -198,8 +198,8 @@ class DefaultController extends Controller
 		else $response = new JsonResponse($responseB);
 		
 		//CACHE
-		$response->setPublic();
-		$response->setSharedMaxAge(600);
+		$response->setPrivate();
+		$response->setMaxAge(1);
 
 
 		return $response;

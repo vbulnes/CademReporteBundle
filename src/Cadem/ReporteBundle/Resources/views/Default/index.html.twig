@@ -99,7 +99,7 @@
 
 $(document).ready(function () {
 	$('form#filtros').submit(function() {
-		$.post( "{{ path('cadem_reporte_indicadores') }}", $(this).serialize(), function(data) {
+		$.get( "{{ path('cadem_reporte_indicadores') }}", $(this).serialize(), function(data) {
 				{% for item in variables_clientes %}
 				if (typeof data.{{item.variable.nombre}} != 'undefined'){
 					if ({{"i_"~item.variable.nombre}}.series.length) {
