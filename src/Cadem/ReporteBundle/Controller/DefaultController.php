@@ -163,8 +163,7 @@ class DefaultController extends Controller
 							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
 						)
 				),
-				'ranking' => $ranking,
-				'test' => $test
+				'ranking' => $ranking
 				
 		);
 		$responseB = array( 
