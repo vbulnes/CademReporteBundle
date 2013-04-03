@@ -75,21 +75,30 @@ class DefaultController extends Controller
 
 
 		return $response;
-		
-		
-        // return $this->render('CademReporteBundle:Default:index.html.twig',
-		// array(
-			// 'forms' => array(
-				// 'form_periodo' => $form_periodo->createView(),
-				// 'form_canal' => $form_canal->createView()
-			// ),
-			// 'logo' => $logos[0],
-			// 'variables_clientes' => $variables_clientes )
-		// );
     }
 	
 	public function indicadoresAction(Request $request)
     {
+		// $start = microtime(true);
+
+		// $em = $this->getDoctrine()->getManager();
+		// $query = $em->createQuery(
+			// 'SELECT t FROM CademReporteBundle:Test t'
+		// )->setMaxResults(10000);
+		
+		// $cacheDriver = new \Doctrine\Common\Cache\ApcCache();
+
+		
+		//$cacheDriver->deleteAll();
+		// if($prueba = $cacheDriver->contains('my_query_result')){
+			// $test = $cacheDriver->fetch('my_query_result');
+		// }
+		// else{
+			// $test = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+			// $cacheDriver->save('my_query_result', $test, 20);
+		// }
+		
+		// $time_taken = microtime(true) - $start;
 		
 		$data = $request->query->all();
 		
@@ -121,7 +130,7 @@ class DefaultController extends Controller
 		);
 		
 		
-		$responseA = array( 
+		$responseA = array(
 				'cobertura' =>	array(
 					'type' => 'pie',
 					'name' => 'Cobertura',
@@ -154,7 +163,8 @@ class DefaultController extends Controller
 							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
 						)
 				),
-				'ranking' => $ranking
+				'ranking' => $ranking,
+				'test' => $test
 				
 		);
 		$responseB = array( 

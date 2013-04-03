@@ -55,6 +55,11 @@ doctrine:
     orm:
         auto_generate_proxy_classes: %kernel.debug%
         auto_mapping: true
+        metadata_cache_driver: apc
+        # query_cache_driver:
+            # type: service
+            # id: my_doctrine_common_cache_service
+        #result_cache_driver: apc
 
 # Swiftmailer Configuration
 swiftmailer:
