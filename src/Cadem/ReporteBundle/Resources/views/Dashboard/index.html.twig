@@ -1,0 +1,289 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Cadem Reporte{% endblock %}
+
+{% block filtro %}
+	<form id="filtros" action="" method="post" >
+		{% for form in forms %}
+				{{ form_widget(form) }}
+		{% endfor %}
+		<input class="btn btn-primary" type="submit" value="Filtrar" />
+	</form>
+{% endblock %}
+
+{% block body %}
+		<div class="span9">
+			<div class="container-fluid well" style="padding-top:0">
+				<h4>Estudio Quiebre y precio</h4>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<!-- <h3>Indicadores</h3> -->
+					<div class="row-fluid">
+					{% for item in variables_clientes %}
+						<div class="span3">
+							{% if item.variable.nombre != "cobertura" %}
+							<div id="i_{{item.variable.nombre}}" style="height: 200px;"></div>
+							{% endif %}
+						</div>
+					{% endfor %}		
+					</div>
+				</div>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<div id="evo_quiebre_precio" style="min-width: 250px; height: 300px; margin: 0 auto"></div>
+				</div>
+			</div>
+			
+			<div class="container-fluid well" style="padding-top:0">
+				<h4>Estudio Cobertura</h4>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<!-- <h3>Indicadores</h3> -->
+					<div class="row-fluid">
+						<div class="span3">
+							<div id="i_cobertura" style="height: 200px;"></div>
+						</div>				
+					</div>
+				</div>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<div id="evo_cobertura" style="min-width: 250px; height: 300px; margin: 0 auto"></div>
+				</div>
+			</div>
+			
+			
+			<div class="row-fluid">
+            <div class="span4">
+              <h3>Actualización 02/03/2013</h3>
+              <p>Se ha trabajado en una actualización con las siguientes características:</p>
+			  <ol>
+					<li>Cambio de color...</li>
+					<li>Cambio de forma</li>
+					<li>Indicador de salas...</li>
+			  </ol>
+              <p><a class="btn" href="#">Ver detalles &raquo;</a></p>
+            </div><!--/span-->
+            <div class="span4">
+              <h3>Heading</h3>
+              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+              <p><a class="btn" href="#">View details &raquo;</a></p>
+            </div><!--/span-->
+            <div class="span4">
+              <h3>Heading</h3>
+              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+              <p><a class="btn" href="#">View details &raquo;</a></p>
+            </div><!--/span-->
+          </div><!--/row-->
+		  
+        </div><!--/span-->
+{% endblock %}
+
+
+{% block javascripts %}
+<script>
+{% for item in variables_clientes %}
+{{"var i_"~item.variable.nombre~";"}}
+{% endfor %}
+var i_cobertura;
+var evo_quiebre_precio;
+var evo_cobertura;
+
+$(document).ready(function () {
+
+	evo_quiebre_precio = new Highcharts.Chart({
+            chart: {
+                zoomType: 'x',
+				renderTo: 'evo_quiebre_precio'
+            },
+            title: {
+                text: 'Evolutivo Quiebre y Precio'
+            },
+            xAxis: [{
+                categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+            }],
+            yAxis: [{
+                title: {
+                    text: 'Promedio Quiebre (%)',
+                    style: {
+                        color: '#4572A7'
+                    }
+                }
+    
+            }, {
+                gridLineWidth: 0,
+                title: {
+                    text: 'Promedio Precio ($)',
+                    style: {
+                        color: '#89A54E'
+                    }
+                },
+                opposite: true
+            }],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'center',
+                x: 0,
+                verticalAlign: 'top',
+                y: 30,
+                floating: true,
+                backgroundColor: '#FFFFFF'
+            },
+            series: [{
+                name: 'Promedio Precio',
+                color: '#89A54E',
+				yAxis: 1,
+                type: 'spline',
+                data: [2300.0, 3100.9, 2000.5, 3490.5, 3889.2, 2198.5, 2500.2, 1612.5, 3332.3, 845.3, 1753.9, 3798.6],
+                tooltip: {
+                    valuePrefix: '$'
+                }
+    
+            }, {
+				name: '% Quiebre',
+                color: '#4572A7',
+                type: 'spline',
+                
+                data: [73.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 39.6],
+                tooltip: {
+                    valueSuffix: ' %'
+                }
+                
+            }],
+			credits: {
+				enabled: false
+			}
+        });
+		
+		var dat = [['Ene',63.0], ['Ene1',81.9], ['Ene2',10.5], ['Ene3',14.5], ['Ene4',88.2], ['Ene5',21.5], ['Ene6',85.2], ['Ene7',26.5], ['Ene8',43.3], ['Ene9',28.3], ['Ene10',43.9],['Ene11',19.6]];
+		
+		evo_cobertura = new Highcharts.Chart({
+            chart: {
+                zoomType: 'x',
+				renderTo: 'evo_cobertura'
+            },
+            title: {
+                text: 'Evolutivo Cobertura'
+            },
+            xAxis: {
+                /*categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']*/
+				type: 'category'
+				/*labels: {
+					formatter: function() {
+					alert(this.value);
+						return this.value;
+					}
+				}*/
+            },
+            yAxis: [{
+                title: {
+                    text: 'Promedio Cobertura (%)',
+                    style: {
+                        color: '#4572A7'
+                    }
+                }
+    
+            }],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'center',
+                x: 100,
+                verticalAlign: 'top',
+                y: 60,
+                floating: true,
+                backgroundColor: '#FFFFFF'
+            },
+            series: [{
+                name: '% de Cobertura',
+                color: '#4572A7',
+                type: 'spline',
+				data: dat,
+                //data: [63.0, 81.9, 10.5, 14.5, 88.2, 21.5, 85.2, 26.5, 43.3, 28.3, 43.9,19.6],
+                tooltip: {
+                    valuePrefix: '$'
+                }
+				//cropThreshold: 1000
+            }],
+			credits: {
+				enabled: false
+			}
+        });
+
+
+	$('form#filtros').submit(function() {
+		$.get( "{{ path('dashboard_indicadores') }}", $(this).serialize(), function(data) {
+				{% for item in variables_clientes %}
+				if (typeof data.{{item.variable.nombre}} != 'undefined'){
+					if ({{"i_"~item.variable.nombre}}.series.length) {
+						{{"i_"~item.variable.nombre}}.series[0].remove();
+					}
+					{{"i_"~item.variable.nombre}}.addSeries(data.{{item.variable.nombre}});
+					{{"i_"~item.variable.nombre}}.setTitle({ text: data.{{item.variable.nombre}}.name});
+				}
+				{% endfor %}
+				
+				//console.log(evo_quiebre_precio.series);
+				evo_quiebre_precio.series[0].setData([1300.0, 1100.9, 1000.5, 4490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6] );
+			},
+		'json');
+		return false;
+	});
+	
+	
+	{% for item in variables_clientes %}
+	{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+		chart: {
+			renderTo: 'i_{{item.variable.nombre}}',
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false
+		},
+		title: {
+			text: '{{item.variable.nombre|capitalize}}'
+		},
+		tooltip: {
+			pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+			percentageDecimals: 1,
+			enabled: false
+		},
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+				dataLabels: {
+					enabled: true,
+					formatter: function() {
+                        return this.point.percentage.toFixed(1) + ' %';
+                    },
+                    distance: -20,
+                    color:'white'
+				},
+				showInLegend: true
+			}
+		},
+		series: [{
+			type: 'pie',
+			data: [
+				['Sin datos',   100.0]
+				
+			]
+		}],
+		credits: {
+			enabled: false
+		}
+	});
+	{% endfor %}
+	
+	
+	
+	
+	
+	
+	
+	
+});
+ </script>
+{% endblock %}

@@ -63,9 +63,11 @@
 			
 
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <li class="{% if app.request.attributes.get('_route') == 'dashboard_index' %}active{% endif %}"><a href="{{ path('dashboard_index')}}">Dashboard</a></li>
+              <li class="{% if app.request.attributes.get('_route') == 'resumen_index' %}active{% endif %}"><a href="#about">Resumen</a></li>
+              <li class="{% if app.request.attributes.get('_route') == 'ranking_index' %}active{% endif %}"><a href="#contact">Ranking</a></li>
+              <li class="{% if app.request.attributes.get('_route') == 'evolucion_index' %}active{% endif %}"><a href="#contact">Evolución</a></li>
+              <li class="{% if app.request.attributes.get('_route') == 'detalle_index' %}active{% endif %}"><a href="#contact">Detalle</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -81,10 +83,10 @@
               <li class="text-center"><img class="img-rounded" alt="140x140" style="width: {{logo.width}}; height: {{logo.height}};" src="{{ asset('bundles/cademreporte/images/'~logo.file) }}"></li>
               <li class="nav-header">FILTROS</li>
               <li>{% block filtro %}{% endblock %}</li>
-              <li class="nav-header">NAV</li>
+              <!-- <li class="nav-header">NAV</li>
               <li><a href="#">Link</a></li>
               <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li> -->
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
@@ -113,6 +115,7 @@
 		<script src="{{ asset('bundles/cademreporte/js/jquery-1.9.1.min.js') }}"></script>
 		<script src="{{ asset('bundles/cademreporte/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('bundles/cademreporte/js/highcharts.js') }}"></script>
+		<!-- <script src="http://github.highcharts.com/v3.0Beta/highcharts-more.js"></script> -->
         {% block javascripts %}{% endblock %}
     </body>
 </html>

@@ -31,8 +31,9 @@ security:
                 provider: fos_userbundle
                 csrf_provider: form.csrf_provider
                 #use_referer: true
-                default_target_path: /
-            logout:       true
+                default_target_path: /dashboard
+            logout:
+                target: /login
             anonymous:    true
             switch_user: false
 

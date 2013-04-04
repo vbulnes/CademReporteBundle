@@ -69,7 +69,7 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$logo1->setCliente($cliente_soprole);
 	$logo2 = new Logo();
 	$logo2->setFile('logonestle.jpg');	
-	$logo2->setWidth('auto');	
+	$logo2->setWidth('auto');
 	$logo2->setHeight('auto');	
 	$logo2->setActivo(true);	
 	$logo2->setCliente($cliente_nestle);
@@ -86,6 +86,10 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$var3->setNombre('precio');	
 	$var3->setDescripcion('precio de sku para período actual');	
 	$var3->setActivo(true);	
+	$var4 = new Variable();	
+	$var4->setNombre('cobertura');	
+	$var4->setDescripcion('cobertura actual');	
+	$var4->setActivo(true);	
 
 	$manager->persist($cliente_soprole);
 	$manager->persist($cliente_nestle);
@@ -94,6 +98,7 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$manager->persist($var1);
 	$manager->persist($var2);	
 	$manager->persist($var3);	
+	$manager->persist($var4);	
 	
 	$varCli1 = new VariableCliente();
 	$varCli1->setCliente($cliente_soprole);	
@@ -101,7 +106,7 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$varCli1->setActivo(true);	
 	$varCli2 = new VariableCliente();
 	$varCli2->setCliente($cliente_soprole);	
-	$varCli2->setVariable($var2);		
+	$varCli2->setVariable($var3);		
 	$varCli2->setActivo(true);		
 	$varCli3 = new VariableCliente();
 	$varCli3->setCliente($cliente_nestle);	
@@ -114,13 +119,18 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$varCli5 = new VariableCliente();
 	$varCli5->setCliente($cliente_nestle);	
 	$varCli5->setVariable($var3);		
-	$varCli5->setActivo(true);			
+	$varCli5->setActivo(true);
+	$varCli6 = new VariableCliente();
+	$varCli6->setCliente($cliente_soprole);	
+	$varCli6->setVariable($var4);		
+	$varCli6->setActivo(true);	
 	
 	$manager->persist($varCli1);
 	$manager->persist($varCli2);	
 	$manager->persist($varCli3);	
 	$manager->persist($varCli4);	
 	$manager->persist($varCli5);			
+	$manager->persist($varCli6);			
 
 	$manager->flush();
     }

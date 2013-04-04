@@ -1,0 +1,238 @@
+<?php
+
+namespace Cadem\ReporteBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+class DashboardController extends Controller
+{
+    
+	public function indexAction()
+    {
+		$defaultData = array();
+		$form_periodo = $this->createFormBuilder($defaultData)
+			->add('Estudio', 'choice', array(
+				'choices'   => array(
+						'0' => 'TODOS',
+						'1' => 'QUIEBRE Y PRECIO',
+						'2' => 'COBERTURA',
+				),
+				'required'  => true,
+				'multiple'  => false,
+				'data' => '0'			
+			))
+			->getForm();
+		$form_canal = $this->createFormBuilder($defaultData)
+			->add('Sala', 'choice', array(
+				'choices'   => array(
+						'0' => 'TODAS',
+						'1' => 'DYSSA217 LIDER CHILLAN',
+						'2' => 'DYSSA036 LIDER LOS ANGELES',
+						'3' => 'DYSSA099 LIDER PUERTO MONTT',
+						'4' => 'CFOUR008 LIDER QUILICURA',
+						'5' => 'DYSSA088 LIDER LOS DOMINICOS',
+						'6' => 'DYSSA076 LIDER DEPARTAMENTAL',
+						'7' => 'DYSSA0841 LIDER BELLOTO',
+				),
+				'required'  => true,
+				'multiple'  => false,
+				'data' => '0'			
+			))
+			->getForm();
+			
+		$form_vendedor = $this->createFormBuilder($defaultData)
+			->add('Vendedor', 'choice', array(
+				'choices'   => array(
+						'0' => 'TODAS',
+						'1' => 'CHRISTIAN MORA',
+						'2' => 'DINA ANDREA CARVAJAL',
+						'3' => 'FABIÁN GUTIÉRREZ',
+						'4' => 'FELIPE CONTRERAS',
+						'5' => 'GABRIELA SEPULVEDA',
+						'6' => 'JOAQUÍN EVANS',
+						'7' => 'JUAN PABLO HERMOSILL',
+				),
+				'required'  => true,
+				'multiple'  => false,
+				'data' => '0'			
+			))
+			->getForm();
+			
+		
+		
+		//PARAMETROS
+		$user = $this->getUser();
+		$em = $this->getDoctrine()->getManager();
+		$query = $em->createQuery(
+			'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
+            JOIN c.variables_clientes vc
+			JOIN vc.variable v
+			JOIN c.logos l
+			JOIN c.usuarios u
+            WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
+		)->setParameter('id', $user->getId());
+		
+		$cliente = $query->getSingleResult();
+		$logos = $cliente->getLogos();
+		$variables_clientes = $cliente->getVariablesClientes();
+
+		
+		//RESPONSE
+		$response = $this->render('CademReporteBundle:Dashboard:index.html.twig',
+		array(
+			'forms' => array(
+				'form_periodo' => $form_periodo->createView(),
+				'form_canal' => $form_canal->createView(),
+				'form_vendedor' => $form_vendedor->createView(),
+			),
+			'logo' => $logos[0],
+			'variables_clientes' => $variables_clientes )
+		);
+
+		//CACHE
+		$response->setPrivate();
+		$response->setMaxAge(1);
+
+
+		return $response;
+    }
+	
+	public function indicadoresAction(Request $request)
+    {
+		// $start = microtime(true);
+
+		// $em = $this->getDoctrine()->getManager();
+		// $query = $em->createQuery(
+			// 'SELECT t FROM CademReporteBundle:Test t'
+		// )->setMaxResults(10000);
+		
+		// $cacheDriver = new \Doctrine\Common\Cache\ApcCache();
+
+		
+		//$cacheDriver->deleteAll();
+		// if($prueba = $cacheDriver->contains('my_query_result')){
+			// $test = $cacheDriver->fetch('my_query_result');
+		// }
+		// else{
+			// $test = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+			// $cacheDriver->save('my_query_result', $test, 20);
+		// }
+		
+		// $time_taken = microtime(true) - $start;
+		
+		$data = $request->query->all();
+		
+		$min = 0;
+		$max = 100;
+		
+		// switch($data['form']['Canal']){
+			// case '1':
+				// $min = 60;
+				// $max = 100;
+			// break;
+			// case '2':
+				// $min = 40;
+				// $max = 100;
+			// break;
+			// case '3':
+				// $min = 0;
+				// $max = 60;
+			// break;
+		// }
+		
+		// $ranking = array(
+			// 'head' => array('CATEGORIA','JUMBO','LIDER','TOTTUS','TOTAL'),
+			// 'body' => array(
+				// array("CERVEZA", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+				// array("ENERGETICA", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+				// array("RON", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
+			// )
+		// );
+		
+		
+		$responseA = array(
+				'cobertura' =>	array(
+					'type' => 'pie',
+					'name' => 'Cobertura',
+					'data' => array(
+							array('name' => 'Cumple', 'y' => 20, 'color' => '#83A931'),
+							array('name' => 'No cumple', 'y' => 80, 'color' => '#EB3737')
+						)
+				),
+				'atributo' =>	array(
+					'type' => 'pie',
+					'name' => 'Atributo',
+					'data' => array(
+							array('name' => 'Cumple', 'y' => 35.5, 'color' => '#83A931'),
+							array('name' => 'No cumple', 'y' => 64.5, 'color' => '#EB3737')
+						)
+				),
+				'quiebre' =>	array(
+					'type' => 'pie',
+					'name' => 'Quiebre',
+					'data' => array(
+							array('name' => 'Cumple', 'y' => 55.5, 'color' => '#83A931'),
+							array('name' => 'No cumple', 'y' => 44.5, 'color' => '#EB3737')
+						)
+				),
+				'precio' =>	array(
+					'type' => 'pie',
+					'name' => 'Presencia',
+					'data' => array(
+							array('name' => 'Cumple', 'y' => 44.5, 'color' => '#83A931'),
+							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
+						)
+				)
+				
+		);
+		$responseB = array( 
+				'cobertura' =>	array(
+					'type' => 'pie',
+					'name' => 'Cobertura',
+					'data' => array(
+							array('name' => 'Cumple', 'y' => 60, 'color' => '#83A931'),
+							array('name' => 'No cumple', 'y' => 40, 'color' => '#EB3737')
+						)
+				),
+				'atributo' =>	array(
+					'type' => 'pie',
+					'name' => 'Atributo',
+					'data' => array(
+							array('name' => 'Cumple', 'y' => 15.5, 'color' => '#83A931'),
+							array('name' => 'No cumple', 'y' => 84.5, 'color' => '#EB3737')
+						)
+				),
+				'quiebre' =>	array(
+					'type' => 'pie',
+					'name' => 'Quiebre',
+					'data' => array(
+							array('name' => 'Cumple', 'y' => 5, 'color' => '#83A931'),
+							array('name' => 'No cumple', 'y' => 95, 'color' => '#EB3737')
+						)
+				),
+				'precio' =>	array(
+					'type' => 'pie',
+					'name' => 'Presencia',
+					'data' => array(
+							array('name' => 'Cumple', 'y' => 44.5, 'color' => '#83A931'),
+							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
+						)
+				),
+				'evo_quiebre_precio' => array(1300.0, 1100.9, 1000.5, 1490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6)
+		);
+		
+		//RESPONSE
+		if('1' === $data['form']['Estudio']) $response = new JsonResponse($responseA);
+		else $response = new JsonResponse($responseB);
+		
+		//CACHE
+		$response->setPrivate();
+		$response->setMaxAge(1);
+
+
+		return $response;
+    }
+}
