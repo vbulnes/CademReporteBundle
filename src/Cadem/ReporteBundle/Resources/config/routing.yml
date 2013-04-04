@@ -5,3 +5,7 @@ cadem_reporte_homepage:
 cadem_reporte_indicadores:
     pattern:  /indicadores
     defaults: { _controller: CademReporteBundle:Default:indicadores }
+
+cadem_reporte_resumen:
+    pattern: /resumen
+    defaults: { _controller: CademReporteBundle:Resumen:index }

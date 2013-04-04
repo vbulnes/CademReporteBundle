@@ -1,0 +1,233 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Cadem Reporte{% endblock %}
+
+{% block filtro %}
+	<form id="filtros" action="" method="post" >
+		{% for form in forms %}
+				{{ form_widget(form) }}
+		{% endfor %}
+		<input class="btn btn-primary" type="submit" value="Filtrar" />
+	</form>
+{% endblock %}
+
+{% block body %}
+    <div class="span9">
+    <div class="row-fluid">
+            <div class="span12 well">
+                <!-- <span class="label">RANKING</span> -->
+                <!-- <br>
+                <br> -->
+                <table id="tabla_resumen" class="table table-bordered">                      
+                    <thead>
+                        <tr>
+                            <th>
+                            </th>
+                            <th>
+                            CATEGORIA/CADENA
+                            </th>
+                            {% for item in tabla_resumen.cadenas %}
+                            <th class="encabezado_tabla_resumen">
+                                {{item}}
+                            </th>
+                            {% endfor %}
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td class="nivel1_tabla_resumen">
+                                {{tabla_resumen.totales.nombre}}
+                            </td>
+                            {% for item in tabla_resumen.totales.valores %}
+                                <td class="nivel1_tabla_resumen">
+                                    {{item}}
+                                </td>
+                            {% endfor %}
+                        </tr> 
+                        {% for item in tabla_resumen.segmento %}
+
+                            <tr class="segmento" num={{ loop.index }}>
+                                <td>
+                             <img src="{{ asset('bundles/cademreporte/images/details_open.png') }}" >
+                            </td> 
+                                <td  class="nivel2_tabla_resumen">
+                                    <label class="nombre_nivel_tabla_resumen">
+                                        {{item.nombre}}
+                                    </label>
+                                </td>
+                                {% for item2 in item.valores %}
+                                <td class="nivel2_tabla_resumen"> 
+                                    {{item2}}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% for item3 in item.categoria %}
+                            <tr class="categoria" segmento={{ loop.index }}>
+                                <td>
+                                </td>
+                                <td class="nivel3_tabla_resumen">
+                                   <label class="nombre_nivel_tabla_resumen">
+                                        {{item3.nombre}}
+                                   </label>
+                                </td>
+                                {% for item4 in item3.valores %}
+                                <td class="nivel3_tabla_resumen">
+                                   {{item4}} 
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>                        					                   
+                </table>
+            </div><!--/span-->
+        </div><!--/row-->         
+        <div class="hero-unit" style="padding:30px">
+                <!-- <h3>Indicadores</h3> -->
+                <div class="row-fluid">
+                {% for item in variables_clientes %}
+                    <div id="i_{{item.variable.nombre}}" ></div>
+                {% endfor %}					
+                </div>
+        </div>             
+    </div><!--/span-->
+{% endblock %}
+
+
+{% block javascripts %}
+
+<script src="{{ asset('bundles/cademreporte/js/jquery.js') }}" type="text/javascript" ></script>        
+<script src="{{ asset('bundles/cademreporte/js/jquery-ui-1.9.2.custom.js') }}" type="text/javascript" ></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}" type="text/javascript" ></script>
+                      
+<script>
+{% for item in variables_clientes %}
+{{"var i_"~item.variable.nombre~";"}}
+{% endfor %}
+
+$(document).ready(function () {
+	$('form#filtros').submit(function() {
+		$.get( "{{ path('cadem_reporte_indicadores') }}", $(this).serialize(), function(data) {
+				{% for item in variables_clientes %}
+				if (typeof data.{{item.variable.nombre}} != 'undefined'){
+					if ({{"i_"~item.variable.nombre}}.series.length) {
+						{{"i_"~item.variable.nombre}}.series[0].remove();
+					}
+					{{"i_"~item.variable.nombre}}.addSeries(data.{{item.variable.nombre}});
+					{{"i_"~item.variable.nombre}}.setTitle({ text: data.{{item.variable.nombre}}.name});
+				}
+				{% endfor %}
+				
+				if (typeof data.ranking != 'undefined'){
+					var tabla = '<table id="ranking" class="table table-bordered"><thead><tr>';
+						
+					for(k in data.ranking.head){
+						tabla = tabla + '<th>'+ data.ranking.head[k] +'</th>';
+					}
+					tabla = tabla + '</tr>  </thead> <tbody>';
+					for(k in data.ranking.body){
+						tabla = tabla + '<tr>';
+						var d = data.ranking.body[k];
+						for(i in d){
+							tabla = tabla + '<td>'+d[i]+'</td>';
+						}
+						tabla = tabla + '</tr>';
+					}
+						
+					tabla = tabla + '</tbody></table>';
+					
+					//SE MUESTRA CON EFECTO
+					var c = $(tabla);
+					c.hide();
+					$('#ranking').fadeOut("slow", function(){
+						$(this).hide();
+					    $(this).replaceWith(c);
+					    c.fadeIn("slow");
+					});
+				}
+			},
+		'json');
+		return false;
+	});
+	
+	
+	{% for item in variables_clientes %}
+        {% if loop.index == 1 %}
+	{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+		chart: {    
+			renderTo: 'i_{{item.variable.nombre}}',
+                        type: 'line',
+                        //marginRight: 130,
+                        //marginBottom: 25,                                
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false,
+                        width: 900,
+                        height: 200                        
+		},
+		title: {
+			text: '{{item.variable.nombre|capitalize}}'
+		},
+		tooltip: {
+			pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+			percentageDecimals: 1,
+			enabled: false
+		},
+		series: [{
+                    name: 'Tokyo',
+                    data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+                }],
+		credits: {
+			enabled: false
+		}
+	});
+        {% endif %}
+	{% endfor %}   
+});
+
+var oTable=$('#tabla_resumen').dataTable({
+    "bJQueryUI": true,
+    "bPaginate": false,
+    "bLengthChange": false,
+    "bFilter": false,
+    "bSort": false,
+    "bInfo": false,
+    "bAutoWidth": false,
+    "bRetrieve": true
+});
+
+
+var html1="<table width='100%'>";
+$('.categoria[segmento=1]').each(function(){
+   html1=html1+"<tr><td></td>"
+   html1=html1+$(this).html();
+   html1=html1+"</tr>"
+});
+html1=html1+"</table>"
+
+
+$('#tabla_resumen tbody td img').live('click', function () {
+    var nTr = $(this).parents('tr')[0];
+    if ( oTable.fnIsOpen(nTr) )
+    {   
+        /* This row is already open - close it */
+        this.src = "{{ asset('bundles/cademreporte/images/details_open.png') }}";
+        oTable.fnClose( nTr );
+    }
+    else
+    {
+        /* Open this row */
+        this.src = "{{ asset('bundles/cademreporte/images/details_close.png') }}";
+        oTable.fnOpen( nTr, html1 );
+    }
+} );
+
+$('.categoria').hide();
+
+
+ </script>
+{% endblock %}
