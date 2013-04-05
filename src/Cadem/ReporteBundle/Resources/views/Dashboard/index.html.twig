@@ -86,7 +86,79 @@ var evo_cobertura;
 
 $(document).ready(function () {
 
-	evo_quiebre_precio = new Highcharts.Chart({
+	
+		
+		//var dat = [['Ene',63.0], ['Ene1',81.9], ['Ene2',10.5], ['Ene3',14.5], ['Ene4',88.2], ['Ene5',21.5], ['Ene6',85.2], ['Ene7',26.5], ['Ene8',43.3], ['Ene9',28.3], ['Ene10',43.9],['Ene11',19.6]];
+		
+		
+
+
+	$('form#filtros').submit(function() {
+		$.get( "{{ path('dashboard_indicadores') }}", $(this).serialize(), function(data) {
+				{% for item in variables_clientes %}
+				if (typeof data.{{item.variable.nombre}} != 'undefined'){
+					if ({{"i_"~item.variable.nombre}}.series.length) {
+						{{"i_"~item.variable.nombre}}.series[0].remove();
+					}
+					{{"i_"~item.variable.nombre}}.addSeries(data.{{item.variable.nombre}});
+					{{"i_"~item.variable.nombre}}.setTitle({ text: data.{{item.variable.nombre}}.name});
+				}
+				{% endfor %}
+				
+				
+				
+				evo_quiebre_precio.series[0].remove();
+				evo_quiebre_precio.series[0].remove();				
+				evo_quiebre_precio.addSeries(data.evo_quiebre_precio.precio);
+				evo_quiebre_precio.addSeries(data.evo_quiebre_precio.quiebre);
+				
+			},
+		'json');
+		return false;
+	});
+	
+	$.get( "{{ path('dashboard_indicadores') }}", $('form#filtros').serialize(), function(data) {
+	
+		{% for item in variables_clientes %}
+		{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+			chart: {
+				renderTo: 'i_{{item.variable.nombre}}',
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: false
+			},
+			title: {
+				text: '{{item.variable.nombre|capitalize}}'
+			},
+			tooltip: {
+				pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+				percentageDecimals: 1,
+				enabled: false
+			},
+			plotOptions: {
+				pie: {
+					allowPointSelect: true,
+					cursor: 'pointer',
+					dataLabels: {
+						enabled: true,
+						formatter: function() {
+							return this.point.percentage.toFixed(1) + ' %';
+						},
+						distance: -20,
+						color:'white'
+					},
+					showInLegend: true
+				}
+			},
+			series: [data.{{item.variable.nombre}}],
+			credits: {
+				enabled: false
+			}
+		});
+		{% endfor %}
+		
+		
+		evo_quiebre_precio = new Highcharts.Chart({
             chart: {
                 zoomType: 'x',
 				renderTo: 'evo_quiebre_precio'
@@ -128,33 +200,12 @@ $(document).ready(function () {
                 floating: true,
                 backgroundColor: '#FFFFFF'
             },
-            series: [{
-                name: 'Promedio Precio',
-                color: '#89A54E',
-				yAxis: 1,
-                type: 'spline',
-                data: [2300.0, 3100.9, 2000.5, 3490.5, 3889.2, 2198.5, 2500.2, 1612.5, 3332.3, 845.3, 1753.9, 3798.6],
-                tooltip: {
-                    valuePrefix: '$'
-                }
-    
-            }, {
-				name: '% Quiebre',
-                color: '#4572A7',
-                type: 'spline',
-                
-                data: [73.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 39.6],
-                tooltip: {
-                    valueSuffix: ' %'
-                }
-                
-            }],
+            series: [data.evo_quiebre_precio.precio, data.evo_quiebre_precio.quiebre],
 			credits: {
 				enabled: false
 			}
         });
 		
-		var dat = [['Ene',63.0], ['Ene1',81.9], ['Ene2',10.5], ['Ene3',14.5], ['Ene4',88.2], ['Ene5',21.5], ['Ene6',85.2], ['Ene7',26.5], ['Ene8',43.3], ['Ene9',28.3], ['Ene10',43.9],['Ene11',19.6]];
 		
 		evo_cobertura = new Highcharts.Chart({
             chart: {
@@ -165,9 +216,9 @@ $(document).ready(function () {
                 text: 'Evolutivo Cobertura'
             },
             xAxis: {
-                /*categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-                    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']*/
-				type: 'category'
+                categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+				//type: 'category'
 				/*labels: {
 					formatter: function() {
 					alert(this.value);
@@ -196,89 +247,13 @@ $(document).ready(function () {
                 floating: true,
                 backgroundColor: '#FFFFFF'
             },
-            series: [{
-                name: '% de Cobertura',
-                color: '#4572A7',
-                type: 'spline',
-				data: dat,
-                //data: [63.0, 81.9, 10.5, 14.5, 88.2, 21.5, 85.2, 26.5, 43.3, 28.3, 43.9,19.6],
-                tooltip: {
-                    valuePrefix: '$'
-                }
-				//cropThreshold: 1000
-            }],
+            series: [data.evo_cobertura.cobertura],
 			credits: {
 				enabled: false
 			}
         });
-
-
-	$('form#filtros').submit(function() {
-		$.get( "{{ path('dashboard_indicadores') }}", $(this).serialize(), function(data) {
-				{% for item in variables_clientes %}
-				if (typeof data.{{item.variable.nombre}} != 'undefined'){
-					if ({{"i_"~item.variable.nombre}}.series.length) {
-						{{"i_"~item.variable.nombre}}.series[0].remove();
-					}
-					{{"i_"~item.variable.nombre}}.addSeries(data.{{item.variable.nombre}});
-					{{"i_"~item.variable.nombre}}.setTitle({ text: data.{{item.variable.nombre}}.name});
-				}
-				{% endfor %}
-				
-				//console.log(evo_quiebre_precio.series);
-				evo_quiebre_precio.series[0].setData([1300.0, 1100.9, 1000.5, 4490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6] );
-			},
-		'json');
-		return false;
+	
 	});
-	
-	
-	{% for item in variables_clientes %}
-	{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
-		chart: {
-			renderTo: 'i_{{item.variable.nombre}}',
-			plotBackgroundColor: null,
-			plotBorderWidth: null,
-			plotShadow: false
-		},
-		title: {
-			text: '{{item.variable.nombre|capitalize}}'
-		},
-		tooltip: {
-			pointFormat: '{series.name}: <b>{point.percentage}%</b>',
-			percentageDecimals: 1,
-			enabled: false
-		},
-		plotOptions: {
-			pie: {
-				allowPointSelect: true,
-				cursor: 'pointer',
-				dataLabels: {
-					enabled: true,
-					formatter: function() {
-                        return this.point.percentage.toFixed(1) + ' %';
-                    },
-                    distance: -20,
-                    color:'white'
-				},
-				showInLegend: true
-			}
-		},
-		series: [{
-			type: 'pie',
-			data: [
-				['Sin datos',   100.0]
-				
-			]
-		}],
-		credits: {
-			enabled: false
-		}
-	});
-	{% endfor %}
-	
-	
-	
 	
 	
 	

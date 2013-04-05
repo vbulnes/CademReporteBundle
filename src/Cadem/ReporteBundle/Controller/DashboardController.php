@@ -89,7 +89,7 @@ class DashboardController extends Controller
 				'form_vendedor' => $form_vendedor->createView(),
 			),
 			'logo' => $logos[0],
-			'variables_clientes' => $variables_clientes )
+			'variables_clientes' => $variables_clientes)
 		);
 
 		//CACHE
@@ -124,33 +124,7 @@ class DashboardController extends Controller
 		// $time_taken = microtime(true) - $start;
 		
 		$data = $request->query->all();
-		
-		$min = 0;
-		$max = 100;
-		
-		// switch($data['form']['Canal']){
-			// case '1':
-				// $min = 60;
-				// $max = 100;
-			// break;
-			// case '2':
-				// $min = 40;
-				// $max = 100;
-			// break;
-			// case '3':
-				// $min = 0;
-				// $max = 60;
-			// break;
-		// }
-		
-		// $ranking = array(
-			// 'head' => array('CATEGORIA','JUMBO','LIDER','TOTTUS','TOTAL'),
-			// 'body' => array(
-				// array("CERVEZA", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-				// array("ENERGETICA", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-				// array("RON", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
-			// )
-		// );
+
 		
 		
 		$responseA = array(
@@ -185,6 +159,38 @@ class DashboardController extends Controller
 							array('name' => 'Cumple', 'y' => 44.5, 'color' => '#83A931'),
 							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
 						)
+				),
+				'evo_quiebre_precio' => array(
+					'precio' => array(
+						'name' => 'Promedio Precio',
+						'color' => '#89A54E',
+						'yAxis' => 1,
+						'type' => 'spline',
+						'data' => array(1300.0, 1100.9, 1000.5, 4490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6),
+						'tooltip' => array(
+							'valuePrefix' => '$'
+						)
+					),
+					'quiebre' => array(
+						'name' => '% Quiebre',
+						'color' => '#4572A7',
+						'type' => 'spline',
+						'data' => array(73.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 39.6),
+						'tooltip' => array(
+							'valueSuffix' => ' %'
+						)
+					)
+				),
+				'evo_cobertura' => array(
+					'cobertura' => array(
+						'name' => '% de Cobertura',
+						'color' => '#4572A7',
+						'type' => 'spline',
+						'data' => array(13.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 13.3, 18.3, 13.9, 39.6),
+						'tooltip' => array(
+							'valueSuffix' => ' %'
+						)
+					)
 				)
 				
 		);
@@ -221,7 +227,38 @@ class DashboardController extends Controller
 							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
 						)
 				),
-				'evo_quiebre_precio' => array(1300.0, 1100.9, 1000.5, 1490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6)
+				'evo_quiebre_precio' => array(
+					'precio' => array(
+						'name' => 'Promedio Precio',
+						'color' => '#89A54E',
+						'yAxis' => 1,
+						'type' => 'spline',
+						'data' => array(1300.0, 1100.9, 1000.5, 4490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6),
+						'tooltip' => array(
+							'valuePrefix' => '$'
+						)
+					),
+					'quiebre' => array(
+						'name' => '% Quiebre',
+						'color' => '#4572A7',
+						'type' => 'spline',
+						'data' => array(73.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 39.6),
+						'tooltip' => array(
+							'valueSuffix' => ' %'
+						)
+					)
+				),
+				'evo_cobertura' => array(
+					'cobertura' => array(
+						'name' => '% de Cobertura',
+						'color' => '#4572A7',
+						'type' => 'spline',
+						'data' => array(73.0, 11.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 19.6),
+						'tooltip' => array(
+							'valueSuffix' => ' %'
+						)
+					)
+				)
 		);
 		
 		//RESPONSE
