@@ -18,16 +18,16 @@
                 <!-- <span class="label">RANKING</span> -->
                 <!-- <br>
                 <br> -->
-                <table id="tabla_resumen" class="table table-bordered">                      
+                <table id="tabla_resumen" class="table table-bordered display">                      
                     <thead>
                         <tr>
-                            <th>
+                            <th width='3%'>
                             </th>
-                            <th>
+                            <th width='18%'>
                             CATEGORIA/CADENA
                             </th>
                             {% for item in tabla_resumen.cadenas %}
-                            <th class="encabezado_tabla_resumen">
+                            <th class="encabezado_tabla_resumen" width='12%'>
                                 {{item}}
                             </th>
                             {% endfor %}
@@ -50,7 +50,7 @@
                         </tr> 
                         {% for item in tabla_resumen.segmento %}
 
-                            <tr class="segmento" num={{ loop.index }}>
+                            <tr class="segmento" nombre={{ item.nombre }}>
                                 <td>
                              <img src="{{ asset('bundles/cademreporte/images/details_open.png') }}" >
                             </td> 
@@ -66,7 +66,7 @@
                                 {% endfor %}
                             </tr>
                             {% for item3 in item.categoria %}
-                            <tr class="categoria" segmento={{ loop.index }}>
+                            <tr class="categoria" segmento={{ item.nombre }}>
                                 <td>
                                 </td>
                                 <td class="nivel3_tabla_resumen">
@@ -110,6 +110,82 @@
 {% endfor %}
 
 $(document).ready(function () {
+
+$('.nombre_nivel_tabla_resumen').click(function() {
+		var label= $(this).text().trim();
+		/*
+		$('#tabla_resumen tbody tr td label').each(function(){
+			$(this).removeAttr('style');
+		});
+		$(this).parent().parent().css("color","red");
+		*/
+		$.get( "{{ path('cadem_reporte_evolutivo') }}", $(this).text().trim(), function(data) {	
+			{% for item in variables_clientes %}
+				{% if loop.index == 1 %}
+					{{"i_"~item.variable.nombre}}.series[0].setData(data); 
+					{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
+				{% endif %}
+			{% endfor %}  					
+		});	
+	});
+
+	{% for item in variables_clientes %}
+        {% if loop.index == 1 %}
+		{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+		chart: {    
+			renderTo: 'i_{{item.variable.nombre}}',
+                        type: 'line',
+                        //marginRight: 130,
+                        //marginBottom: 25,                                
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false,
+                        width: 900,
+                        height: 200                        
+		},
+		title: {
+			text: 'Evolución Quiebre'
+		},
+		tooltip: {
+			pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+			percentageDecimals: 1,
+			enabled: true
+		},
+		xAxis: {
+            categories: {{ periodos|raw }},
+
+			labels: {
+                rotation: -40
+            }			
+		},		
+		yAxis: {
+            //categories: [0,100],
+			title: {
+                    text: '% Quiebre'
+            }
+		},		
+		series: [{
+                    name: '% Quiebre',
+                    data: {{ evolutivo }},			
+                }],
+		legend: {
+               layout: 'vertical',
+               align: 'center',
+               x: 400,
+               verticalAlign: 'top',
+               y: 0,
+               floating: true,
+               backgroundColor: '#FFFFFF'
+        },				
+		credits: {
+			enabled: false
+		}
+	});
+        {% endif %}
+	{% endfor %}   
+	});
+
+
 	$('form#filtros').submit(function() {
 		$.get( "{{ path('cadem_reporte_indicadores') }}", $(this).serialize(), function(data) {
 				{% for item in variables_clientes %}

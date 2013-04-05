@@ -119,14 +119,8 @@ class ResumenController extends Controller
 						),
 					);
 		
-		// $tabla_resumen = array(
-			// 'head' => array('CATEGORIA/CADENA','LIDER','JUMBO','SANTA ISABEL','SMU','TOTAL'),
-			// 'body' => array(
-				// array("AIR CARE"," AMBIENTALES AUTO", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-				// array("AIR CARE"," CONTINUO ELECTRICO", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-				// array("RON", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
-			// )
-		// );		
+		$periodos= array('2012-03 SEM 1_7','2013-03 SEM 8_13','2013-03 SEM 15_20','2013-03 SEM 21_26','2013-03 SEM 27_31','2013-04 SEM 1_7','2013-04 SEM 8_13','2013-04 SEM 14_19');
+		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));
 		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Resumen:index.html.twig',
@@ -137,7 +131,9 @@ class ResumenController extends Controller
 			),
 			'tabla_resumen' => $tabla_resumen,
 			'logo' => $logos[0],
-			'variables_clientes' => $variables_clientes )
+			'variables_clientes' => $variables_clientes,
+			'evolutivo' => json_encode($evolutivo),
+			'periodos' => json_encode($periodos))
 		);
 
 		//CACHE
@@ -147,6 +143,16 @@ class ResumenController extends Controller
 
 		return $response;
     }
+	
+	public function evolutivoAction(Request $request)
+    {
+		$min = 0;
+		$max = 100;	
+
+		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));
+
+		return new JsonResponse($evolutivo);
+	}
 	
 	public function indicadoresAction(Request $request)
     {
