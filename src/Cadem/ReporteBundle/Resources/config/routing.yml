@@ -13,7 +13,7 @@ dashboard_indicadores:
 resumen_index:
     pattern: /resumen
     defaults: { _controller: CademReporteBundle:Resumen:index }
-evolutivo_index:
+resumen_evolutivo:
     pattern: /resumen/evolutivo
     defaults: { _controller: CademReporteBundle:Resumen:evolutivo }	
 

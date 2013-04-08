@@ -65,7 +65,7 @@
 
             <ul class="nav">
               <li class="{% if app.request.attributes.get('_route') == 'dashboard_index' %}active{% endif %}"><a href="{{ path('dashboard_index')}}">Dashboard</a></li>
-              <li class="{% if app.request.attributes.get('_route') == 'resumen_index' %}active{% endif %}"><a href="{{ path('cadem_reporte_resumen')}}">Resumen</a></li>
+              <li class="{% if app.request.attributes.get('_route') == 'resumen_index' %}active{% endif %}"><a href="{{ path('resumen_index')}}">Resumen</a></li>
               <li class="{% if app.request.attributes.get('_route') == 'ranking_index' %}active{% endif %}"><a href="#contact">Ranking</a></li>
               <li class="{% if app.request.attributes.get('_route') == 'evolucion_index' %}active{% endif %}"><a href="#contact">Evolución</a></li>
               <li class="{% if app.request.attributes.get('_route') == 'detalle_index' %}active{% endif %}"><a href="#contact">Detalle</a></li>
