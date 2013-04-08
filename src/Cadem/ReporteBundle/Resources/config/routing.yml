@@ -4,6 +4,12 @@
 # cadem_reporte_indicadores:
     # pattern:  /indicadores
     # defaults: { _controller: CademReporteBundle:Default:indicadores }
+root:
+    path:     /
+    defaults:
+        _controller: FrameworkBundle:Redirect:Redirect
+        route: dashboard_index
+        permanent: true
 dashboard_index:
     pattern:  /dashboard
     defaults: { _controller: CademReporteBundle:Dashboard:index }
