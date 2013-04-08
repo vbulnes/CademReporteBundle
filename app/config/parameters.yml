@@ -1,10 +1,10 @@
 parameters:
-    database_driver:   pdo_mysql
+    database_driver:   pdo_sqlsrv
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     reporte
-    database_user:     reporte
-    database_password: reporte
+    database_name:     CademReporte
+    database_user:     user
+    database_password: ~
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1

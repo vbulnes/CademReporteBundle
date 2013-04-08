@@ -31,9 +31,9 @@ class Logo
     /**
      * @var string
      *
-     * @ORM\Column(name="file", type="string", length=255)
+     * @ORM\Column(name="filename", type="string", length=255)
      */
-    private $file;
+    private $filename;
 
     /**
      * @var string
@@ -91,26 +91,26 @@ class Logo
     }
 
     /**
-     * Set file
+     * Set filename
      *
      * @param string $file
      * @return Logo
      */
-    public function setFile($file)
+    public function setFilename($filename)
     {
-        $this->file = $file;
+        $this->filename = $filename;
     
         return $this;
     }
 
     /**
-     * Get file
+     * Get filename
      *
      * @return string 
      */
-    public function getFile()
+    public function getFilename()
     {
-        return $this->file;
+        return $this->filename;
     }
 
     /**
