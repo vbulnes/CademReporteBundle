@@ -111,7 +111,7 @@ $(document).ready(function () {
 	$('span.filtrable').click(function() {
 		var label= $(this).text().trim();
 		
-		$.get( "{{ path('cadem_reporte_evolutivo') }}", $(this).text().trim(), function(data) {	
+		$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
 			{% for item in variables_clientes %}
 				{% if loop.index == 1 %}
 					{{"i_"~item.variable.nombre}}.series[0].setData(data); 

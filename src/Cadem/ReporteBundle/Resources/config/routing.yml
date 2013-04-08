@@ -10,10 +10,10 @@ dashboard_index:
 dashboard_indicadores:
     pattern:  /dashboard/indicadores
     defaults: { _controller: CademReporteBundle:Dashboard:indicadores }
-cadem_reporte_resumen:
+resumen_index:
     pattern: /resumen
     defaults: { _controller: CademReporteBundle:Resumen:index }
-cadem_reporte_evolutivo:
+evolutivo_index:
     pattern: /resumen/evolutivo
     defaults: { _controller: CademReporteBundle:Resumen:evolutivo }	
 
