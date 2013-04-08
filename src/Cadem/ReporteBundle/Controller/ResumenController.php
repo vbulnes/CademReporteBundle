@@ -16,8 +16,9 @@ class ResumenController extends Controller
 		$form_periodo = $this->createFormBuilder($defaultData)
 			->add('Estudio', 'choice', array(
 				'choices'   => array(
-						'1' => 'QUIEBRE Y PRECIO',
-						'2' => 'COBERTURA',
+						'1' => 'QUIEBRE',
+						'2' => 'QUIEBRE Y PRECIO',
+						'3' => 'COBERTURA',
 				),
 				'required'  => true,
 				'multiple'  => false,
@@ -38,9 +39,10 @@ class ResumenController extends Controller
 		$form_canal = $this->createFormBuilder($defaultData)
 			->add('Canal', 'choice', array(
 				'choices'   => array(
-						'1' => 'SUPERMERCADO',
-						'2' => 'MAYORISTA',
-						'3' => 'MINORISTA'
+						'1' => 'TODOS',
+						'2' => 'SUPERMERCADO',
+						'3' => 'MAYORISTA',
+						'4' => 'MINORISTA'
 				),
 				'required'  => true,
 				'multiple'  => false,
@@ -120,7 +122,7 @@ class ResumenController extends Controller
 					);
 		
 		$periodos= array('2012-03 SEM 1_7','2013-03 SEM 8_13','2013-03 SEM 15_20','2013-03 SEM 21_26','2013-03 SEM 27_31','2013-04 SEM 1_7','2013-04 SEM 8_13','2013-04 SEM 14_19');
-		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));
+		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));	
 		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Resumen:index.html.twig',
@@ -133,7 +135,8 @@ class ResumenController extends Controller
 			'logo' => $logos[0],
 			'variables_clientes' => $variables_clientes,
 			'evolutivo' => json_encode($evolutivo),
-			'periodos' => json_encode($periodos))
+			'periodos' => json_encode($periodos)
+			)
 		);
 
 		//CACHE
@@ -148,9 +151,9 @@ class ResumenController extends Controller
     {
 		$min = 0;
 		$max = 100;	
-
+	
 		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));
-
+		
 		return new JsonResponse($evolutivo);
 	}
 	
