@@ -66,7 +66,7 @@
             <ul class="nav">
               <li class="{% if app.request.attributes.get('_route') == 'dashboard_index' %}active{% endif %}"><a href="{{ path('dashboard_index')}}">Dashboard</a></li>
               <li class="{% if app.request.attributes.get('_route') == 'resumen_index' %}active{% endif %}"><a href="{{ path('resumen_index')}}">Resumen</a></li>
-              <li class="{% if app.request.attributes.get('_route') == 'ranking_index' %}active{% endif %}"><a href="#contact">Ranking</a></li>
+              <li class="{% if app.request.attributes.get('_route') == 'ranking_index' %}active{% endif %}"><a href="{{ path('ranking_index')}}">Ranking</a></li>
               <li class="{% if app.request.attributes.get('_route') == 'evolucion_index' %}active{% endif %}"><a href="#contact">Evolución</a></li>
               <li class="{% if app.request.attributes.get('_route') == 'detalle_index' %}active{% endif %}"><a href="#contact">Detalle</a></li>
             </ul>
@@ -81,7 +81,7 @@
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">LOGO CLIENTE</li>
-              <li class="text-center"><img class="img-rounded" alt="140x140" style="width: {{logo.width}}; height: {{logo.height}};" src="{{ asset('bundles/cademreporte/images/'~logo.file) }}"></li>
+              <li class="text-center"><img class="img-rounded" alt="140x140" style="width: {{logo.width}}; height: {{logo.height}};" src="{{ asset('bundles/cademreporte/images/'~logo.filename) }}"></li>
               <li class="nav-header">FILTROS</li>
               <li>{% block filtro %}{% endblock %}</li>
               <!-- <li class="nav-header">NAV</li>
