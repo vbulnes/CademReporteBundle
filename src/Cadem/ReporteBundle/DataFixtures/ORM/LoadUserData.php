@@ -62,13 +62,13 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$userManager->updateUser($user2,false);
 
 	$logo1 = new Logo();
-	$logo1->setFile('logosoprole.gif');	
+	$logo1->setFilename('logosoprole.gif');	
 	$logo1->setWidth('auto');	
 	$logo1->setHeight('auto');	
 	$logo1->setActivo(true);
 	$logo1->setCliente($cliente_soprole);
 	$logo2 = new Logo();
-	$logo2->setFile('logonestle.jpg');	
+	$logo2->setFilename('logonestle.jpg');	
 	$logo2->setWidth('auto');
 	$logo2->setHeight('auto');	
 	$logo2->setActivo(true);	
