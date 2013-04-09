@@ -18,8 +18,8 @@
                 <!-- <span class="label">RANKING</span> -->
                 <!-- <br>
                 <br> -->
-                <table id="tabla_resumen" class="table table-bordered display">                      
-                    <thead>
+                <table id="tabla_resumen" class="table table-bordered">                      
+                    <thead style='position:static'>
                         <tr>
                             <th width='18%'>
                             CATEGORIA/CADENA
@@ -35,16 +35,18 @@
                     <tbody>
                         <tr>
                             <td class="nivel1_tabla_resumen">
-                                {{tabla_resumen.totales.nombre}}
+								<span class='filtrable'>
+									{{tabla_resumen.totales.nombre}}
+								</span>		
                             </td>
                             {% for item in tabla_resumen.totales.valores %}
                                 <td class="nivel1_tabla_resumen">
-                                    {{item}}
+									{{item}}
                                 </td>
                             {% endfor %}
                         </tr> 
                         {% for item in tabla_resumen.segmento %}
-                            <tr data-tt-id="{{loop.index}}">
+                            <tr data-tt-id="{{loop.index}}" class='maestro'>
                                 <td class="nivel2_tabla_resumen">
                                     <span class='filtrable'>
                                         {{item.nombre}}
@@ -57,7 +59,7 @@
                                 {% endfor %}
                             </tr>
                             {% for item3 in item.categoria %}
-                            <tr data-tt-id="{{loop.parent.loop.index}}.{{loop.index}}" data-tt-parent-id="{{loop.parent.loop.index}}">
+                            <tr data-tt-id="{{loop.parent.loop.index}}.{{loop.index}}" data-tt-parent-id="{{loop.parent.loop.index}}" class='loop.parent.loop.index'>
                                 <td class="nivel3_tabla_resumen">
                                    <span class='filtrable'>
                                         {{item3.nombre}}
@@ -88,7 +90,7 @@
 
 {% block stylesheets %}
 <link href="{{ asset('bundles/cademreporte/css/jquery.treetable.css') }}" rel="stylesheet">		  
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">		  		  
+<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">		 	 		  
 {% endblock %}
 
 {% block customstyles %}	  
@@ -96,21 +98,33 @@ span{
 	font-size: 10px;
 	padding-left: 0px !important;
 	}
+.dataTables_scrollHead{
+	overflow: auto !important;
+	}
+	
+#tabla_resumen thead tr{
+	padding-right: 17px;
+}
 {% endblock %}
 
 {% block javascripts %}
 <script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/script.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.rowGrouping.js') }}"></script>
 
 <script>
 {% for item in variables_clientes %}
 {{"var i_"~item.variable.nombre~";"}}
 {% endfor %}
 
+
 $(document).ready(function () {
 	
-	$('span.filtrable').click(function() {
+	$('#tabla_resumen span.filtrable').click(function() {
 		var label= $(this).text().trim();
-		
+
 		$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
 			{% for item in variables_clientes %}
 				{% if loop.index == 1 %}
@@ -175,8 +189,8 @@ $(document).ready(function () {
 	});
         {% endif %}
 	{% endfor %}   
-	});
-	
+	});	
+						
 	
 	$("#tabla_resumen").treetable({ expandable: true });	
 	
@@ -185,24 +199,42 @@ $(document).ready(function () {
 	  $(this).addClass("selected");
 	});	
 	
-	$('#tabla_resumen tbody td img').click(function () {
-   
-   var segmento=$(this).parent().parent().attr('nombre');    	
-   
-   if($('.categoria[segmento='+segmento+']').css('display')=='none')
-   {	 
-       $('.categoria[segmento='+segmento+']').show();
-       this.src = "{{ asset('bundles/cademreporte/images/details_close.png') }}";
-   }
-   else
-   {	
-       $('.categoria[segmento='+segmento+']').hide();       
-       this.src = "{{ asset('bundles/cademreporte/images/details_open.png') }}";
-   }
-});
-
-$('.categoria').hide();
-
-
+	$('#tabla_resumen').dataTable({
+			"bJQueryUI": false,
+			"bPaginate": false,
+			"bLengthChange": false,
+			"bFilter": false,
+			"bSort": false,
+			"bInfo": false,
+			"bAutoWidth": false,		
+		//	"sScrollY": "50px",
+			"sScrollY": '180px',
+			"sScrollX": "100%",
+		//	"sScrollXInner": "110%"		
+		});	
+	
+		$('form#filtros').submit(function() {
+			$.get( "{{ path('resumen_periodo') }}", $(this).serialize(), function(data) {
+				{% for item in tabla_resumen.totales.valores %}
+					//$('#tabla_resumen tbody tr:first').children("eq(:{{ loop.index }})").html({{item}});
+				{% endfor %}
+				$('#tabla_resumen tbody tr').each(function(){
+					var cont=0;
+					$(this).children().each(function(){
+						if(cont>0)
+							$(this).text(Math.floor((Math.random()*100)+1));
+						cont++;
+					});
+				})
+			{% for item in variables_clientes %}
+				{% if loop.index == 1 %}
+					{{"i_"~item.variable.nombre}}.series[0].setData(data.evolutivo); 
+					{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre General"});
+				{% endif %}
+			{% endfor %} 
+			},
+			'json');
+		return false;
+	});	
  </script>
 {% endblock %}

@@ -147,6 +147,77 @@ class ResumenController extends Controller
 		return $response;
     }
 	
+	public function periodoAction(Request $request)
+	{
+	
+		$min = 0;
+		$max = 100;				
+	
+	$tabla_resumen = array(
+		'cadenas' => array('LIDER','JUMBO','SANTA ISABEL','SMU','SODIMAC','MAYORISTA 10','ALVI','TOTAL'),
+		'totales' => array('nombre'=>'QUIEBRE SC JOHNSON',
+						   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
+					 ),
+		'segmento' => array(array('nombre'=>'AIR CARE',
+								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+								  'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
+														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+											
+															),		
+													 array('nombre'=>'CONTINUO ELECTRICO',
+														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+											
+															),					
+													 array('nombre'=>'CONTINUO NO ELECTRICO',
+														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+											
+															)			
+													 ),		
+																													 
+								 ),
+							array('nombre'=>'AUTO CARE',
+								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+								  'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
+														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+											
+															),									
+													 ),		
+																													 
+								 ), 
+							array('nombre'=>' HOME CLEANING',
+								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+								  'categoria'=>array(array('nombre'=>'BAÑO',
+														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															),																						
+													 array('nombre'=>'BAÑO-CREMA',
+														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															),																						 
+													 array('nombre'=>'COCINA',
+														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															),																						 
+													 array('nombre'=>'LIMPIAHORNOS',
+														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															),									
+																										 
+																													 
+								 ), 								 
+							),
+						),
+					);
+					
+		
+		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));	
+		
+		//RESPONSE
+		$response = 
+		array(
+			'tabla_resumen' => $tabla_resumen,
+			'evolutivo' => $evolutivo,
+			);
+		
+		return new JsonResponse($response);
+	}
+	
 	public function evolutivoAction(Request $request)
     {
 		$min = 0;
