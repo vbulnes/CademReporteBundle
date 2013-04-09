@@ -1,0 +1,132 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Cadem Reporte{% endblock %}
+
+{% block filtro %}
+	<form id="filtros" action="" method="post" >
+		{% for form in forms %}
+				{{ form_widget(form) }}
+		{% endfor %}
+		<input class="btn btn-primary" type="submit" value="Filtrar" />
+	</form>
+{% endblock %}
+
+{% block body %}
+		<div class="span9">
+			<div class="container-fluid well" style="padding-top:0">
+				<h4>Estudio Quiebre y precio</h4>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+                    <h5>Ranking por Sala</h5>
+					
+						<table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Sala</th>
+                  <th>% quiebre</th>
+                  <th>% quiebre ant</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Lider 123</td>
+                  <td>15</td>
+                  <td>3</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Jumbo 234</td>
+                  <td>45</td>
+                  <td>87</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Santa Isabel 657</td>
+                  <td>23</td>
+                  <td>12</td>
+                </tr>
+              </tbody>
+            </table>
+					
+				</div>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<h5>Ranking por Producto</h5>
+				</div>
+                <div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<h5>Ranking por Vendedor</h5>
+				</div>
+			</div>
+			
+			<div class="container-fluid well" style="padding-top:0">
+				<h4>Estudio Cobertura</h4>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+                    <h5>Ranking por Sala</h5>
+					<table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Sala</th>
+                  <th>% quiebre</th>
+                  <th>% quiebre ant</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Lider 123</td>
+                  <td>15</td>
+                  <td>3</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Jumbo 234</td>
+                  <td>45</td>
+                  <td>87</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Santa Isabel 657</td>
+                  <td>23</td>
+                  <td>12</td>
+                </tr>
+              </tbody>
+            </table>
+				</div>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<h5>Ranking por Producto</h5>
+				</div>
+                <div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<h5>Ranking por Vendedor</h5>
+				</div>
+			</div>
+            
+        </div><!--/span-->
+{% endblock %}
+
+
+{% block javascripts %}
+<script>
+
+
+$(document).ready(function () {
+		
+		
+
+
+	$('form#filtros').submit(function() {
+		$.get( "{#{ path('dashboard_indicadores') }#}", $(this).serialize(), function(data) {
+				
+				
+			},
+		'json');
+		return false;
+	});
+	
+	
+	
+	
+	
+});
+ </script>
+{% endblock %}

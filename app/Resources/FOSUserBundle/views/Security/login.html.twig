@@ -3,24 +3,26 @@
 {% block fos_user_content %}
 
 
-<form class="form-signin" action="{{ path("fos_user_security_check") }}" method="post">
-    <h2 class="form-signin-heading">Ingreso</h2>
+<form class="form-signin text-center" action="{{ path("fos_user_security_check") }}" method="post">
+    <h2 class="form-signin-heading text-center">Bienvenido</h2>
 	
 	<input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
 
     <!-- <label for="username">{{ 'security.login.username'|trans({}, 'FOSUserBundle') }}</label> -->
-    <input type="text" id="username" name="_username" class="input-block-level" placeholder="Email" required="required" />
+    <input type="text" id="username" name="_username" class="input-block-level text-center" placeholder="Email" required="required" />
 
     <!-- <label for="password">{{ 'security.login.password'|trans({}, 'FOSUserBundle') }}</label> -->
-    <input type="password" id="password" name="_password" required="required" placeholder="Contraseña" />
-
-	<label class="checkbox">
-	  <input name="_remember_me" type="checkbox" value="remember-me"> {{ 'security.login.remember_me'|trans({}, 'FOSUserBundle') }}
-	</label>
+    
+        <input type="password" id="password" name="_password" class="text-center" required="required" placeholder="Contraseña" />
+    
+	<!--label class="checkbox">
+	  <input style="float:none;margin:0" name="_remember_me" type="checkbox" value="remember-me"> {{ 'security.login.remember_me'|trans({}, 'FOSUserBundle') }}
+	</label-->
 
 	<button name="_submit" class="btn btn-large btn-primary" type="submit">{{ 'security.login.submit'|trans({}, 'FOSUserBundle') }}</button>
 	{% if error %}
     <div class="alert alert-error" style="margin-top: 20px;margin-bottom:0">{{ error|trans({}, 'FOSUserBundle') }}</div>
 	{% endif %}
+    <a target="_blank" href="http://www.cademsmart.cl"><img style="padding-top:10px" src="{{ asset('bundles/cademreporte/images/logocadem.png') }}" alt="Cadem"></a>
 </form>
 {% endblock fos_user_content %}

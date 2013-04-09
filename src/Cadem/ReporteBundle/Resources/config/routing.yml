@@ -25,4 +25,6 @@ resumen_evolutivo:
 resumen_periodo:
     pattern: /resumen/periodo
     defaults: { _controller: CademReporteBundle:Resumen:periodo }	
-
+ranking_index:
+    pattern:  /ranking
+    defaults: { _controller: CademReporteBundle:Ranking:index }
