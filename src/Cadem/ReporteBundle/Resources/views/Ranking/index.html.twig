@@ -15,83 +15,250 @@
 		<div class="span9">
 			<div class="container-fluid well" style="padding-top:0">
 				<h4>Estudio Quiebre y precio</h4>
-				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
-                    <h5>Ranking por Sala</h5>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px;">
+						<h5 style="float:left">Ranking por Sala</h5>
+						<form style="float:right">
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  Top
+							</label>
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  Bottom
+							</label>
+						</form>
 					
-						<table class="table">
+						<table id="EQP_S">
                           <thead>
                             <tr>
                               <th>#</th>
                               <th>Sala</th>
-                              <th>% quiebre</th>
-                              <th>% quiebre ant</th>
+                              <th>% Quiebre</th>
+                              <th>% Quiebre ant</th>
+                              <th>% Diff</th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
                               <td>1</td>
                               <td>Lider 123</td>
-                              <td>15</td>
                               <td>3</td>
+                              <td>15</td>
+                              <td>12
+							  <div style="height:20px;display:inline">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_201_upload_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_206_ok_2_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_213_up_arrow_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_343_thumbs_up_g.png') }}" alt="Cadem">
+							  <div>
+							  </td>
                             </tr>
                             <tr>
                               <td>2</td>
                               <td>Jumbo 234</td>
                               <td>45</td>
-                              <td>87</td>
+                              <td>85</td>
+                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem"><div></td>
                             </tr>
                             <tr>
                               <td>3</td>
                               <td>Santa Isabel 657</td>
                               <td>23</td>
                               <td>12</td>
+                              <td>-11 <div style="height:20px;display:inline">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_200_download_r.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_207_remove_2_r.png') }}" alt="Cadem">
+							  <div></td>
                             </tr>
                           </tbody>
                         </table>
 					
 				</div>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
-					<h5>Ranking por Producto</h5>
+					<h5 style="float:left">Ranking por Producto</h5>
+						<form style="float:right">
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  Top
+							</label>
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  Bottom
+							</label>
+						</form>
+					
+						<table class="table table-condensed table-bordered">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Producto</th>
+                              <th>% Quiebre</th>
+                              <th>% Quiebre ant</th>
+                              <th>% Diff</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Yoghurt A</td>
+                              <td>3</td>
+                              <td>15</td>
+                              <td>12
+							  <div style="height:20px;display:inline">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_201_upload_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_206_ok_2_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_213_up_arrow_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_343_thumbs_up_g.png') }}" alt="Cadem">
+							  <div>
+							  </td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>Yoghurt B</td>
+                              <td>45</td>
+                              <td>85</td>
+                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem"><div></td>
+                            </tr>
+                            <tr>
+                              <td>3</td>
+                              <td>Yoghurt C</td>
+                              <td>23</td>
+                              <td>12</td>
+                              <td>-11 <div style="height:20px;display:inline">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_200_download_r.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_207_remove_2_r.png') }}" alt="Cadem">
+							  <div></td>
+                            </tr>
+                          </tbody>
+                        </table>
 				</div>
                 <div class="hero-unit" style="padding:15px;margin-bottom:10px">
-					<h5>Ranking por Vendedor</h5>
+					<h5 style="float:left">Ranking por Vendedor</h5>
+						<form style="float:right">
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  Top
+							</label>
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  Bottom
+							</label>
+						</form>
+					
+						<table class="table table-condensed table-bordered">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Vendedor</th>
+                              <th>% Quiebre</th>
+                              <th>% Quiebre ant</th>
+                              <th>% Diff</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Juan Perez</td>
+                              <td>3</td>
+                              <td>15</td>
+                              <td>12
+							  <div style="height:20px;display:inline">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_201_upload_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_206_ok_2_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_213_up_arrow_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_343_thumbs_up_g.png') }}" alt="Cadem">
+							  <div>
+							  </td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>Juan Junior</td>
+                              <td>45</td>
+                              <td>85</td>
+                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem"><div></td>
+                            </tr>
+                            <tr>
+                              <td>3</td>
+                              <td>Juan Antonio</td>
+                              <td>23</td>
+                              <td>12</td>
+                              <td>-11 <div style="height:20px;display:inline">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_200_download_r.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_207_remove_2_r.png') }}" alt="Cadem">
+							  <div></td>
+                            </tr>
+                          </tbody>
+                        </table>
 				</div>
 			</div>
 			
 			<div class="container-fluid well" style="padding-top:0">
 				<h4>Estudio Cobertura</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
-                    <h5>Ranking por Sala</h5>
-					<table class="table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Sala</th>
-                  <th>% quiebre</th>
-                  <th>% quiebre ant</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Lider 123</td>
-                  <td>15</td>
-                  <td>3</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Jumbo 234</td>
-                  <td>45</td>
-                  <td>87</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Santa Isabel 657</td>
-                  <td>23</td>
-                  <td>12</td>
-                </tr>
-              </tbody>
-            </table>
+                    <h5 style="float:left">Ranking por Sala</h5>
+						<form style="float:right">
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  Top
+							</label>
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  Bottom
+							</label>
+						</form>
+					
+						<table class="table table-condensed table-bordered">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Sala</th>
+                              <th>% Cobertura</th>
+                              <th>% Cobertura ant</th>
+                              <th>% Diff</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Lider 123</td>
+                              <td>3</td>
+                              <td>15</td>
+                              <td>12
+							  <div style="height:20px;display:inline">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_201_upload_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_206_ok_2_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_213_up_arrow_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_343_thumbs_up_g.png') }}" alt="Cadem">
+							  <div>
+							  </td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>Jumbo 234</td>
+                              <td>45</td>
+                              <td>85</td>
+                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem"><div></td>
+                            </tr>
+                            <tr>
+                              <td>3</td>
+                              <td>Santa Isabel 657</td>
+                              <td>23</td>
+                              <td>12</td>
+                              <td>-11 <div style="height:20px;display:inline">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_200_download_r.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_207_remove_2_r.png') }}" alt="Cadem">
+							  <div></td>
+                            </tr>
+                          </tbody>
+                        </table>
 				</div>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<h5>Ranking por Producto</h5>
@@ -104,13 +271,52 @@
         </div><!--/span-->
 {% endblock %}
 
+{% block customstyles %}
+.hero-unit{
+	background-color:white;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.hero-unit select{
+	width: auto;
+	padding: 0;
+	margin-bottom: 0;
+}
+
+.hero-unit input{
+	width: auto;
+	padding: 0;
+	margin-bottom: 0;
+}
+
+/* .table{
+	border-width: 2px;
+	font-size: 14px;
+}
+.table thead{
+	font-size: 16px;
+} */
+{% endblock %}
+
+{% block stylesheets %}
+	<link href="{{ asset('bundles/cademreporte/css/redmond/jquery-ui.min.css') }}" rel="stylesheet">
+	<link href="{{ asset('bundles/cademreporte/css/jquery.dataTables_themeroller.css') }}" rel="stylesheet">
+{% endblock %}
 
 {% block javascripts %}
+	<script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
+	<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 <script>
 
 
 $(document).ready(function () {
-		
+	
+	
+	oTable = $('#EQP_S').dataTable({
+        "bJQueryUI": true,
+        "sPaginationType": "full_numbers"
+    });
 		
 
 

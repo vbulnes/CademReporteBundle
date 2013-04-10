@@ -28,7 +28,6 @@ class RankingController extends Controller
 		$form_periodo = $this->createFormBuilder($defaultData)
 			->add('Periodo', 'choice', array(
 				'choices'   => array(
-						'0' => 'TODOS',
 						'1' => '2013 - 03 - SEM 01_10',
 						'2' => '2013 - 03 - SEM 11_15',
 						'3' => '2013 - 03 - SEM 15_22',
@@ -36,7 +35,7 @@ class RankingController extends Controller
 				),
 				'required'  => true,
 				'multiple'  => false,
-				'data' => '0'			
+				'data' => '4'			
 			))
 			->getForm();
 			
