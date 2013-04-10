@@ -13,106 +13,92 @@
 
 {% block body %}
     <div class="span9">
-    <div class="row-fluid">
-            <div class="span12 well">
-                <!-- <span class="label">RANKING</span> -->
-                <!-- <br>
-                <br> -->
-                <table id="tabla_resumen" class="table table-bordered">                      
-                    <thead style='position:static'>
-                        <tr>
-                            <th width='18%'>
-                            CATEGORIA/CADENA
-                            </th>
-                            {% for item in tabla_resumen.cadenas %}
-                            <th class="encabezado_tabla_resumen" width='12%'>
-                                {{item}}
-                            </th>
-                            {% endfor %}
-                        </tr>
+		<div class="container-fluid well" style="padding-top:0">
+			<h4>Resumen Quiebre</h4>
+				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
+					<div class="row-fluid">
+							<table id="tabla_resumen" class="table table-bordered display">                      
+								<thead style='position:static'>
+									<tr>
+										{% for item in tabla_resumen.head %}
+										<th width='12%'>
+											{{item}}
+										</th>
+										{% endfor %}
+									</tr>
+								</thead>
+								<tbody>
+									{% for item in tabla_resumen.body %}
+										{% set acum = 0 %}
+										<tr class='{{item['segmento']|trim}}' data-tt-id="{{loop.index}}" data-tt-parent-id="{{item['segmento']}}">
+											{% for item2 in item %}
+											<td id_col="{{loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['segmento']|trim}}'>  
+												{{item2}}
+											</td>
+											{% set acum = acum + item2 %}
+											{% endfor %}
+											<td>
+												{{ acum }}
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>                        					                   
+							</table>
+						
+					</div><!--/row-->   
+				</div>
+					<div class="hero-unit" style="padding:30px">
+							<div class="row-fluid">
+							{% for item in variables_clientes %}
+								<div id="i_{{item.variable.nombre}}" ></div>
+							{% endfor %}					
+							</div>
+					</div>             
+				</div><!--/span-->
+			</div>
+		</div>
+{% endblock %}
 
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="nivel1_tabla_resumen">
-								<span class='filtrable'>
-									{{tabla_resumen.totales.nombre}}
-								</span>		
-                            </td>
-                            {% for item in tabla_resumen.totales.valores %}
-                                <td class="nivel1_tabla_resumen">
-									{{item}}
-                                </td>
-                            {% endfor %}
-                        </tr> 
-                        {% for item in tabla_resumen.segmento %}
-                            <tr data-tt-id="{{loop.index}}" class='maestro'>
-                                <td class="nivel2_tabla_resumen">
-                                    <span class='filtrable'>
-                                        {{item.nombre}}
-                                    </span>
-                                </td>
-                                {% for item2 in item.valores %}
-                                <td class="nivel2_tabla_resumen"> 
-                                    {{item2}}
-                                </td>
-                                {% endfor %}
-                            </tr>
-                            {% for item3 in item.categoria %}
-                            <tr data-tt-id="{{loop.parent.loop.index}}.{{loop.index}}" data-tt-parent-id="{{loop.parent.loop.index}}" class='loop.parent.loop.index'>
-                                <td class="nivel3_tabla_resumen">
-                                   <span class='filtrable'>
-                                        {{item3.nombre}}
-                                   </span>
-                                </td>
-                                {% for item4 in item3.valores %}
-                                <td class="nivel3_tabla_resumen">
-                                   {{item4}} 
-                                </td>
-                                {% endfor %}
-                            </tr>
-                            {% endfor %}
-                        {% endfor %}
-                    </tbody>                        					                   
-                </table>
-            </div><!--/span-->
-        </div><!--/row-->         
-        <div class="hero-unit" style="padding:30px">
-                <!-- <h3>Indicadores</h3> -->
-                <div class="row-fluid">
-                {% for item in variables_clientes %}
-                    <div id="i_{{item.variable.nombre}}" ></div>
-                {% endfor %}					
-                </div>
-        </div>             
-    </div><!--/span-->
+{% block customstyles %}
+
+table.table-bordered{
+    margin-bottom:0px !important;
+    margin-bottom:0px !important;
+}
+
+table.table-bordered thead{
+	padding-right:15px !important;
+}
+
+table.treetable{
+    margin:0px !important;
+}
+
+.FixedColumns_Cloned th { background-color: white !important; }
+			td.index { background-color: white !important; border-right: 1px solid black !important; }
+			table.display th.sorting_disabled { border-bottom: 1px solid white !important; }
+
 {% endblock %}
 
 {% block stylesheets %}
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.css') }}" rel="stylesheet">		  
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">		 	 		  
-{% endblock %}
+<link href="{{ asset('bundles/cademreporte/css/demo_page.css') }}" rel="stylesheet">
+<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">
 
-{% block customstyles %}	  
-span{
-	font-size: 10px;
-	padding-left: 0px !important;
-	}
-.dataTables_scrollHead{
-	overflow: auto !important;
-	}
-	
-#tabla_resumen thead tr{
-	padding-right: 17px;
-}
+<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.css') }}" rel="stylesheet">		  
+<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">
+
+<link href="{{ asset('bundles/cademreporte/css/jquery-ui-1.10.2.custom.min.css') }}" rel="stylesheet">
+
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script>
+
 <script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
 <script src="{{ asset('bundles/cademreporte/js/script.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.rowGrouping.js') }}"></script>
+
+<script src="{{ asset('bundles/cademreporte/js/jquery-ui-1.10.2.custom.min.js') }}"></script>
 
 <script>
 {% for item in variables_clientes %}
@@ -122,7 +108,20 @@ span{
 
 $(document).ready(function () {
 	
-	$('#tabla_resumen span.filtrable').click(function() {
+	$('#tabla_resumen tr').click(function() {
+		var label= $(this).children(':first').text().trim();
+
+		$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
+			{% for item in variables_clientes %}
+				{% if loop.index == 1 %}
+					{{"i_"~item.variable.nombre}}.series[0].setData(data); 
+					{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
+				{% endif %}
+			{% endfor %}  					
+		});	
+	});
+	
+	$('#tabla_resumen_wrapper tr th').click(function() {
 		var label= $(this).text().trim();
 
 		$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
@@ -190,34 +189,94 @@ $(document).ready(function () {
         {% endif %}
 	{% endfor %}   
 	});	
-						
 	
-	$("#tabla_resumen").treetable({ expandable: true });	
+	oTable = $('#tabla_resumen').dataTable({
+		"sScrollY": "200px",
+		"sScrollX": "100%",
+		"sScrollXInner": "150%",
+		"bFilter": false,
+		"bSort": false,
+		"bInfo": false,
+		"bPaginate": false,
+		"bJQueryUI": true,
+		//"bScrollCollapse": true,
+		"fnDrawCallback": function ( oSettings ) {
+			if ( oSettings.aiDisplay.length == 0 )
+			{
+				return;
+			}
+			
+			var nTrs = $('#tabla_resumen tbody tr');
+			var iColspan = nTrs[0].getElementsByTagName('td').length;
+			//var nColumns =
+			var sLastGroup = "";
+			
+			for ( var i=0 ; i<nTrs.length ; i++ )
+			{
+				var iDisplayIndex = oSettings._iDisplayStart + i;
+				var sGroup = oSettings.aoData[ oSettings.aiDisplay[iDisplayIndex] ]._aData[0];
+				
+				if ( sGroup != sLastGroup )
+				{
+					var nGroup = document.createElement( 'tr' );
+					
+					var nCells= new Array();
+					
+					for(var j=0 ; j<7 ; j++)
+					{
+						nCells[j] = document.createElement( 'td' );
+						//nCells[j].colSpan=iColspan;
+						nCells[j].className = "group";
+						if(j==0 || j==1)
+						{
+							nCells[j].innerHTML = sGroup;
+						}
+						else
+						{
+							var total;
+							
+							$(this).children(":eq("+j+")").each(function(){
+														
+								total=0;
+								
+								$("#tabla_resumen tbody tr[data-tt-id="+i+"]").each(function(){
+									total=total+parseInt($(this).text());
+									//alert($(this).text());
+								});
+							});
+							nCells[j].innerHTML = sGroup;
+						}
+						nGroup.appendChild( nCells[j] );
+					}
+		
+					nTrs[i].parentNode.insertBefore( nGroup, nTrs[i] );
+					
+					var att=document.createAttribute("data-tt-id");
+					att.value=sGroup;
+					nTrs[i].previousSibling.setAttributeNode(att);
+					
+					sLastGroup = sGroup;
+				}
+			}
+		},
+		"aoColumnDefs": [
+			{ "bVisible": false, "aTargets": [ 0 ] }
+		],
+		"aaSortingFixed": [[ 0, 'asc' ]],
+		"aaSorting": [[ 1, 'asc' ]],
+		"sDom": 'lfr<"giveHeight"t>ip'
+		});
+		
+		$("#tabla_resumen").treetable({ expandable: true });	
 	
-	$("#tabla_resumen tbody tr").mousedown(function() {
-	  $("tr.selected").removeClass("selected");
-	  $(this).addClass("selected");
-	});	
-	
-	$('#tabla_resumen').dataTable({
-			"bJQueryUI": false,
-			"bPaginate": false,
-			"bLengthChange": false,
-			"bFilter": false,
-			"bSort": false,
-			"bInfo": false,
-			"bAutoWidth": false,		
-		//	"sScrollY": "50px",
-			"sScrollY": '180px',
-			"sScrollX": "100%",
-		//	"sScrollXInner": "110%"		
+		$("#tabla_resumen tbody tr").mousedown(function() {
+		  $("tr.selected").removeClass("selected");
+		  $(this).addClass("selected");
 		});	
 	
 		$('form#filtros').submit(function() {
 			$.get( "{{ path('resumen_periodo') }}", $(this).serialize(), function(data) {
-				{% for item in tabla_resumen.totales.valores %}
-					//$('#tabla_resumen tbody tr:first').children("eq(:{{ loop.index }})").html({{item}});
-				{% endfor %}
+
 				$('#tabla_resumen tbody tr').each(function(){
 					var cont=0;
 					$(this).children().each(function(){
@@ -225,7 +284,7 @@ $(document).ready(function () {
 							$(this).text(Math.floor((Math.random()*100)+1));
 						cont++;
 					});
-				})
+				});
 			{% for item in variables_clientes %}
 				{% if loop.index == 1 %}
 					{{"i_"~item.variable.nombre}}.series[0].setData(data.evolutivo); 

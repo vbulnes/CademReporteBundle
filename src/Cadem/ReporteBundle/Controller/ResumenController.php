@@ -69,57 +69,127 @@ class ResumenController extends Controller
 		$min = 0;
 		$max = 100;
 		
-		$tabla_resumen = array(
-		'cadenas' => array('LIDER','JUMBO','SANTA ISABEL','SMU','SODIMAC','MAYORISTA 10','ALVI','TOTAL'),
-		'totales' => array('nombre'=>'QUIEBRE SC JOHNSON',
-						   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
-					 ),
-		'segmento' => array(array('nombre'=>'AIR CARE',
-								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+$tabla_resumen = array(
+		'head' => array('SEGMENTO','CATEGORIA','LIDER','JUMBO','TOTTUS','SANTA ISABEL','SMU','TOTAL'),
+		'body' => array(	
+						array(
+								'segmento' => 'air care',
+								'categoria'=> 'continuo electrico',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),
+						array(
+								'segmento' => 'air care',
+								'categoria'=> 'continuo no electrico',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),		
+						array(
+								'segmento' => 'air care',
+								'categoria'=> 'desinfectante',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),
+						array(
+								'segmento' => 'air care',
+								'categoria'=> 'ambientales auto',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),
+						array(
+								'segmento' => 'home cleaning',
+								'categoria'=> 'baño',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),		
+						array(
+								'segmento' => 'home cleaning',
+								'categoria'=> 'baño-crema',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),
+						array(
+								'segmento' => 'home cleaning',
+								'categoria'=> 'cocina',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),								
+						)
+					);
+		
+	
+		// $tabla_resumen = array(
+		// 'cadenas' => array('LIDER','JUMBO','SANTA ISABEL','SMU','SODIMAC','MAYORISTA 10','ALVI','TOTAL'),
+		// 'totales' => array('nombre'=>'QUIEBRE SC JOHNSON',
+						   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
+					 // ),
+		// 'segmento' => array(array('nombre'=>'AIR CARE',
+								  // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+								  // 'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
+														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
 											
-															),		
-													 array('nombre'=>'CONTINUO ELECTRICO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															// ),		
+													 // array('nombre'=>'CONTINUO ELECTRICO',
+														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
 											
-															),					
-													 array('nombre'=>'CONTINUO NO ELECTRICO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															// ),					
+													 // array('nombre'=>'CONTINUO NO ELECTRICO',
+														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
 											
-															)			
-													 ),		
+															// )			
+													 // ),		
 																													 
-								 ),
-							array('nombre'=>'AUTO CARE',
-								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+								 // ),
+							// array('nombre'=>'AUTO CARE',
+								  // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+								  // 'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
+														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
 											
-															),									
-													 ),		
+															// ),									
+													 // ),		
 																													 
-								 ), 
-							array('nombre'=>' HOME CLEANING',
-								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  'categoria'=>array(array('nombre'=>'BAÑO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															),																						
-													 array('nombre'=>'BAÑO-CREMA',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															),																						 
-													 array('nombre'=>'COCINA',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															),																						 
-													 array('nombre'=>'LIMPIAHORNOS',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															),									
+								 // ), 
+							// array('nombre'=>' HOME CLEANING',
+								  // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+								  // 'categoria'=>array(array('nombre'=>'BAÑO',
+														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															// ),																						
+													 // array('nombre'=>'BAÑO-CREMA',
+														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															// ),																						 
+													 // array('nombre'=>'COCINA',
+														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															// ),																						 
+													 // array('nombre'=>'LIMPIAHORNOS',
+														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
+															// ),									
 																										 
 																													 
-								 ), 								 
-							),
-						),
-					);
+								 // ), 								 
+							// ),
+						// ),
+					// );
 		
 		$periodos= array('2012-03 SEM 1_7','2013-03 SEM 8_13','2013-03 SEM 15_20','2013-03 SEM 21_26','2013-03 SEM 27_31','2013-04 SEM 1_7','2013-04 SEM 8_13','2013-04 SEM 14_19');
 		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));	
