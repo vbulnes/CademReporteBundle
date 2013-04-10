@@ -13,7 +13,7 @@ class DashboardController extends Controller
 	public function indexAction()
     {
 		$defaultData = array();
-		$form_periodo = $this->createFormBuilder($defaultData)
+		$form_estudio = $this->createFormBuilder($defaultData)
 			->add('Estudio', 'choice', array(
 				'choices'   => array(
 						'0' => 'TODOS',
@@ -25,41 +25,9 @@ class DashboardController extends Controller
 				'data' => '0'			
 			))
 			->getForm();
-		$form_canal = $this->createFormBuilder($defaultData)
-			->add('Sala', 'choice', array(
-				'choices'   => array(
-						'0' => 'TODAS',
-						'1' => 'DYSSA217 LIDER CHILLAN',
-						'2' => 'DYSSA036 LIDER LOS ANGELES',
-						'3' => 'DYSSA099 LIDER PUERTO MONTT',
-						'4' => 'CFOUR008 LIDER QUILICURA',
-						'5' => 'DYSSA088 LIDER LOS DOMINICOS',
-						'6' => 'DYSSA076 LIDER DEPARTAMENTAL',
-						'7' => 'DYSSA0841 LIDER BELLOTO',
-				),
-				'required'  => true,
-				'multiple'  => false,
-				'data' => '0'			
-			))
-			->getForm();
+		
 			
-		$form_vendedor = $this->createFormBuilder($defaultData)
-			->add('Vendedor', 'choice', array(
-				'choices'   => array(
-						'0' => 'TODAS',
-						'1' => 'CHRISTIAN MORA',
-						'2' => 'DINA ANDREA CARVAJAL',
-						'3' => 'FABIÁN GUTIÉRREZ',
-						'4' => 'FELIPE CONTRERAS',
-						'5' => 'GABRIELA SEPULVEDA',
-						'6' => 'JOAQUÍN EVANS',
-						'7' => 'JUAN PABLO HERMOSILL',
-				),
-				'required'  => true,
-				'multiple'  => false,
-				'data' => '0'			
-			))
-			->getForm();
+		
 			
 		
 		
@@ -84,9 +52,7 @@ class DashboardController extends Controller
 		$response = $this->render('CademReporteBundle:Dashboard:index.html.twig',
 		array(
 			'forms' => array(
-				'form_periodo' => $form_periodo->createView(),
-				'form_canal' => $form_canal->createView(),
-				'form_vendedor' => $form_vendedor->createView(),
+				'form_estudio' => $form_estudio->createView(),
 			),
 			'logo' => $logos[0],
 			'variables_clientes' => $variables_clientes)
