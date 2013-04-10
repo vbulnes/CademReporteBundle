@@ -172,74 +172,17 @@ $(document).ready(function () {
                     style: {
                         color: '#4572A7'
                     }
-                },
-                plotBands: [{ // Buen quiebre
-                    from: 0,
-                    to: 20,
-                    color: 'rgba(0, 200, 0, 0.2)',
-                    id: 'pb-q1',
-                    label: {
-                        text: 'Quiebre aceptable',
-                        style: {
-                            color: '#606060'
-                        }
-                    }
-                }, { // Intermedio quiebre
-                    from: 20,
-                    to: 40,
-                    color: 'rgba(200, 200, 0, 0.2)',
-                    id: 'pb-q2',
-                    label: {
-                        text: 'Quiebre peligroso',
-                        style: {
-                            color: '#606060'
-                        }
-                    }
-                }, { // Mal quiebre
-                    from: 40,
-                    to: 100,
-                    color: 'rgba(200, 0, 0, 0.2)',
-                    id: 'pb-q3',
-                    label: {
-                        text: 'Quiebre excesivo',
-                        style: {
-                            color: '#606060'
-                        }
-                    }
-                }]
+                }
     
             }, {
-                gridLineWidth: 0,
+                //gridLineWidth: 0,
                 title: {
                     text: 'Promedio Precio ($)',
                     style: {
                         color: '#89A54E'
                     }
                 },
-                opposite: true,
-                plotBands: [{ // Buen quiebre
-                    from: 0,
-                    to: 3000,
-                    color: 'rgba(0, 200, 0, 0.1)',
-                    id: 'pb-p1',
-                    label: {
-                        text: 'Gooddd',
-                        style: {
-                            color: '#606060'
-                        }
-                    }
-                }, { // Mal quiebre
-                    from: 3000,
-                    to: 5000,
-                    color: 'rgba(200, 0, 0, 0.1)',
-                    id: 'pb-p2',
-                    label: {
-                        text: 'Badddd',
-                        style: {
-                            color: '#606060'
-                        }
-                    }
-                }]
+                opposite: true
             }],
             tooltip: {
                 shared: true
@@ -259,66 +202,23 @@ $(document).ready(function () {
 			},
             plotOptions: {
                 series: {
-                    
                         events: {
                             legendItemClick: function () {
                                 var series = this.chart.series;
-                                var todasSeleccionadas = true;
-                                for(i in series){
-                                    if(!series[i].visible) todasSeleccionadas = false;
-                                    else{
-                                        if(i == 0){//quiebre
-                                            evo_quiebre_precio.yAxis[0].addPlotBand({ // Buen quiebre
-                                                from: 0,
-                                                to: 20,
-                                                color: 'rgba(0, 200, 0, 0.2)',
-                                                id: 'pb-q1',
-                                                label: {
-                                                    text: 'Quiebre aceptable',
-                                                    style: {
-                                                        color: '#606060'
-                                                    }
-                                                }
-                                            });
-                                            evo_quiebre_precio.yAxis[0].addPlotBand({ // Intermedio quiebre
-                                                from: 20,
-                                                to: 40,
-                                                color: 'rgba(200, 200, 0, 0.2)',
-                                                id: 'pb-q2',
-                                                label: {
-                                                    text: 'Quiebre peligroso',
-                                                    style: {
-                                                        color: '#606060'
-                                                    }
-                                                }
-                                            });
-                                            evo_quiebre_precio.yAxis[0].addPlotBand({ // Mal quiebre
-                                                from: 40,
-                                                to: 100,
-                                                color: 'rgba(200, 0, 0, 0.2)',
-                                                id: 'pb-q3',
-                                                label: {
-                                                    text: 'Quiebre excesivo',
-                                                    style: {
-                                                        color: '#606060'
-                                                    }
-                                                }
-                                            });
-                                        }
-                                        if(i == 1){//precio
-                                        
-                                        }
-                                    }
+                                var seriesIndex = this.index;
+                                //alert(series[seriesIndex].visible);//0 precio 1 quiebre
+                                if(seriesIndex == 1){
+                                    if(series[1].visible == false && series[0].visible == false) mostrarbandaquiebre();
+                                    if(series[1].visible == true && series[0].visible == true) mostrarbandaprecio();
                                 }
-                                if(todasSeleccionadas){//SE BORRAN TODAS LAS BANDAS
-                                    alert('Todas');
-                                    evo_quiebre_precio.yAxis[0].removePlotBand('pb-q1');
-                                    evo_quiebre_precio.yAxis[0].removePlotBand('pb-q2');
-                                    evo_quiebre_precio.yAxis[0].removePlotBand('pb-q3');
-                                    evo_quiebre_precio.yAxis[1].removePlotBand('pb-p1');
-                                    evo_quiebre_precio.yAxis[1].removePlotBand('pb-p2');
+                                if(seriesIndex == 0){
+                                    if(series[1].visible == true && series[0].visible == true) mostrarbandaquiebre();
+                                    if(series[1].visible == false && series[0].visible == false) mostrarbandaprecio();
                                 }
-                                //alert('I am an alert');
+                                
+                                if((series[0].visible == false && series[1].visible == true) || (series[0].visible == true && series[1].visible == false)) borrarbandas();
+                                
+                                
                                 
                                 //return false; // <== returning false will cancel the default action
                             }
@@ -328,6 +228,86 @@ $(document).ready(function () {
                 }
             }
         });
+        
+        function mostrarbandaquiebre(){
+            borrarbandas();
+            var trasparencia = 0.15;
+            evo_quiebre_precio.yAxis[0].addPlotBand({ // Buen quiebre
+                from: 0,
+                to: 20,
+                color: 'rgba(0, 200, 0, '+trasparencia+')',
+                id: 'pb-q1',
+                label: {
+                    text: 'Quiebre aceptable',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            });
+            evo_quiebre_precio.yAxis[0].addPlotBand({ // Intermedio quiebre
+                from: 20,
+                to: 40,
+                color: 'rgba(200, 200, 0, '+trasparencia+')',
+                id: 'pb-q2',
+                label: {
+                    text: 'Quiebre peligroso',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            });
+            evo_quiebre_precio.yAxis[0].addPlotBand({ // Mal quiebre
+                from: 40,
+                to: 100,
+                color: 'rgba(200, 0, 0, '+trasparencia+')',
+                id: 'pb-q3',
+                label: {
+                    text: 'Quiebre excesivo',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            });
+            
+        }
+        
+        function mostrarbandaprecio(){
+            borrarbandas();
+            var trasparencia = 0.15;
+            evo_quiebre_precio.yAxis[1].addPlotBand({ // Buen quiebre
+                from: 0,
+                to: 3000,
+                color: 'rgba(0, 200, 0, '+trasparencia+')',
+                id: 'pb-p1',
+                label: {
+                    text: 'Precio aceptable',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            });
+            evo_quiebre_precio.yAxis[1].addPlotBand({ // Intermedio quiebre
+                from: 3000,
+                to: 5000,
+                color: 'rgba(200, 0, 0, '+trasparencia+')',
+                id: 'pb-p2',
+                label: {
+                    text: 'Precio peligroso',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            });
+            
+        }
+        
+        function borrarbandas(){
+            evo_quiebre_precio.yAxis[0].removePlotBand('pb-q1');
+            evo_quiebre_precio.yAxis[0].removePlotBand('pb-q2');
+            evo_quiebre_precio.yAxis[0].removePlotBand('pb-q3');
+            evo_quiebre_precio.yAxis[1].removePlotBand('pb-p1');
+            evo_quiebre_precio.yAxis[1].removePlotBand('pb-p2');
+        }
 		
 		
 		evo_cobertura = new Highcharts.Chart({
