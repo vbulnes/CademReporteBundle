@@ -14,7 +14,7 @@
 {% block body %}
     <div class="span9">
 		<div class="container-fluid well" style="padding-top:0">
-			<h4>Resumen Quiebre</h4>
+			<h4>Resumen Detalle</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<div class="row-fluid">
 							<table id="tabla_resumen" class="table table-bordered display">                      
@@ -30,16 +30,13 @@
 								<tbody>
 									{% for item in tabla_resumen.body %}
 										{% set acum = 0 %}
-										<tr class='{{item['segmento']|trim}}' data-tt-id="{{loop.index}}" data-tt-parent-id="{{item['segmento']}}">
+										<tr class='{{item['categoria']|trim}}' data-tt-id="{{loop.index}}" data-tt-parent-id="{{item['categoria']}}">
 											{% for item2 in item %}
-											<td id_col="{{loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['segmento']|trim}}'>  
+											<td id_col="{{loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}'>  
 												{{item2}}
 											</td>
 											{% set acum = acum + item2 %}
 											{% endfor %}
-											<td>
-												{{ acum }}
-											</td>
 										</tr>
 									{% endfor %}
 								</tbody>                        					                   
@@ -47,23 +44,22 @@
 						
 					</div><!--/row-->   
 				</div>
-					<div class="hero-unit" style="padding:30px">
+					<!--div class="hero-unit" style="padding:30px">
 							<div class="row-fluid">
 							{% for item in variables_clientes %}
 								<div id="i_{{item.variable.nombre}}" ></div>
 							{% endfor %}					
 							</div>
-					</div>             
+					</div-->             
 				</div><!--/span-->
 			</div>
 		</div>
 {% endblock %}
 
 {% block customstyles %}
-
 div.dataTables_scroll { 
 	clear: both !important; 
-}
+	}
 
 th{
 	font-size: small !important;
@@ -117,6 +113,7 @@ $(document).ready(function () {
 		});	
 	});
 	
+	/*
 	{% for item in variables_clientes %}
         {% if loop.index == 1 %}
 		{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
@@ -170,11 +167,29 @@ $(document).ready(function () {
 		}
 	});
         {% endif %}
-	{% endfor %}   
-	});	
+	{% endfor %}
 
+		*/
+	
+		var aoColDefsArr=new Array();
+	
+	function aoColDefs(indice,width)
+	{	
+		this.indice=indice;
+		this.width=width;
+	}
+	
+	{% for item in tabla_resumen.head %}
+	{% set widthRatio = 100 %}
+		{% if loop.index == 1 %}
+			aoColDefsArr.push(new aoColDefs({{ loop.index-1 }},"{{widthRatio*3}}px"));
+		{% else %}
+		aoColDefsArr.push(new aoColDefs({{ loop.index-1 }},"{{widthRatio}}%"));
+		{% endif %}
+	{% endfor %}
+	
 	oTable = $('#tabla_resumen').dataTable({
-		"sScrollY": "200px",
+		"sScrollY": "400px",
 		"sScrollX": "100%",
  		//"sScrollXInner": "150%",
  		"bScrollCollapse": true,
@@ -183,7 +198,7 @@ $(document).ready(function () {
 		"bInfo": false,
 		"bPaginate": false,
 		"bJQueryUI": true,
-		"fnDrawCallback": function ( oSettings ) {
+		"fnDrawCallback": function ( oSettings ) {	
 			if ( oSettings.aiDisplay.length == 0 )
 			{
 				return;
@@ -205,13 +220,12 @@ $(document).ready(function () {
 					
 					var nCells= new Array();
 					
-					for(var j=0 ; j<7 ; j++)
+					for(var j=0 ; j< 13 ; j++)
 					{
 						nCells[j] = document.createElement( 'td' );
 						//nCells[j].colSpan=iColspan;
 						nCells[j].className = "group";
-						nCells[j].width = $('#tabla_resumen_wrapper div div div div table thead tr').children(':eq('+j+')').css('width');						
-						
+						nCells[j].width = $('#tabla_resumen_wrapper div div div div table thead tr').children(':eq('+j+')').css('width');
 						if(j==0)
 						{
 							nCells[j].innerHTML = sGroup;
@@ -246,6 +260,7 @@ $(document).ready(function () {
 		},
 		"aoColumnDefs": [
 			{ "bVisible": false, "aTargets": [ 0 ] },
+			{ "aTargets": [ 1 ] , "aTargets": [ 1 ], "sWidth": "30%" }
 		],
 		"aaSortingFixed": [[ 0, 'asc' ]],
 		"aaSorting": [[ 1, 'asc' ]],
@@ -253,23 +268,27 @@ $(document).ready(function () {
 		"fnInitComplete": function () {
             this.fnAdjustColumnSizing();
             this.fnDraw();
-        }	
+        }
 		});
+		/*
+		$(window).bind('resize', function () {
+			oTable.fnAdjustColumnSizing();
+		});
+		*/
 		
 		$("#tabla_resumen").treetable({ 
 			expandable: true, 
-			onNodeExpand: function () {			
+			onNodeExpand: function () {
 			}
 		});	
-		
-		$("#tabla_resumen tbody tr").mousedown(function() {			
+	
+		$("#tabla_resumen tbody tr").mousedown(function() {
 			  $(".ui-state-active").removeClass("ui-state-active");
 			  $(".row_selected").removeClass("row_selected");
 			  $(this).addClass("row_selected");
 		});	
 		
 		$('#tabla_resumen_wrapper tr th').click(function() {
-			
 			var label= $(this).text().trim();
 			$('.ui-state-active').removeClass();
 			$(this).addClass('ui-state-active');
@@ -283,7 +302,7 @@ $(document).ready(function () {
 					{% endif %}
 				{% endfor %}  					
 			});	
-		});
+		});		
 		
 		/*
 		var oFC = new FixedColumns( oTable, {
@@ -315,6 +334,7 @@ $(document).ready(function () {
 			},
 			'json');
 		return false;
+		});		
 	});	
  </script>
 {% endblock %}
