@@ -74,6 +74,23 @@ td{
 	font-size: small !important;
 }
 
+
+.hero-unit select{
+	width: auto;
+	padding: 0;
+	margin-bottom: 0;
+}
+
+.hero-unit input{
+	width: auto;
+	padding: 0;
+	margin-bottom: 0;
+}
+
+.hero-unit label{
+	margin-bottom: 0;
+}
+
 {% endblock %}
 
 {% block stylesheets %}
@@ -89,12 +106,12 @@ td{
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 
 <script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/script.js') }}"></script>
+<!-- <script src="{{ asset('bundles/cademreporte/js/script.js') }}"></script> -->
 
-<script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script>
+<!-- <script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script> -->
 <script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
 
 <script>
@@ -178,7 +195,7 @@ $(document).ready(function () {
 		"sScrollX": "100%",
  		//"sScrollXInner": "150%",
  		"bScrollCollapse": true,
-		"bFilter": false,
+		"bFilter": true,
 		"bSort": false,
 		"bInfo": false,
 		"bPaginate": false,
@@ -249,7 +266,7 @@ $(document).ready(function () {
 		],
 		"aaSortingFixed": [[ 0, 'asc' ]],
 		"aaSorting": [[ 1, 'asc' ]],
-		"sDom": 'lfr<"giveHeight"t>ip',
+		"sDom": '<"H"Cfr>t<"F"ip>',
 		"fnInitComplete": function () {
             this.fnAdjustColumnSizing();
             this.fnDraw();
