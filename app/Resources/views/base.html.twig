@@ -68,7 +68,7 @@
               <li class="{% if app.request.attributes.get('_route') == 'resumen_index' %}active{% endif %}"><a href="{{ path('resumen_index')}}">Resumen</a></li>
               <li class="{% if app.request.attributes.get('_route') == 'ranking_index' %}active{% endif %}"><a href="{{ path('ranking_index')}}">Ranking</a></li>
               <li class="{% if app.request.attributes.get('_route') == 'evolucion_index' %}active{% endif %}"><a href="#contact">Evolución</a></li>
-              <li class="{% if app.request.attributes.get('_route') == 'detalle_index' %}active{% endif %}"><a href="#contact">Detalle</a></li>
+              <li class="{% if app.request.attributes.get('_route') == 'detalle_index' %}active{% endif %}"><a href="{{ path('detalle_index')}}">Detalle</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
