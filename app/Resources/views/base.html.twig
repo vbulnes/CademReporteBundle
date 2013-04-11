@@ -8,6 +8,7 @@
 		<meta name="author" content="">
 		<link href="{{ asset('bundles/cademreporte/css/bootstrap.min.css') }}" rel="stylesheet">
 		<link href="{{ asset('bundles/cademreporte/css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+		<link href="{{ asset('bundles/cademreporte/css/redmond/jquery-ui.min.css') }}" rel="stylesheet">
 		<style type="text/css">
 		  body {
 			padding-top: 60px;
@@ -29,51 +30,58 @@
 		  form#filtros select{
 			font-size: 12px;
 		  }
+		  
+		  .progress-label {
+			float: left;
+			margin-left: 40%;
+			margin-top: -2px;
+			font-size: 12px;
+			font-weight: bolder;
+			//text-shadow: 1px 1px 0 #fff;
+		  }
+		  
 		  {% block customstyles %}{% endblock %}
 		</style>
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
 		
+		
+    </head>
+	
+    <body>
 		<div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="#">Cadem Reporte</a>
-          <div class="nav-collapse collapse">
-			
-			<div style="margin-top: 0" class="btn-group pull-right navbar-text">
-			  <a class="btn btn-small" href="{{ path('fos_user_profile_show')}}">{{ app.user.username }}</a>
-			  <button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
-				<span class="caret"></span>
-			  </button>
-			  <ul class="dropdown-menu">
-				<li><a href="{{ path('fos_user_profile_show')}}">Perfil</a></li>
-				<li><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}</a></li>
-			  </ul>
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="brand" href="{{ path('dashboard_index')}}">Cadem Reporte</a>
+					<div class="nav-collapse collapse">
+						<div style="margin-top: 0" class="btn-group pull-right navbar-text">
+							<a class="btn btn-small" href="{{ path('fos_user_profile_show')}}">{{ app.user.username }}</a>
+							<button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="{{ path('fos_user_profile_show')}}">Perfil</a></li>
+								<li><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}</a></li>
+							</ul>
+						</div>
+						<ul class="nav">
+							<li class="{% if app.request.attributes.get('_route') == 'dashboard_index' %}active{% endif %}"><a href="{{ path('dashboard_index')}}">Dashboard</a></li>
+							<li class="{% if app.request.attributes.get('_route') == 'resumen_index' %}active{% endif %}"><a href="{{ path('resumen_index')}}">Resumen</a></li>
+							<li class="{% if app.request.attributes.get('_route') == 'ranking_index' %}active{% endif %}"><a href="{{ path('ranking_index')}}">Ranking</a></li>
+							<li class="{% if app.request.attributes.get('_route') == 'evolucion_index' %}active{% endif %}"><a href="#contact">Evolución</a></li>
+							<li class="{% if app.request.attributes.get('_route') == 'detalle_index' %}active{% endif %}"><a href="{{ path('detalle_index')}}">Detalle</a></li>
+							<li><div style="width:auto;height:15px;margin-top:10px;margin-left:20px">Salas Medidas (<b>55/100</b>)</div></li>
+							<li><div id="progressbar" style="width:100px;height:15px;margin-top:12px;margin-left:5px"><div class="progress-label"></div></div></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
 			</div>
-			
-			
-			
-			
-			
-
-            <ul class="nav">
-              <li class="{% if app.request.attributes.get('_route') == 'dashboard_index' %}active{% endif %}"><a href="{{ path('dashboard_index')}}">Dashboard</a></li>
-              <li class="{% if app.request.attributes.get('_route') == 'resumen_index' %}active{% endif %}"><a href="{{ path('resumen_index')}}">Resumen</a></li>
-              <li class="{% if app.request.attributes.get('_route') == 'ranking_index' %}active{% endif %}"><a href="{{ path('ranking_index')}}">Ranking</a></li>
-              <li class="{% if app.request.attributes.get('_route') == 'evolucion_index' %}active{% endif %}"><a href="#contact">Evolución</a></li>
-              <li class="{% if app.request.attributes.get('_route') == 'detalle_index' %}active{% endif %}"><a href="{{ path('detalle_index')}}">Detalle</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
+		</div>
 
     <div class="container-fluid">
       <div class="row-fluid">
@@ -114,9 +122,21 @@
         
 
 		<script src="{{ asset('bundles/cademreporte/js/jquery-1.9.1.min.js') }}"></script>
+		<script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
 		<script src="{{ asset('bundles/cademreporte/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('bundles/cademreporte/js/highcharts.js') }}"></script>
+		
 		<!-- <script src="http://github.highcharts.com/v3.0Beta/highcharts-more.js"></script> -->
         {% block javascripts %}{% endblock %}
+		<script>
+		$(function() {
+			
+			var progressbar = $( "#progressbar" ).progressbar({
+				value: 55
+			});
+			var progressLabel = progressbar.find(".progress-label" );
+			progressLabel.text( progressbar.progressbar( "value" ) + "%" );
+		});
+		</script>
     </body>
 </html>
