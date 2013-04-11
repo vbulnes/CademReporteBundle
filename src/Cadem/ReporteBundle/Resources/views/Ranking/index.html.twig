@@ -28,7 +28,7 @@
 							</label>
 						</form>
 					
-						<table id="EQP_S">
+						<table class="datatable">
                           <thead>
                             <tr>
                               <th>#</th>
@@ -89,7 +89,7 @@
 							</label>
 						</form>
 					
-						<table class="table table-condensed table-bordered">
+						<table class="datatable">
                           <thead>
                             <tr>
                               <th>#</th>
@@ -149,7 +149,7 @@
 							</label>
 						</form>
 					
-						<table class="table table-condensed table-bordered">
+						<table class="datatable">
                           <thead>
                             <tr>
                               <th>#</th>
@@ -213,7 +213,7 @@
 							</label>
 						</form>
 					
-						<table class="table table-condensed table-bordered">
+						<table class="datatable">
                           <thead>
                             <tr>
                               <th>#</th>
@@ -261,10 +261,124 @@
                         </table>
 				</div>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
-					<h5>Ranking por Producto</h5>
+					<h5 style="float:left">Ranking por Producto</h5>
+						<form style="float:right">
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  Top
+							</label>
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  Bottom
+							</label>
+						</form>
+					
+						<table class="datatable">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Producto</th>
+                              <th>% Cobertura</th>
+                              <th>% Cobertura ant</th>
+                              <th>% Diff</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Yoghurt A</td>
+                              <td>3</td>
+                              <td>15</td>
+                              <td>12
+							  <div style="height:20px;display:inline">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_201_upload_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_206_ok_2_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_213_up_arrow_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_343_thumbs_up_g.png') }}" alt="Cadem">
+							  <div>
+							  </td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>Yoghurt B</td>
+                              <td>45</td>
+                              <td>85</td>
+                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem"><div></td>
+                            </tr>
+                            <tr>
+                              <td>3</td>
+                              <td>Yoghurt C</td>
+                              <td>23</td>
+                              <td>12</td>
+                              <td>-11 <div style="height:20px;display:inline">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_200_download_r.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_207_remove_2_r.png') }}" alt="Cadem">
+							  <div></td>
+                            </tr>
+                          </tbody>
+                        </table>
 				</div>
                 <div class="hero-unit" style="padding:15px;margin-bottom:10px">
-					<h5>Ranking por Vendedor</h5>
+					<h5 style="float:left">Ranking por Vendedor</h5>
+						<form style="float:right">
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  Top
+							</label>
+							<label class="radio inline">
+							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  Bottom
+							</label>
+						</form>
+					
+						<table class="datatable">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Vendedor</th>
+                              <th>% Cobertura</th>
+                              <th>% Cobertura ant</th>
+                              <th>% Diff</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Juan Perez</td>
+                              <td>3</td>
+                              <td>15</td>
+                              <td>12
+							  <div style="height:20px;display:inline">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_201_upload_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_206_ok_2_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_213_up_arrow_g.png') }}" alt="Cadem">
+								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_343_thumbs_up_g.png') }}" alt="Cadem">
+							  <div>
+							  </td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>Juan Junior</td>
+                              <td>45</td>
+                              <td>85</td>
+                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up.png') }}" alt="Cadem"><div></td>
+                            </tr>
+                            <tr>
+                              <td>3</td>
+                              <td>Juan Antonio</td>
+                              <td>23</td>
+                              <td>12</td>
+                              <td>-11 <div style="height:20px;display:inline">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_200_download_r.png') }}" alt="Cadem">
+							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/glyphicons_207_remove_2_r.png') }}" alt="Cadem">
+							  <div></td>
+                            </tr>
+                          </tbody>
+                        </table>
 				</div>
 			</div>
             
@@ -290,6 +404,10 @@
 	margin-bottom: 0;
 }
 
+.hero-unit label{
+	margin-bottom: 0;
+}
+
 /* .table{
 	border-width: 2px;
 	font-size: 14px;
@@ -312,12 +430,62 @@
 
 $(document).ready(function () {
 	
+	var lang_es = {
+				"sProcessing":     "Procesando...",
+				"sLengthMenu":     "Mostrar _MENU_ registros",
+				"sZeroRecords":    "No se encontraron resultados",
+				"sEmptyTable":     "Ningún dato disponible en esta tabla",
+				"sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+				"sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+				"sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+				"sInfoPostFix":    "",
+				"sSearch":         "Buscar:",
+				"sUrl":            "",
+				"sInfoThousands":  ",",
+				"sLoadingRecords": "Cargando...",
+				"oPaginate": {
+					"sFirst":    "Primero",
+					"sLast":     "Último",
+					"sNext":     "Siguiente",
+					"sPrevious": "Anterior"
+				},
+				"oAria": {
+					"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+					"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+				}
+			};
 	
-	oTable = $('#EQP_S').dataTable({
-        "bJQueryUI": true,
-        "sPaginationType": "full_numbers"
-    });
+	var oTables = [];
+	
+	$('.datatable').each(function( index ) {
+		var $this = $(this);
+		var h5 = $this.prev().prev();
+		var form = $this.prev();
+		form.children('label').css('padding-top','0');
+		var d = $this.dataTable({
+			"bJQueryUI": true,
+			"sPaginationType": "full_numbers",
+			"oLanguage": lang_es,
+			"bLengthChange" : false,
+			"sDom": '<"H"<"toolbar">Cfr>t<"F"ip>'
+		});
+		$this.prev().find('div.toolbar').append(h5.css({'margin':'0', 'float':'left'}));
+		$this.prev().find('div.toolbar').after(form.css({'margin':'0', 'float':'left', 'margin-left':'20px'}));
+		//$this.prev().find('div.toolbar').css('float', 'left');
+		oTables.push(d);
+	});
+	
+	// var oTables = $('.datatable').dataTable({
+			// "bJQueryUI": true,
+			// "sPaginationType": "full_numbers",
+			// "oLanguage": lang_es,
+			// "bLengthChange" : false,
+			// "sDom": '<"H"<"toolbar">Cfr>t<"F"ip>'
+		// });
 		
+	//$("div.toolbar").html('<b>Custom tool bar! Text/images etc.</b>');
+		
+	//$(oTables[1]).dataTable().fnDeleteRow( 0 );
 
 
 	$('form#filtros').submit(function() {
