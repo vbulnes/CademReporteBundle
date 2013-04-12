@@ -31,3 +31,6 @@ ranking_index:
 detalle_index:
     pattern:  /detalle
     defaults: { _controller: CademReporteBundle:Detalle:index }
+evolucion_index:
+    pattern:  /evolucion
+    defaults: { _controller: CademReporteBundle:Evolucion:index }
