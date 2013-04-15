@@ -18,6 +18,12 @@
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<!-- <h3>Indicadores</h3> -->
 					<div class="row-fluid">
+						<div class="span3">
+							<div id="i_quiebre1" style="height: 200px;"></div>
+						</div>
+						<div class="span3">
+							<div id="i_quiebre2" style="height: 200px;"></div>
+						</div>
 					{% for item in variables_clientes %}
 						<div class="span3">
 							{% if item.variable.nombre != "cobertura" %}
@@ -76,6 +82,8 @@
 
 
 {% block javascripts %}
+<script src="{{ asset('bundles/cademreporte/js/highcharts.regression.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/highcharts-more.js') }}"></script>
 <script>
 {% for item in variables_clientes %}
 {{"var i_"~item.variable.nombre~";"}}
@@ -83,11 +91,241 @@
 var i_cobertura;
 var evo_quiebre_precio;
 var evo_cobertura;
+var i_quiebre1, i_quiebre2;
 
 $(document).ready(function () {
 		
-		
+	i_quiebre1 = new Highcharts.Chart({
+		chart: {
+	        type: 'gauge',
+	        plotBorderWidth: 1,
+	        plotBackgroundColor: {
+	        	linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+	        	stops: [
+	        		[0, '#FFF4C6'],
+	        		[0.3, '#FFFFFF'],
+	        		[1, '#FFF4C6']
+	        	]
+	        },
+	        plotBackgroundImage: null,
+	        height: 200,
+			renderTo: 'i_quiebre1'
+	    },
+	
+	    title: {
+	        text: 'Quiebre'
+	    },
+	    
+	    pane: [{
+	        startAngle: -45,
+	        endAngle: 45,
+	        background: null,
+	        center: ['50%', '110%'],
+	        size: 180
+	    }],	    		        
+	
+	    yAxis: [{
+	        min: 0,
+	        max: 100,
+	        minorTickPosition: 'outside',
+	        tickPosition: 'outside',
+	        labels: {
+	        	rotation: 'auto',
+	        	distance: 20
+	        },
+	        plotBands: [{
+	        	from: 30,
+	        	to: 70,
+	        	color: 'yellow',
+	        	innerRadius: '100%',
+	        	outerRadius: '102%'
+	        },{
+	        	from: 0,
+	        	to: 30,
+	        	color: 'green',
+	        	innerRadius: '100%',
+	        	outerRadius: '102%'
+	        },{
+	        	from: 70,
+	        	to: 100,
+	        	color: 'red',
+	        	innerRadius: '100%',
+	        	outerRadius: '102%'
+	        }],
+	        pane: 0,
+	        title: {
+	        	text: 'Quiebre',
+	        	y: -30
+	        }
+	    }],
+	    
+	    plotOptions: {
+	    	gauge: {
+	    		dataLabels: {
+	    			enabled: false
+	    		},
+	    		dial: {
+	    			radius: '100%'
+	    		}
+	    	}
+	    },
+	    	
+	
+	    series: [{
+	        data: [10],
+	        yAxis: 0
+	    }],
+		credits: {
+				enabled: false
+			}
+	
+	},
+	
+	// Let the music play
+	function(chart) {
+	    setInterval(function() {
+	        var left = chart.series[0].points[0],
+	            leftVal,
+                texto = "",
+	            inc = (Math.random()) * 5;
+	
+	        leftVal =  left.y + inc;
+	        if (leftVal < 0 || leftVal > 100) {
+	            leftVal = left.y - inc;
+	        }
+            
+            if(leftVal >= 0 && leftVal <= 30) texto = 'Quiebre<br/><span style="font-size:10px">Bueno</span>'
+            if(leftVal > 30 && leftVal <= 70) texto = 'Quiebre<br/><span style="font-size:10px">Regular</span>'
+            if(leftVal > 70 && leftVal <= 100) texto = 'Quiebre<br/><span style="font-size:10px">Pésimo</span>'
+	        chart.yAxis[0].setTitle({
+                text: texto
+            });
+	        left.update(leftVal, false);
+	        chart.redraw();
+	
+	    }, 500);
+	
+	});
 
+	i_quiebre2 = new Highcharts.Chart({
+		chart: {
+	        type: 'gauge',
+	        plotBackgroundColor: null,
+	        plotBackgroundImage: null,
+	        plotBorderWidth: 0,
+	        plotShadow: false,
+			renderTo: 'i_quiebre2'
+	    },
+	    
+	    title: {
+	        text: 'Quiebre'
+	    },
+	    
+	    pane: {
+	        startAngle: -150,
+	        endAngle: 150,
+	        background: [{
+	            backgroundColor: {
+	                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+	                stops: [
+	                    [0, '#FFF'],
+	                    [1, '#333']
+	                ]
+	            },
+	            borderWidth: 0,
+	            outerRadius: '109%'
+	        }, {
+	            backgroundColor: {
+	                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+	                stops: [
+	                    [0, '#333'],
+	                    [1, '#FFF']
+	                ]
+	            },
+	            borderWidth: 1,
+	            outerRadius: '107%'
+	        }, {
+	            // default background
+	        }, {
+	            backgroundColor: '#DDD',
+	            borderWidth: 0,
+	            outerRadius: '105%',
+	            innerRadius: '103%'
+	        }]
+	    },
+	       
+	    // the value axis
+	    yAxis: {
+	        min: 0,
+	        max: 100,
+	        
+	        minorTickInterval: 'auto',
+	        minorTickWidth: 1,
+	        minorTickLength: 10,
+	        minorTickPosition: 'inside',
+	        minorTickColor: '#666',
+	
+	        tickPixelInterval: 30,
+	        tickWidth: 2,
+	        tickPosition: 'inside',
+	        tickLength: 10,
+	        tickColor: '#666',
+	        labels: {
+	            step: 2,
+	            rotation: 'auto'
+	        },
+	        title: {
+	            text: '% Quiebre',
+                y: 15
+	        },
+	        plotBands: [{
+	            from: 0,
+	            to: 30,
+				innerRadius: '95%',
+	            color: '#55BF3B' // green
+	        }, {
+	            from: 30,
+	            to: 70,
+				innerRadius: '95%',
+	            color: '#DDDF0D' // yellow
+	        }, {
+	            from: 70,
+	            to: 100,
+				innerRadius: '95%',
+	            color: '#DF5353' // red
+	        }]        
+	    },
+	
+	    series: [{
+	        name: 'Quiebre',
+	        data: [10],
+	        tooltip: {
+	            valueSuffix: ' %'
+	        }
+	    }],
+		credits: {
+				enabled: false
+			}
+	
+	}, 
+	// Add some life
+	function (chart) {
+		if (!chart.renderer.forExport) {
+		    setInterval(function () {
+		        var point = chart.series[0].points[0],
+		            newVal,
+		            inc = Math.round((Math.random() - 0.1) * 20);
+		        
+		        newVal = point.y + inc;
+		        if (newVal < 0 || newVal > 100) {
+		            newVal = point.y - inc;
+		        }
+		        
+		        point.update(newVal);
+		        
+		    }, 3000);
+		}
+	});
 
 	$('form#filtros').submit(function() {
 		$.get( "{{ path('dashboard_indicadores') }}", $(this).serialize(), function(data) {
@@ -196,7 +434,18 @@ $(document).ready(function () {
                 floating: true,
                 backgroundColor: '#FFFFFF'
             },
-            series: [data.evo_quiebre_precio.precio, data.evo_quiebre_precio.quiebre],
+            series: [data.evo_quiebre_precio.precio, data.evo_quiebre_precio.quiebre,
+			{
+				type: 'line',
+				marker: { enabled: false },
+				/* function returns data for trend-line */
+				data: (function() {
+					  return fitData(data.evo_quiebre_precio.quiebre.data).data;
+					})(),
+				name: 'Tendencia Quiebre'
+			}
+			
+			],
 			credits: {
 				enabled: false
 			},
@@ -206,12 +455,11 @@ $(document).ready(function () {
                             legendItemClick: function () {
                                 var series = this.chart.series;
                                 var seriesIndex = this.index;
-                                //alert(series[seriesIndex].visible);//0 precio 1 quiebre
-                                if(seriesIndex == 1){
+                                if(seriesIndex == 1){//QUIEBRE
                                     if(series[1].visible == false && series[0].visible == false) mostrarbandaquiebre();
                                     if(series[1].visible == true && series[0].visible == true) mostrarbandaprecio();
                                 }
-                                if(seriesIndex == 0){
+                                if(seriesIndex == 0){//PRECIO
                                     if(series[1].visible == true && series[0].visible == true) mostrarbandaquiebre();
                                     if(series[1].visible == false && series[0].visible == false) mostrarbandaprecio();
                                 }
