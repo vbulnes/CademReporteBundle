@@ -30,7 +30,7 @@ table.dataTable td.dataTables_empty {
 }
 
 /* table.dataTable tr.odd { background-color: #E2E4FF; }  ECEDFF*/
-table.dataTable tr.odd { background-color:rgb(236, 239, 248) }
+table.dataTable tr.odd { background-color:white }
 table.dataTable tr.even { background-color: white; }
 
 table.dataTable tr.odd td.sorting_1 { background-color: #D3D6FF; }
