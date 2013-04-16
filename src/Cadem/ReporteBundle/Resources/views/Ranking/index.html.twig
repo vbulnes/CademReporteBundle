@@ -373,13 +373,6 @@
 	margin-bottom: 0;
 }
 
-/* .table{
-	border-width: 2px;
-	font-size: 14px;
-}
-.table thead{
-	font-size: 16px;
-} */
 {% endblock %}
 
 {% block stylesheets %}
@@ -450,8 +443,9 @@ $(document).ready(function () {
 	});
 
 	$('form#filtros').submit(function(event) {
-	
-		console.log($boton_presionado);
+		if($boton_presionado.attr("value") === "Limpiar Filtros"){
+			$('form#filtros select[multiple="multiple"] option').prop('selected',true);
+		}
 	
 		// $.get( "{#{ path('dashboard_indicadores') }#}", $(this).serialize(), function(data) {
 				
@@ -462,12 +456,6 @@ $(document).ready(function () {
 		
 		return false;
 	});
-	
-	
-	/*$('form#filtros input[value="Limpiar Filtros"]').click(function() {
-		alert('hola');
-		return false;
-	});*/
 	
 	
 	
