@@ -8,6 +8,7 @@
 				{{ form_widget(form) }}
 		{% endfor %}
 		<input class="btn btn-primary" type="submit" value="Filtrar" />
+		<input class="btn btn-warning" type="submit" value="Limpiar Filtros" />
 	</form>
 {% endblock %}
 
@@ -443,15 +444,30 @@ $(document).ready(function () {
 		oTables.push(d);
 	});
 
+	var $boton_presionado;
+	$('form#filtros input').click(function() {
+		$boton_presionado = $(this);
+	});
 
-	$('form#filtros').submit(function() {
-		$.get( "{#{ path('dashboard_indicadores') }#}", $(this).serialize(), function(data) {
+	$('form#filtros').submit(function(event) {
+	
+		console.log($boton_presionado);
+	
+		// $.get( "{#{ path('dashboard_indicadores') }#}", $(this).serialize(), function(data) {
 				
 				
-			},
-		'json');
+			// },
+		// 'json');
+		
+		
 		return false;
 	});
+	
+	
+	/*$('form#filtros input[value="Limpiar Filtros"]').click(function() {
+		alert('hola');
+		return false;
+	});*/
 	
 	
 	
