@@ -16,11 +16,11 @@
 			<h4>Vista Resumen de Quiebre:</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<div class="row-fluid">
-							<table id="tabla_resumen" class="table table-bordered display">                      
+							<table id="tabla_resumen" class="table table-bordered display" width='100%'>                      
 								<thead style='position:static'>
 									<tr>
 										{% for item in tabla_resumen.head %}
-										<th width='12%'>
+										<th width='10%'>
 											{{item}}
 										</th>
 										{% endfor %}
@@ -35,6 +35,14 @@
 											<td value={{item2}} id_fil="{{loop.parent.loop.index-1}}" class='{{item['segmento']|trim}}'>  
 												{{item2}}%
 											</td>
+											{% elseif loop.index==2 %}
+											<td id_fil="{{loop.parent.loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}' title="{{ item2 }}">  
+												{% if item2|replace({' ':'_'})|length>30 %}
+												{{item2|replace({' ':'_'})[0:25]}}...
+												{% else %}
+												{{item2}}
+												{% endif %}
+											</td>
 											{% else %}
 											<td value={{item2}} id_fil="{{loop.parent.loop.index-1}}" class='{{item['segmento']|trim}}'> 
 												{% if loop.index<=2 %}
@@ -47,7 +55,7 @@
 											{% set acum = acum + item2 %}
 											{% endfor %}
 											<td class='total' value={{ acum }}>
-												{{acum}}%
+												{{'%.1f'|format(acum/((item|length)-2))}}%
 											</td>
 										</tr>
 									{% endfor %}
@@ -79,7 +87,7 @@ td{
 }
 
 th{
-	font-size: .65em !important;
+	font-size: .7em !important;
 	text-align: center !important;
 }
 
@@ -137,7 +145,7 @@ legend {
 <script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
 <!-- <script src="{{ asset('bundles/cademreporte/js/script.js') }}"></script> -->
 
-<!-- <script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script> -->
+<script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script>
 <script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
 
 <script>
@@ -219,16 +227,17 @@ $(document).ready(function () {
 
 	oTable = $('#tabla_resumen').dataTable({
 		"sScrollY": "400px",
-		"sScrollX": "100%",
- 		"sScrollXInner": "150%",
+		//"sScrollX": "100%",
+ 		//"sScrollXInner": "150%",
  		"bScrollCollapse": true,
 		"bFilter": false,
 		"bSort": false,
 		"bInfo": false,
-		"bPaginate": false,
+		"bPaginate": true,
 		"bJQueryUI": true,
 		"bAutoWidth": false, 
 		"fnDrawCallback": function ( oSettings ) {
+			var cols=this.fnSettings().aoColumns.length-1;
 			if ( oSettings.aiDisplay.length == 0 )
 			{
 				return;
@@ -250,7 +259,7 @@ $(document).ready(function () {
 					
 					var nCells= new Array();
 					
-					for(var j=0 ; j<7 ; j++)
+					for(var j=0 ; j<cols ; j++)
 					{
 						nCells[j] = document.createElement( 'td' );
 						// nCells[j].colSpan=iColspan;
@@ -289,18 +298,20 @@ $(document).ready(function () {
 		"aaSorting": [[ 1, 'asc' ]],
 		"sDom": '<"H"Cfr>t<"F"ip>',
 		"fnInitComplete": function () {
+			var cols=this.fnSettings().aoColumns.length-1;
 			$('#tabla_resumen').css('padding-right','5em');
             this.fnAdjustColumnSizing();
             this.fnDraw();
 			var totalesGlobales=new Array();
-			for (var i = 0; i < 7; i++) totalesGlobales[i] = 0;
+			var contGlobal=0;
+			for (var i = 0; i < cols; i++) totalesGlobales[i] = 0;
 			$('#tabla_resumen tbody tr.parent').each(function(){
-				alert($(this).html());
 				var totalesParciales= new Array();
-				for (var i = 0; i < 7; i++) totalesParciales[i] = 0;
+				for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
 				var cont=0;
 				$('#tabla_resumen tbody tr[data-tt-parent-id="'+$(this).attr('data-tt-id')+'"]').each(function(){
 					var j=0;
+					contGlobal++;
 					$(this).children().each(function(){
 						if(j>0)
 							totalesParciales[j-1]=totalesParciales[j-1]+parseInt($(this).attr('value'));
@@ -322,13 +333,13 @@ $(document).ready(function () {
 			});
 			var nTrs = $('#tabla_resumen tbody tr');
 			var nGroup = document.createElement( 'tr' );
-					
 			var nCells= new Array();
 					
-			for(var j=0 ; j<7 ; j++)
+			for(var j=0 ; j<cols ; j++)
 			{
 				nCells[j] = document.createElement( 'td' );
 				// nCells[j].colSpan=iColspan;
+				
 				nCells[j].className = "group";				
 						
 				if(j==0)
@@ -337,7 +348,7 @@ $(document).ready(function () {
 				}
 				else
 				{			
-					nCells[j].innerHTML = parseFloat((totalesGlobales[j])/$('#tabla_resumen tbody tr.parent').size()).toFixed(1)+'%';//totales[j];
+					nCells[j].innerHTML = parseFloat((totalesGlobales[j-1])/contGlobal).toFixed(1)+'%';//totales[j];
 				}
 				nGroup.appendChild( nCells[j] );
 			}
@@ -350,11 +361,13 @@ $(document).ready(function () {
 		
 		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: Categoria/Cadena</h5>");
 		
-		$("#tabla_resumen").treetable({ 
-			expandable: true, 
-			onNodeExpand: function () {			
-			}
-		});	
+		new FixedColumns( oTable );
+		
+		// $("#tabla_resumen").treetable({ 
+			// expandable: true, 
+			// onNodeExpand: function () {			
+			// }
+		// });	
 		
 		$("#tabla_resumen tbody tr").mousedown(function() {			
 			  $(".ui-state-active").removeClass("ui-state-active");
@@ -378,16 +391,6 @@ $(document).ready(function () {
 			});	
 		});
 		
-		/*
-		var oFC = new FixedColumns( oTable, {
-		"iLeftWidth": 150,
-		"iRightColumns": 1,
-		"fnDrawCallback": function ( left, right ) {
-				oTable.fnDraw();
-			}
-		});
-		*/
-	
 		$('form#filtros').submit(function() {
 			$.get( "{{ path('resumen_periodo') }}", $(this).serialize(), function(data) {
 

@@ -17,6 +17,12 @@
 			<h4>Detalle Quiebre</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:20px">
 					<div class="row-fluid">
+						<a id='ant' href='#'>
+							Salas Ant.
+						</a>/
+						<a id='sig' href='#'>
+							Salas Sig.
+						</a>
 							<table id="tabla_resumen" class="table table-bordered display">                      
 								<thead style='position:static'>
 									<tr>
@@ -59,7 +65,6 @@
 									{% endfor %}
 								</tbody>                        					                   
 							</table>
-						
 					</div><!--/row-->   
 				</div>
 					<!--div class="hero-unit" style="padding:30px">
@@ -131,6 +136,10 @@ span.indenter{
 
 $(document).ready(function () {
 	
+	$('#sig').click(function(){
+		sig();
+	});
+	
 	$('th').tooltip({
 		position: {
 			my: "center bottom-20",
@@ -165,6 +174,7 @@ $(document).ready(function () {
 		"bJQueryUI": true,
 		"bAutoWidth": false, 
 		"fnDrawCallback": function ( oSettings ) {	
+			var cols=this.fnSettings().aoColumns.length-1;
 			if ( oSettings.aiDisplay.length == 0 )
 			{
 				return;
@@ -184,7 +194,7 @@ $(document).ready(function () {
 					
 					var nCells= new Array();
 					
-					for(var j=0 ; j< 13 ; j++)
+					for(var j=0 ; j< cols ; j++)
 					{
 						nCells[j] = document.createElement( 'td' );
 						// nCells[j].colSpan=iColspan;
@@ -236,6 +246,7 @@ $(document).ready(function () {
 		// "sDom": 'lfr<"giveHeight"t>ip',
 		"sDom": '<"H"Cfr>t<"F"ip>',
 		"fnInitComplete": function () {
+			var cols=this.fnSettings().aoColumns.length-1;
             this.fnAdjustColumnSizing();
             this.fnDraw();
 			$('.head').tooltip({
@@ -245,10 +256,9 @@ $(document).ready(function () {
 				}
 			});
 			$('#tabla_resumen tbody tr.parent').each(function(){
-				alert($(this).html());
 				var totalesParciales= new Array();
 				var cont=0;
-				for (var i = 0; i < 13; i++) totalesParciales[i] = 0;
+				for (var i = 0; i < cols ; i++) totalesParciales[i] = 0;
 				$('#tabla_resumen tbody tr[data-tt-parent-id="'+$(this).attr('data-tt-id')+'"]').each(function(){
 ;					var j=0;
 					cont++;
@@ -268,80 +278,26 @@ $(document).ready(function () {
         }
 		});
 		
-		$("#tabla_resumen").treetable({ 
-			expandable: true, 
-			onNodeExpand: function () {
-				//oTable.fnAdjustColumnSizing();
-				//oTable.fnDraw();
-			}
-		});	
 		
-		
-		// new FixedColumns( oTable, {
-		// "fnDrawCallback": function ( left, right ) {
-
-				// alert('hola');		
-		
-			// var oSettings = oTable.fnSettings();
-		
-	
-			// if ( oSettings.aiDisplay.length === 0 )
-			// {
-				// return;
+		// $("#tabla_resumen").treetable({ 
+			// expandable: true, 
+			// onNodeExpand: function () {
+				// //oTable.fnAdjustColumnSizing();
+				// //oTable.fnDraw();
 			// }
-
-			// var nGroup, nCell, iIndex, sGroup;
-			// var sLastGroup = "", iCorrector=0;
-			// var nTrs = $('#tabla_resumen tbody tr');
-			// var iColspan = nTrs[0].getElementsByTagName('td').length;
-	
-			
-			// for ( var i=0 ; i<nTrs.length ; i++ )
-			// {
-				// iIndex = oSettings._iDisplayStart + i;
-				// sGroup = oSettings.aoData[ oSettings.aiDisplay[iIndex] ]._aData[0]			;
-				
-				// if ( sGroup != sLastGroup )
-				// {
-					// /* Cell to insert into main table */
-					// nGroup = document.createElement( 'tr' );
-					// nCell = document.createElement( 'td' );
-					// nCell.colSpan = iColspan;
-					// nCell.className = "group";
-					// nCell.innerHTML = "&nbsp;";
-					// nGroup.appendChild( nCell );
-					// nTrs[i].parentNode.insertBefore( nGroup, nTrs[i] );
-					
-					// var att=document.createAttribute("data-tt-id");
-					// att.value=sGroup;
-					// nTrs[i].previousSibling.setAttributeNode(att);
-					
-					// /* Cell to insert into the frozen columns */
-					// nGroup = document.createElement( 'tr' );
-					// nCell = document.createElement( 'td' );
-					// nCell.className = "group";
-					// nCell.innerHTML = sGroup;
-					// nGroup.appendChild( nCell );
-					// $(nGroup).insertBefore( $('tbody tr:eq('+(i+iCorrector)+')', left.body)[0] );
-					
-					// alert(nGroup);
-					// alert($(nGroup).prev().html());
-
-					// iCorrector++;
-					// sLastGroup = sGroup;
-				// }
-			// }
-		// }
-	// });
+		// });	
+		
+		new FixedColumns( oTable );
+		
 		
 		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Detalle Quiebre: SKU/Sala</h5>");
+	
+		
 		/*
 		$(window).bind('resize', function () {
 			oTable.fnAdjustColumnSizing();
 		});
 		*/
-		
-	
 		
 		$("#tabla_resumen tbody tr").mousedown(function() {
 			  $(".ui-state-active").removeClass("ui-state-active");
@@ -365,8 +321,6 @@ $(document).ready(function () {
 			});	
 		});		
 		
-		
-	
 		$('form#filtros').submit(function() {
 			$.get( "{{ path('resumen_periodo') }}", $(this).serialize(), function(data) {
 
