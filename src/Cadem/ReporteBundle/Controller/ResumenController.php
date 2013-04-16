@@ -50,6 +50,60 @@ class ResumenController extends Controller
 			))
 			->getForm();
 			
+	$form_region = $this->createFormBuilder($defaultData)
+			->add('Region', 'choice', array(
+				'choices'   => array(
+						'1' => strtoupper ('Arica y Parinacota'),
+						'2' => strtoupper ('Tarapacá'),
+						'3' => strtoupper ('Antofagasta'),
+						'4' => strtoupper ('Atacama'),
+						'5' => strtoupper ('Coquimbo'),
+						'6' => strtoupper ('Valparaíso'),
+						'7' => strtoupper ('Metropolitana de Santiago'),
+						'8' => strtoupper ('Libertador General Bernardo O\'Higgins'),
+						'9' => strtoupper ('Maule'),
+				),
+				'required'  => true,
+				'multiple'  => true,
+				'data' => array('1','2','3','4','5','6','7','8','9')			
+			))
+			->getForm();
+			
+		$form_provincia = $this->createFormBuilder($defaultData)
+			->add('Provincia', 'choice', array(
+				'choices'   => array(
+						'1' => strtoupper ('Chacabuco'),
+						'2' => strtoupper ('Cordillera'),
+						'3' => strtoupper ('Maipo'),
+						'4' => strtoupper ('Melipilla'),
+						'5' => strtoupper ('Santiago'),
+						'6' => strtoupper ('Talagante'),
+				),
+				'required'  => true,
+				'multiple'  => true,
+				'data' => array('1','2','3','4','5','6')			
+			))
+			->getForm();
+			
+		$form_comuna = $this->createFormBuilder($defaultData)
+			->add('Comuna', 'choice', array(
+				'choices'   => array(
+						'1' => strtoupper ('Colina'),
+						'2' => strtoupper ('Lampa'),
+						'3' => strtoupper ('Puente Alto'),
+						'4' => strtoupper ('San José de Maipo'),
+						'5' => strtoupper ('Calera de Tango'),
+						'6' => strtoupper ('Curacaví'),
+						'7' => strtoupper ('Cerrillos'),
+						'8' => strtoupper ('La Pintana'),
+						'9' => strtoupper ('Lo Barnechea'),
+				),
+				'required'  => true,
+				'multiple'  => true,
+				'data' => array('1','2','3','4','5','6','7','8','9')			
+			))
+			->getForm();
+			
 		//PARAMETROS
 		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
@@ -199,7 +253,9 @@ $tabla_resumen = array(
 		array(
 			'forms' => array(
 				'form_periodo' => $form_periodo->createView(),
-				'form_canal' => $form_canal->createView()
+				'form_region' 	=> $form_region->createView(),
+				'form_provincia' => $form_provincia->createView(),
+				'form_comuna' 	=> $form_comuna->createView(),
 			),
 			'tabla_resumen' => $tabla_resumen,
 			'logo' => $logos[0],
