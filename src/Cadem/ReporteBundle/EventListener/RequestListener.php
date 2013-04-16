@@ -29,7 +29,7 @@ class RequestListener
 		$request = $event->getRequest();
 		$routeName = $request->attributes->get('_route');
 		if($routeName == "fos_user_security_login" && $this->security->isGranted('ROLE_USER')){
-			$url = $this->router->generate('cadem_reporte_homepage');
+			$url = $this->router->generate('dashboard_index');
 			$event->setResponse(new RedirectResponse($url));
 		}
     }
