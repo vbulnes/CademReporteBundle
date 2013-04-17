@@ -22,7 +22,11 @@
 									<tr>
 										{% for item in tabla_resumen.head %}
 										<th width='10%'>
-											{{item}}
+											{% if item|replace({' ':'_'})|length>8 and loop.index>2 %}
+												{{item|replace({' ':'_'})[0:8]|upper}}...
+											{% else %}
+												{{item|upper}}
+											{% endif %}
 										</th>
 										{% endfor %}
 									</tr>
@@ -37,15 +41,15 @@
 												{{item2}}%
 											</td>
 											{% elseif loop.index==2 %}
-											<td id_fil="{{loop.parent.loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}' title="{{ item2 }}">  
-												{% if item2|replace({' ':'_'})|length>30 %}
-												{{item2|replace({' ':'_'})[0:25]}}...
+											<td id_fil="{{loop.parent.loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}' title="{{item['categoria']|upper}}">  
+												{% if item2|replace({' ':'_'})|length>15 %}
+												{{item2|replace({' ':'_'})[0:15]|upper}}...
 												{% else %}
-												{{item2}}
+												{{item2|upper}}
 												{% endif %}
 											</td>
 											{% else %}
-											<td value={{item2}} id_fil="{{loop.parent.loop.index-1}}" class='{{item['segmento']|trim}}'> 
+											<td value={{item2}} id_fil="{{loop.parent.loop.index-1}}" class='{{item['segmento']|trim}}' title="{{item['categoria']|upper}}"> 
 												{% if loop.index<=2 %}
 													{{item2|upper}}
 												{% else %}
@@ -83,12 +87,12 @@ div.dataTables_scroll {
 }
 
 td{
-	font-size: .75em !important;
+	font-size: .64em !important;
 	text-align: center !important;
 }
 
 th{
-	font-size: .7em !important;
+	font-size: .64em !important;
 	text-align: center !important;
 }
 
@@ -241,24 +245,31 @@ $(document).ready(function () {
 	
 	
 
+	
 	oTable = $('#tabla_resumen').dataTable({
-		"sScrollY": "400px",
-		//"sScrollX": "100%",
+		"sScrollY": "210px",
+		"sScrollX": "100%",
  		//"sScrollXInner": "150%",
- 		"bScrollCollapse": true,
+ 		//"bScrollCollapse": true,
 		"bFilter": false,
 		"bSort": false,
 		"bInfo": false,
-		"bPaginate": true,
+		"bPaginate": false,
 		"bJQueryUI": true,
 		"bAutoWidth": false, 
+		"aoColumnDefs": [
+			{ "bVisible": false, "aTargets": [ 0 ] },
+			{ "aTargets": [ 1 ] },	
+		],
+		"aaSortingFixed": [[ 0, 'asc' ]],
+		"aaSorting": [[ 1, 'asc' ]],
+		"sDom": '<"H"Cfr>t<"F"ip>',	
 		"fnDrawCallback": function ( oSettings ) {
 			var cols=this.fnSettings().aoColumns.length-1;
 			if ( oSettings.aiDisplay.length == 0 )
 			{
 				return;
 			}
-			
 			var nTrs = $('#tabla_resumen tbody tr');
 			var iColspan = nTrs[0].getElementsByTagName('td').length;
 			//var nColumns =
@@ -306,16 +317,13 @@ $(document).ready(function () {
 				}
 			}
 		},
-		"aoColumnDefs": [
-			{ "bVisible": false, "aTargets": [ 0 ] },
-			{ "aTargets": [ 1 ] },	
-		],
-		"aaSortingFixed": [[ 0, 'asc' ]],
-		"aaSorting": [[ 1, 'asc' ]],
-		"sDom": '<"H"Cfr>t<"F"ip>',
 		"fnInitComplete": function () {
+			$('#tabla_resumen tbody tr td').tooltip({
+				position: {
+					track: true
+				}
+			});		
 			var cols=this.fnSettings().aoColumns.length-1;
-			$('#tabla_resumen').css('padding-right','5em');
             this.fnAdjustColumnSizing();
             this.fnDraw();
 			var totalesGlobales=new Array();
@@ -379,11 +387,11 @@ $(document).ready(function () {
 		
 		// new FixedColumns( oTable );
 		
-		// $("#tabla_resumen").treetable({ 
-			// expandable: true, 
-			// onNodeExpand: function () {			
-			// }
-		// });	
+		$("#tabla_resumen").treetable({ 
+			expandable: true, 
+			onNodeExpand: function () {			
+			}
+		});	
 		
 		$("#tabla_resumen tbody tr").mousedown(function() {			
 			  $(".ui-state-active").removeClass("ui-state-active");

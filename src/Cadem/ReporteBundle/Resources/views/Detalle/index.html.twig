@@ -18,12 +18,6 @@
 			<h4>Detalle Quiebre</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:20px">
 					<div class="row-fluid">
-						<a id='ant' href='#'>
-							Salas Ant.
-						</a>/
-						<a id='sig' href='#'>
-							Salas Sig.
-						</a>
 							<table id="tabla_resumen" class="table table-bordered display">                      
 								<thead style='position:static'>
 									<tr>
@@ -53,12 +47,14 @@
 													{% set color='#8181F7' %}
 												{% endif %}
 											{% endif %}	
-											<td id_col="{{loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}' style='background-color:{{color}}' title="{{ item2 }}">  
-												{% if loop.index==2 %}
-													{{item2|replace({' ':'_'})[0:25]}}...
+											<td id_col="{{loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}' style='background-color:{{color}}'" title="{{item['SKU']}}">  
+
+												{% if item2|replace({' ':'_'})|length>15 and loop.index==2 %}
+													{{item2|replace({' ':'_'})[0:15]|upper}}...
 												{% else %}
-													{{item2}}
-												{% endif %}	
+													{{item2|upper}}
+												{% endif %}
+	
 											</td>
 											{% set acum = acum + item2 %}
 											{% endfor %}
@@ -86,12 +82,12 @@ div.dataTables_scroll {
 	}
 
 td{
-	font-size: .75em !important;
+	font-size: .64em !important;
 	text-align: center !important;
 }
 
 th{
-	font-size: .7em !important;
+	font-size: .64em !important;
 	text-align: center !important;
 }
 
@@ -122,6 +118,7 @@ span.indenter{
 {% endblock %}
 
 {% block javascripts %}
+<script src="{{ asset('bundles/cademreporte/js/jquery.js') }}"></script>
 <script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 
 <script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
@@ -137,9 +134,6 @@ span.indenter{
 
 $(document).ready(function () {
 	
-	$('#sig').click(function(){
-		sig();
-	});
 	
 	$('th').tooltip({
 		position: {
@@ -161,19 +155,22 @@ $(document).ready(function () {
 		});	
 	});
 
-
 	oTable = $('#tabla_resumen').dataTable({
-		"sScrollY": 450,
+		"sScrollY": "360px",
 		"sScrollX": "100%",
-        //"sScrollXInner": "50%",
- 		//"sScrollXInner": "150%",
- 		//"bScrollCollapse": true,
-		"bFilter": false,
+		"bJQueryUI": true,
 		"bSort": false,
 		"bInfo": false,
 		"bPaginate": false,
-		"bJQueryUI": true,
-		"bAutoWidth": false, 
+		"bJQueryUI": true,		
+		"bFilter": false,	
+		"aaSortingFixed": [[ 0, 'asc' ]],
+		"aaSorting": [[ 1, 'asc' ]],		
+		"aoColumnDefs": [
+			{ "bVisible": false, "aTargets": [ 0 ] },
+			{ "aTargets": [ 1 ], "sClass": "head", "sWidth":'20%' },	
+		],		
+		"sDom": '<"H"Cfr>t<"F"ip>',	
 		"fnDrawCallback": function ( oSettings ) {	
 			var cols=this.fnSettings().aoColumns.length-1;
 			if ( oSettings.aiDisplay.length == 0 )
@@ -237,23 +234,14 @@ $(document).ready(function () {
 					sLastGroup = sGroup;
 				}
 			}
-		},
-		"aoColumnDefs": [
-			{ "bVisible": false, "aTargets": [ 0 ] },
-			{ "aTargets": [ 1 ], "sClass": "head" },	
-		],
-		"aaSortingFixed": [[ 0, 'asc' ]],
-		"aaSorting": [[ 1, 'asc' ]],
-		// "sDom": 'lfr<"giveHeight"t>ip',
-		"sDom": '<"H"Cfr>t<"F"ip>',
+		},	
 		"fnInitComplete": function () {
 			var cols=this.fnSettings().aoColumns.length-1;
             this.fnAdjustColumnSizing();
             this.fnDraw();
-			$('.head').tooltip({
+			$('#tabla_resumen tbody tr td').tooltip({
 				position: {
-					my: "center bottom-20",
-					at: "center top",
+					track: true
 				}
 			});
 			$('#tabla_resumen tbody tr.parent').each(function(){
@@ -276,24 +264,22 @@ $(document).ready(function () {
 					j++;
 				});
 			});			
-        }
-		});
-		
-		
-		// $("#tabla_resumen").treetable({ 
-			// expandable: true, 
-			// onNodeExpand: function () {
-				// //oTable.fnAdjustColumnSizing();
-				// //oTable.fnDraw();
-			// }
-		// });	
+        }		
+	});
+	
 		
 		// new FixedColumns( oTable );
 		
+		$("#tabla_resumen").treetable({ 
+			expandable: true, 
+			onNodeExpand: function () {
+				//oTable.fnAdjustColumnSizing();
+				//oTable.fnDraw();
+			}
+		});	
 		
 		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Detalle Quiebre: SKU/Sala</h5>");
 	
-		
 		/*
 		$(window).bind('resize', function () {
 			oTable.fnAdjustColumnSizing();
