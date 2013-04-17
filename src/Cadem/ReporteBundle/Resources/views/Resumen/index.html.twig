@@ -169,6 +169,8 @@ $(document).ready(function () {
 		});	
 	});
 	
+	var periodo = {{ periodos|raw }};
+	
 	{% for item in variables_clientes %}
         {% if loop.index == 1 %}
 		{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
@@ -192,10 +194,10 @@ $(document).ready(function () {
 			enabled: true
 		},
 		xAxis: {
-            categories: {{ periodos|raw }},
+            categories: periodo.data,
 			
 			labels: {
-                rotation: -40
+                rotation: 0
             }			
 		},		
 		yAxis: {
@@ -223,8 +225,21 @@ $(document).ready(function () {
 		}
 	});
         {% endif %}
-	{% endfor %}   
+	{% endfor %}
+	
+	$.each(periodo.data, function(index, value) {
+		$('div#i_quiebre tspan:contains("'+value+'")').attr('title', periodo.tooltip[index])
+		.tooltip({
+			track: true
+		});
+	});
+	
+	
+	
 	});	
+	
+	
+	
 
 	oTable = $('#tabla_resumen').dataTable({
 		"sScrollY": "400px",
