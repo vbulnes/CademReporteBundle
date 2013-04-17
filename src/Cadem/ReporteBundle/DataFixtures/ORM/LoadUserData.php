@@ -41,6 +41,10 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$cliente_nestle->setNombre('nestle');
 	$cliente_nestle->setRut('111-2');
 	$cliente_nestle->setTipo('fabricante');
+	$cliente_johnson = new Cliente();
+	$cliente_johnson->setNombre('johnson');
+	$cliente_johnson->setRut('111-3');
+	$cliente_johnson->setTipo('fabricante');
         
 	
 	$userManager = $this->container->get('fos_user.user_manager');
@@ -60,6 +64,14 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$user2->setCliente($cliente_nestle);
 	$user2->setEnabled(true);
 	$userManager->updateUser($user2,false);
+	
+	$user3 = $userManager->createUser();
+	$user3->setUsername('johnson');
+	$user3->setEmail('usuario@johnson.cl');
+	$user3->setPlainPassword('1234');
+	$user3->setCliente($cliente_johnson);
+	$user3->setEnabled(true);
+	$userManager->updateUser($user3,false);
 
 	$logo1 = new Logo();
 	$logo1->setFilename('logosoprole.gif');	
@@ -73,6 +85,12 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$logo2->setHeight('auto');	
 	$logo2->setActivo(true);	
 	$logo2->setCliente($cliente_nestle);
+	$logo3 = new Logo();
+	$logo3->setFilename('logojohnson.png');	
+	$logo3->setWidth('auto');
+	$logo3->setHeight('auto');	
+	$logo3->setActivo(true);	
+	$logo3->setCliente($cliente_johnson);
 	
 	$var1 = new Variable();
 	$var1->setNombre('quiebre');	
@@ -93,17 +111,20 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 
 	$manager->persist($cliente_soprole);
 	$manager->persist($cliente_nestle);
+	$manager->persist($cliente_johnson);
 	$manager->persist($logo1);
 	$manager->persist($logo2);	
+	$manager->persist($logo3);	
 	$manager->persist($var1);
 	$manager->persist($var2);	
 	$manager->persist($var3);	
 	$manager->persist($var4);	
 	
-	$varCli1 = new VariableCliente();
-	$varCli1->setCliente($cliente_soprole);	
-	$varCli1->setVariable($var1);		
-	$varCli1->setActivo(true);	
+	$varCli1 = (new VariableCliente())
+	->setCliente($cliente_soprole)
+	->setVariable($var1)
+	->setActivo(true);
+
 	$varCli2 = new VariableCliente();
 	$varCli2->setCliente($cliente_soprole);	
 	$varCli2->setVariable($var3);		
@@ -123,7 +144,16 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$varCli6 = new VariableCliente();
 	$varCli6->setCliente($cliente_soprole);	
 	$varCli6->setVariable($var4);		
-	$varCli6->setActivo(true);	
+	$varCli6->setActivo(true);
+	
+	$varCli7 = (new VariableCliente())
+	->setCliente($cliente_johnson)
+	->setVariable($var3)
+	->setActivo(true);
+	$varCli8 = (new VariableCliente())
+	->setCliente($cliente_johnson)
+	->setVariable($var4)
+	->setActivo(true);
 	
 	$manager->persist($varCli1);
 	$manager->persist($varCli2);	
@@ -131,6 +161,8 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$manager->persist($varCli4);	
 	$manager->persist($varCli5);			
 	$manager->persist($varCli6);			
+	$manager->persist($varCli7);			
+	$manager->persist($varCli8);
 
 	$manager->flush();
     }
