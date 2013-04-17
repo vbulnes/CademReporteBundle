@@ -437,11 +437,13 @@ $(document).ready(function () {
 		oTables.push(d);
 	});
 
+	//GUARDA QUE BOTON SE PRESIONA EN EL FORMULARIO
 	var $boton_presionado;
 	$('form#filtros input').click(function() {
 		$boton_presionado = $(this);
 	});
 
+	//LOGICA DEL SUBMIT DEL FORMULARIO, SE DEBERIA OCUPAR AJAX
 	$('form#filtros').submit(function(event) {
 		if($boton_presionado.attr("value") === "Limpiar Filtros"){
 			$('form#filtros select[multiple="multiple"] option').prop('selected',true);
