@@ -46,7 +46,17 @@ class DashboardController extends Controller
 		$cliente = $query->getSingleResult();
 		$logos = $cliente->getLogos();
 		$variables_clientes = $cliente->getVariablesClientes();
-
+		
+		$em_supi = $this->get('doctrine')->getManager('supi');
+		$conn_supi = $em_supi->getConnection();
+		$est = $conn_supi->fetchAll('SELECT * FROM ESTUDIO');
+		
+		$aux = "";
+		
+		foreach($est as $e) {
+			$aux .= $e['ID_ESTUDIO'].",";
+		}
+		die($aux);
 		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Dashboard:index.html.twig',

@@ -5,6 +5,12 @@ parameters:
     database_name:     reporte
     database_user:     reporte
     database_password: reporte
+    database_driver2:   pdo_sqlsrv
+    database_host2:     200.29.139.244
+    database_port2:     ~
+    database_name2:     SUPI_PRUEBA
+    database_user2:     admin
+    database_password2: Jgh240482710
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1
