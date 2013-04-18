@@ -160,10 +160,11 @@ legend {
 //{% endfor %}
 
 var i_quiebre;
+var periodo = {{ periodos|raw }};
 
 $(document).ready(function () {
 	
-	var periodo = {{ periodos|raw }};
+	
 	
 	{% for item in variables_clientes %}
         {% if loop.index == 1 %}
@@ -222,12 +223,7 @@ $(document).ready(function () {
         {% endif %}
 	{% endfor %}
 	
-	$.each(periodo.data, function(index, value) {
-		$('div#i_quiebre tspan:contains("'+value+'")').attr('title', periodo.tooltip[index])
-		.tooltip({
-			track: true
-		});
-	});	
+	cargartooltip();
 	});	
 
 	oTable = $('#tabla_resumen').dataTable({
@@ -388,7 +384,8 @@ $(document).ready(function () {
 							{{"i_"~item.variable.nombre}}.series[0].setData(data); 
 							{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
 						{% endif %}
-					{% endfor %}  					
+					{% endfor %}
+					cargartooltip();
 				});	
 			});				
 		  }	
@@ -416,8 +413,9 @@ $(document).ready(function () {
 						{{"i_"~item.variable.nombre}}.series[0].setData(data); 
 						{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
 					{% endif %}
-				{% endfor %}  					
-			});	
+				{% endfor %}
+				cargartooltip();
+			});
 		});
 		
 		
@@ -453,6 +451,17 @@ $(document).ready(function () {
 				'json');
 			}
 		return false;
-	});	
+	});
+
+	function cargartooltip(){
+		$.each(periodo.data, function(index, value) {
+			$('div#i_quiebre tspan:contains("'+value+'")').attr('title', periodo.tooltip[index])
+			.tooltip({
+				track: true
+			});
+		});	
+	}
+
+	
  </script>
 {% endblock %}
