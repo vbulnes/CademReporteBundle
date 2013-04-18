@@ -21,11 +21,13 @@
 								<thead style='position:static'>
 									<tr>
 										{% for item in tabla_resumen.head %}
-										<th width='10%'>
+										<th width='10%' title="{{item|upper}}" tag="{{item|upper}}">
 											{% if item|replace({' ':'_'})|length>8 and loop.index>2 %}
 												{{item|replace({' ':'_'})[0:8]|upper}}...
 											{% else %}
 												{{item|upper}}
+											{% endif %}
+											{% if loop.index>2 %}											
 											{% endif %}
 										</th>
 										{% endfor %}
@@ -37,21 +39,21 @@
 										<tr class='{{item['segmento']|trim}} head' data-tt-id="{{loop.index}}" data-tt-parent-id="{{item['segmento']}}">
 											{% for item2 in item %}
 											{% if loop.index > 2 %}
-											<td value={{item2}} id_fil="{{loop.parent.loop.index-1}}" class='{{item['segmento']|trim}}'>  
+											<td value={{item2}} class='{{item['segmento']|trim}}'>  
 												{{item2}}%
 											</td>
 											{% elseif loop.index==2 %}
-											<td id_fil="{{loop.parent.loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}' title="{{item['categoria']|upper}}">  
+											<td class='{{item['categoria']|trim}}' title="{{item['categoria']|upper}}" tag="{{item['categoria']|upper}}">  
 												{% if item2|replace({' ':'_'})|length>15 %}
 												{{item2|replace({' ':'_'})[0:15]|upper}}...
 												{% else %}
 												{{item2|upper}}
-												{% endif %}
+												{% endif %}											
 											</td>
 											{% else %}
-											<td value={{item2}} id_fil="{{loop.parent.loop.index-1}}" class='{{item['segmento']|trim}}' title="{{item['categoria']|upper}}"> 
+											<td value={{item2}} class='{{item['segmento']|trim}}' title="{{item['categoria']|upper}}"> 
 												{% if loop.index<=2 %}
-													{{item2|upper}}
+													{{item2|upper}}													
 												{% else %}
 													{{item2}}
 												{% endif %}												
@@ -133,8 +135,8 @@ legend {
 {% endblock %}
 
 {% block stylesheets %}
-<!-- <link href="{{ asset('bundles/cademreporte/css/demo_page.css') }}" rel="stylesheet"> -->
-<!-- <link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet"> -->
+
+<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">		
 
 <link href="{{ asset('bundles/cademreporte/css/jquery.treetable.css') }}" rel="stylesheet">		  
 <link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">
@@ -148,7 +150,6 @@ legend {
 <script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 
 <script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
-<!-- <script src="{{ asset('bundles/cademreporte/js/script.js') }}"></script> -->
 
 <!-- <script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script> -->
 <script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
@@ -161,19 +162,6 @@ legend {
 var i_quiebre;
 
 $(document).ready(function () {
-	
-	$('#tabla_resumen tr').click(function() {
-		var label= $(this).children(':first').text().trim();
-
-		$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
-			{% for item in variables_clientes %}
-				{% if loop.index == 1 %}
-					{{"i_"~item.variable.nombre}}.series[0].setData(data); 
-					{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
-				{% endif %}
-			{% endfor %}  					
-		});	
-	});
 	
 	var periodo = {{ periodos|raw }};
 	
@@ -239,16 +227,9 @@ $(document).ready(function () {
 		.tooltip({
 			track: true
 		});
-	});
-	
-	
-	
 	});	
-	
-	
-	
+	});	
 
-	
 	oTable = $('#tabla_resumen').dataTable({
 		"sScrollY": "210px",
 		"sScrollX": "100%",
@@ -262,7 +243,7 @@ $(document).ready(function () {
 		"bAutoWidth": false, 
 		"aoColumnDefs": [
 			{ "bVisible": false, "aTargets": [ 0 ] },
-			{ "aTargets": [ 1 ] },	
+			{ "aTargets": [ 1 ], "sClass": "head", "sWidth":'20%' },	
 		],
 		"aaSortingFixed": [[ 0, 'asc' ]],
 		"aaSorting": [[ 1, 'asc' ]],
@@ -315,6 +296,12 @@ $(document).ready(function () {
 					var att=document.createAttribute("class");
 					att.value="parent head";
 					nTrs[i].previousSibling.setAttributeNode(att);
+					var att=document.createAttribute("title");
+					att.value=sGroup.toUpperCase();
+					nTrs[i].previousSibling.setAttributeNode(att);				
+					var att=document.createAttribute("tag");
+					att.value=sGroup.toUpperCase();
+					nTrs[i].previousSibling.setAttributeNode(att);	
 					
 					sLastGroup = sGroup;
 				}
@@ -365,13 +352,19 @@ $(document).ready(function () {
 			for(var j=0 ; j<cols ; j++)
 			{
 				nCells[j] = document.createElement( 'td' );
-				// nCells[j].colSpan=iColspan;
-				
-				nCells[j].className = "group";				
+				// nCells[j].colSpan=iColspan;		
+				nCells[j].className = "group";
+
+				var att=document.createAttribute("title");
+				att.value="QUIEBRE GENERAL";
+				nCells[j].setAttributeNode(att);				
+				var att=document.createAttribute("tag");
+				att.value="QUIEBRE GENERAL";
+				nCells[j].setAttributeNode(att);					
 						
 				if(j==0)
 				{
-					nCells[j].innerHTML = "QUIEBRE SOPROLE";
+					nCells[j].innerHTML = "QUIEBRE GENERAL";
 				}
 				else
 				{			
@@ -383,6 +376,21 @@ $(document).ready(function () {
 			var att=document.createAttribute("class");
 			att.value="parent head";
 			nTrs[0].previousSibling.setAttributeNode(att);
+			
+			$('#tabla_resumen tbody tr td.group').click(function() {
+				var label= $(this).parent().attr('tag');
+			
+				$(".ui-state-active").removeClass("ui-state-active");
+				$(this).parent().addClass("ui-state-active");
+				$.get( "{{ path('resumen_evolutivo') }}", label, function(data) {	
+					{% for item in variables_clientes %}
+						{% if loop.index == 1 %}
+							{{"i_"~item.variable.nombre}}.series[0].setData(data); 
+							{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
+						{% endif %}
+					{% endfor %}  					
+				});	
+			});				
 		  }	
 		});
 		
@@ -395,20 +403,14 @@ $(document).ready(function () {
 			onNodeExpand: function () {			
 			}
 		});	
+	
 		
-		$("#tabla_resumen tbody tr").mousedown(function() {			
-			  $(".ui-state-active").removeClass("ui-state-active");
-			  $(".row_selected").removeClass("row_selected");
-			  $(this).addClass("row_selected");
-		});	
+		$('thead th').click(function() {
+			var label= $(this).attr('tag');
 		
-		$('#tabla_resumen_wrapper tr th').click(function() {
-			var label= $(this).text().trim();
-			$('.ui-state-active').removeClass();
-			$(this).addClass('ui-state-active');
-			$(".row_selected").removeClass("row_selected");
-			
-			$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
+			$(".ui-state-active").removeClass("ui-state-active");
+			$(this).addClass("ui-state-active");
+			$.get( "{{ path('resumen_evolutivo') }}", label, function(data) {	
 				{% for item in variables_clientes %}
 					{% if loop.index == 1 %}
 						{{"i_"~item.variable.nombre}}.series[0].setData(data); 

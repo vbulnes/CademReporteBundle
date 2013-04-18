@@ -103,8 +103,8 @@ span.indenter{
 {% endblock %}
 
 {% block stylesheets %}
-<!-- <link href="{{ asset('bundles/cademreporte/css/demo_page.css') }}" rel="stylesheet"> -->
-<!-- <link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet"> -->
+
+<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet"> 
 
 <link href="{{ asset('bundles/cademreporte/css/jquery.treetable.css') }}" rel="stylesheet">		  
 <link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">
@@ -115,14 +115,12 @@ span.indenter{
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('bundles/cademreporte/js/jquery.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 
 <script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
 
 <!-- <script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script> -->
 <script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
-
 <script>
 {% for item in variables_clientes %}
 {{"var i_"~item.variable.nombre~";"}}
@@ -294,7 +292,7 @@ $(document).ready(function () {
 							
 					if(j==0)
 					{
-						nCells[j].innerHTML = "QUIEBRE SOPROLE";
+						nCells[j].innerHTML = "QUIEBRE GENERAL";
 					}
 					else
 					{			
