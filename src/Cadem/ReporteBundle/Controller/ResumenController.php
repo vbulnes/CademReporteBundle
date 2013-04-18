@@ -126,7 +126,7 @@ class ResumenController extends Controller
 $tabla_resumen = array(
 		'head' => array('SEGMENTO','CATEGORIA/CADENA','LIDER','JUMBO','TOTTUS','SANTA ISABEL','SMU','TOTAL'),
 		'body' => array(	
-						array(
+						array(/////////////////////////// AIR CARE //////////////////////////////////////
 								'segmento' => 'air care',
 								'categoria'=> 'continuo electrico',
 								'lider' => mt_rand($min, $max),
@@ -162,7 +162,7 @@ $tabla_resumen = array(
 								'sta isabel' => mt_rand($min, $max),
 								'smu' => mt_rand($min, $max),
 							),
-						array(
+						array( /////////////////////////// HOME CLEANING //////////////////////////////////////
 								'segmento' => 'home cleaning',
 								'categoria'=> 'baño',
 								'lider' => mt_rand($min, $max),
@@ -189,6 +189,51 @@ $tabla_resumen = array(
 								'sta isabel' => mt_rand($min, $max),
 								'smu' => mt_rand($min, $max),
 							),								
+						array( /////////////////////////// HOME STORAGE //////////////////////////////////////
+								'segmento' => 'home storage',
+								'categoria'=> 'bolsas',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),		
+						array(
+								'segmento' => 'home storage',
+								'categoria'=> 'potes',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),
+						array( /////////////////////////// pest control //////////////////////////////////////
+								'segmento' => 'pest control',
+								'categoria'=> 'electricos',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),		
+						array(
+								'segmento' => 'pest control',
+								'categoria'=> 'continuos',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),
+						array(
+								'segmento' => 'pest control',
+								'categoria'=> 'instantaneos',
+								'lider' => mt_rand($min, $max),
+								'jumbo' => mt_rand($min, $max),
+								'tottus' => mt_rand($min, $max),
+								'sta isabel' => mt_rand($min, $max),
+								'smu' => mt_rand($min, $max),
+							),
 						)
 					);
 		
