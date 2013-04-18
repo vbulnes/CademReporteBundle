@@ -70,9 +70,9 @@
 				</div>
 					<div class="hero-unit" style="padding:30px">
 							<div class="row-fluid">
-							{% for item in variables_clientes %}
-								<div id="i_{{item.variable.nombre}}" ></div>
-							{% endfor %}					
+							{# {% for item in variables_clientes %} #}
+								<div id="i_quiebre" ></div>
+							{# {% endfor %} #}			
 							</div>
 					</div>             
 				</div><!--/span-->
@@ -154,9 +154,11 @@ legend {
 <script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
 
 <script>
-{% for item in variables_clientes %}
-{{"var i_"~item.variable.nombre~";"}}
-{% endfor %}
+//{% for item in variables_clientes %}
+//{{"var i_"~item.variable.nombre~";"}}
+//{% endfor %}
+
+var i_quiebre;
 
 $(document).ready(function () {
 	
@@ -177,9 +179,10 @@ $(document).ready(function () {
 	
 	{% for item in variables_clientes %}
         {% if loop.index == 1 %}
-		{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+		//{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+		i_quiebre = new Highcharts.Chart({
 		chart: {    
-			renderTo: 'i_{{item.variable.nombre}}',
+			renderTo: 'i_quiebre',
                         type: 'spline',
                         //marginRight: 130,
                         //marginBottom: 25,                                
