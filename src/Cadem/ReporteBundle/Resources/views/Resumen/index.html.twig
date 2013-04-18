@@ -72,9 +72,9 @@
 				</div>
 					<div class="hero-unit" style="padding:30px">
 							<div class="row-fluid">
-							{% for item in variables_clientes %}
-								<div id="i_{{item.variable.nombre}}" ></div>
-							{% endfor %}					
+							{# {% for item in variables_clientes %} #}
+								<div id="i_quiebre" ></div>
+							{# {% endfor %} #}			
 							</div>
 					</div>             
 				</div><!--/span-->
@@ -155,19 +155,23 @@ legend {
 <script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
 
 <script>
-{% for item in variables_clientes %}
-{{"var i_"~item.variable.nombre~";"}}
-{% endfor %}
+//{% for item in variables_clientes %}
+//{{"var i_"~item.variable.nombre~";"}}
+//{% endfor %}
+
+var i_quiebre;
+var periodo = {{ periodos|raw }};
 
 $(document).ready(function () {
 	
-	var periodo = {{ periodos|raw }};
+	
 	
 	{% for item in variables_clientes %}
         {% if loop.index == 1 %}
-		{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+		//{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+		i_quiebre = new Highcharts.Chart({
 		chart: {    
-			renderTo: 'i_{{item.variable.nombre}}',
+			renderTo: 'i_quiebre',
                         type: 'spline',
                         //marginRight: 130,
                         //marginBottom: 25,                                
@@ -219,12 +223,7 @@ $(document).ready(function () {
         {% endif %}
 	{% endfor %}
 	
-	$.each(periodo.data, function(index, value) {
-		$('div#i_quiebre tspan:contains("'+value+'")').attr('title', periodo.tooltip[index])
-		.tooltip({
-			track: true
-		});
-	});	
+	cargartooltip();
 	});	
 
 	oTable = $('#tabla_resumen').dataTable({
@@ -382,10 +381,11 @@ $(document).ready(function () {
 				$.get( "{{ path('resumen_evolutivo') }}", label, function(data) {	
 					{% for item in variables_clientes %}
 						{% if loop.index == 1 %}
-							{{"i_"~item.variable.nombre}}.series[0].setData(data); 
-							{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
+							i_quiebre.series[0].setData(data); 
+							i_quiebre.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
 						{% endif %}
-					{% endfor %}  					
+					{% endfor %}
+					cargartooltip();
 				});	
 			});				
 		  }	
@@ -410,11 +410,12 @@ $(document).ready(function () {
 			$.get( "{{ path('resumen_evolutivo') }}", label, function(data) {	
 				{% for item in variables_clientes %}
 					{% if loop.index == 1 %}
-						{{"i_"~item.variable.nombre}}.series[0].setData(data); 
-						{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
+						i_quiebre.series[0].setData(data); 
+						i_quiebre.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
 					{% endif %}
-				{% endfor %}  					
-			});	
+				{% endfor %}
+				cargartooltip();
+			});
 		});
 		
 		
@@ -442,14 +443,25 @@ $(document).ready(function () {
 					});
 				{% for item in variables_clientes %}
 					{% if loop.index == 1 %}
-						{{"i_"~item.variable.nombre}}.series[0].setData(data.evolutivo); 
-						{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre General"});
+						i_quiebre.series[0].setData(data.evolutivo); 
+						i_quiebre.setTitle({ text: "Evolucion Quiebre General"});
 					{% endif %}
 				{% endfor %} 
 				},
 				'json');
 			}
 		return false;
-	});	
+	});
+
+	function cargartooltip(){
+		$.each(periodo.data, function(index, value) {
+			$('div#i_quiebre tspan:contains("'+value+'")').attr('title', periodo.tooltip[index])
+			.tooltip({
+				track: true
+			});
+		});	
+	}
+
+	
  </script>
 {% endblock %}
