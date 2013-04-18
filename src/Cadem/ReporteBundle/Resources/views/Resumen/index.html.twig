@@ -43,7 +43,7 @@
 												{{item2}}%
 											</td>
 											{% elseif loop.index==2 %}
-											<td class='{{item['categoria']|trim}}' title="{{item['categoria']|upper}}" tag="{{item['categoria']|upper}}">  
+											<td class='{{item['categoria']|trim}} tag' title="{{item['categoria']|upper}}" tag="{{item['categoria']|upper}}">  
 												{% if item2|replace({' ':'_'})|length>15 %}
 												{{item2|replace({' ':'_'})[0:15]|upper}}...
 												{% else %}
@@ -270,11 +270,18 @@ $(document).ready(function () {
 					{
 						nCells[j] = document.createElement( 'td' );
 						// nCells[j].colSpan=iColspan;
-						nCells[j].className = "group";				
+						nCells[j].className = "group";	
+						var att=document.createAttribute("title");
+						att.value=sGroup.toUpperCase();;
+						nCells[j].setAttributeNode(att);				
+						var att=document.createAttribute("tag");
+						att.value=sGroup.toUpperCase();;
+						nCells[j].setAttributeNode(att);						
 						
 						if(j==0)
 						{
 							nCells[j].innerHTML = sGroup;
+							nCells[j].className = nCells[j].className+" tag";
 						}
 						else
 						{			
@@ -291,13 +298,7 @@ $(document).ready(function () {
 					
 					var att=document.createAttribute("class");
 					att.value="parent head";
-					nTrs[i].previousSibling.setAttributeNode(att);
-					var att=document.createAttribute("title");
-					att.value=sGroup.toUpperCase();
-					nTrs[i].previousSibling.setAttributeNode(att);				
-					var att=document.createAttribute("tag");
-					att.value=sGroup.toUpperCase();
-					nTrs[i].previousSibling.setAttributeNode(att);	
+					nTrs[i].previousSibling.setAttributeNode(att);					
 					
 					sLastGroup = sGroup;
 				}
@@ -361,6 +362,7 @@ $(document).ready(function () {
 				if(j==0)
 				{
 					nCells[j].innerHTML = "QUIEBRE GENERAL";
+					nCells[j].className = nCells[j].className+" tag";
 				}
 				else
 				{			
@@ -373,8 +375,8 @@ $(document).ready(function () {
 			att.value="parent head";
 			nTrs[0].previousSibling.setAttributeNode(att);
 			
-			$('#tabla_resumen tbody tr td.group').click(function() {
-				var label= $(this).parent().attr('tag');
+			$('#tabla_resumen tbody tr td.tag').click(function() {
+				var label= $(this).attr('tag');
 			
 				$(".ui-state-active").removeClass("ui-state-active");
 				$(this).parent().addClass("ui-state-active");
