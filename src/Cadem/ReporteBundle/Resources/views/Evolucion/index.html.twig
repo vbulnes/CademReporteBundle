@@ -39,7 +39,7 @@
 											{% for item2 in item %}
 											{% if loop.index > 2 %}
 											<td value={{item2}} id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}' title="{{item['SKU']}}">  
-												{{item2}}%
+												{{item2}}
 											</td>
 											{% elseif loop.index==2 %}
 											<td id_fil="{{loop.parent.loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}}' title="{{ item2 }}" title="{{item['SKU']}}">  
@@ -272,7 +272,7 @@ $(document).ready(function () {
 					$(this).children().each(function(){
 						if(j>0)
 						{
-							$(this).text(parseFloat((totalesParciales[j-1]/cont)).toFixed(1)+'%');
+							$(this).text(parseFloat((totalesParciales[j-1]/cont)).toFixed(1));
 							totalesGlobales[j-1]=totalesGlobales[j-1]+totalesParciales[j-1];
 							//$(this).attr('value',parseFloat((totalesParciales[j-1])/7)).round(2);
 						}
@@ -296,7 +296,7 @@ $(document).ready(function () {
 					}
 					else
 					{			
-						nCells[j].innerHTML = parseFloat((totalesGlobales[j-1])/contGlobal).toFixed(1)+'%';//totales[j];
+						nCells[j].innerHTML = parseFloat((totalesGlobales[j-1])/contGlobal).toFixed(1);//totales[j];
 					}
 					nGroup.appendChild( nCells[j] );
 				}
@@ -307,7 +307,7 @@ $(document).ready(function () {
 			}
 		});
 	
-		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Evolución Quiebre: Categoria/Sala</h5>");
+		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Evolución Quiebre: (%) de Quiebre SKU/Sala</h5>");
 	
 		$("#tabla_resumen").treetable({ 
 			expandable: true, 

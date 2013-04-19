@@ -40,7 +40,7 @@
 											{% for item2 in item %}
 											{% if loop.index > 2 %}
 											<td value={{item2}} class='{{item['segmento']|trim}}'>  
-												{{item2}}%
+												{{item2}}
 											</td>
 											{% elseif loop.index==2 %}
 											<td class='{{item['categoria']|trim}} tag' title="{{item['categoria']|upper}}" tag="{{item['categoria']|upper}}">  
@@ -335,7 +335,7 @@ $(document).ready(function () {
 					if(j>0)
 					{
 						
-						$(this).text(parseFloat((totalesParciales[j-1]/cont)).toFixed(1)+'%');
+						$(this).text(parseFloat((totalesParciales[j-1]/cont)).toFixed(1));
 						totalesGlobales[j-1]=totalesGlobales[j-1]+totalesParciales[j-1];
 						//$(this).attr('value',parseFloat((totalesParciales[j-1])/7)).round(2);
 					}
@@ -366,7 +366,7 @@ $(document).ready(function () {
 				}
 				else
 				{			
-					nCells[j].innerHTML = parseFloat((totalesGlobales[j-1])/contGlobal).toFixed(1)+'%';//totales[j];
+					nCells[j].innerHTML = parseFloat((totalesGlobales[j-1])/contGlobal).toFixed(1);//totales[j];
 				}
 				nGroup.appendChild( nCells[j] );
 			}
@@ -393,7 +393,7 @@ $(document).ready(function () {
 		  }	
 		});
 		
-		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: Categoria/Cadena</h5>");
+		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: (%) de Quiebre Categoria/Cadena</h5>");
 		
 		// new FixedColumns( oTable );
 		
