@@ -115,7 +115,6 @@ span.indenter{
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('bundles/cademreporte/js/jquery.js') }}"></script>
 <script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 
 <script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
@@ -128,6 +127,19 @@ span.indenter{
 {% for item in variables_clientes %}
 {{"var i_"~item.variable.nombre~";"}}
 {% endfor %}
+
+function aoColDef(aTarget,sClass,sWidth)
+{
+	this.aTargets=aTarget;
+	this.sClass=sClass;
+	this.sWidth=sWidth;
+}
+
+// var aoColsDefArr=new Array();
+
+// {% for item in tabla_resumen.head %}	
+	// aoColsDefArr.push(new aoColDef([{{loop.index-1}}],'head','12%'));
+// {% endfor %}
 
 $(document).ready(function () {
 	
@@ -155,6 +167,8 @@ $(document).ready(function () {
 	oTable = $('#tabla_resumen').dataTable({
 		"sScrollY": "360px",
 		"sScrollX": "100%",
+		// "sScrollXInner": "110%",
+		// "bScrollCollapse": true,
 		"bJQueryUI": true,
 		"bSort": false,
 		"bInfo": false,
@@ -166,7 +180,8 @@ $(document).ready(function () {
 		"aoColumnDefs": [
 			{ "bVisible": false, "aTargets": [ 0 ] },
 			{ "aTargets": [ 1 ], "sClass": "head", "sWidth":'20%' },	
-		],		
+		],	
+		// "aoColumnDefs": aoColsDefArr,
 		"sDom": '<"H"Cfr>t<"F"ip>',	
 		"fnDrawCallback": function ( oSettings ) {	
 			var cols=this.fnSettings().aoColumns.length-1;
@@ -192,7 +207,7 @@ $(document).ready(function () {
 					for(var j=0 ; j< cols ; j++)
 					{
 						nCells[j] = document.createElement( 'td' );
-						// nCells[j].colSpan=iColspan;
+						 // nCells[j].colSpan=iColspan;
 						nCells[j].className = "group";
 						//nCells[j].width= '50px';
 						if(j==0)
@@ -215,7 +230,7 @@ $(document).ready(function () {
 							nCells[j].innerHTML = 0;
 						}
 						nGroup.appendChild( nCells[j] );
-						// break;
+						 // break;
 					}
 		
 					nTrs[i].parentNode.insertBefore( nGroup, nTrs[i] );
@@ -262,7 +277,7 @@ $(document).ready(function () {
 					$(this).children().each(function(){
 						if(j>0)
 						{
-							$(this).text(parseFloat((totalesParciales[j-1]/cont)).toFixed(1)+'%');
+							$(this).text(parseFloat((totalesParciales[j-1]/cont)).toFixed(1));
 							totalesGlobales[j-1]=totalesGlobales[j-1]+totalesParciales[j-1];
 							//$(this).attr('value',parseFloat((totalesParciales[j-1])/7)).round(2);
 						}
@@ -286,7 +301,7 @@ $(document).ready(function () {
 					}
 					else
 					{			
-						nCells[j].innerHTML = parseFloat((totalesGlobales[j-1])/contGlobal).toFixed(1)+'%';//totales[j];
+						nCells[j].innerHTML = parseFloat((totalesGlobales[j-1])/contGlobal).toFixed(1);//totales[j];
 					}
 					nGroup.appendChild( nCells[j] );
 				}
@@ -300,15 +315,15 @@ $(document).ready(function () {
 		
 		// new FixedColumns( oTable );
 		
-		$("#tabla_resumen").treetable({ 
-			expandable: true, 
-			onNodeExpand: function () {
-				//oTable.fnAdjustColumnSizing();
-				//oTable.fnDraw();
-			}
-		});	
+		// $("#tabla_resumen").treetable({ 
+			// expandable: true, 
+			// onNodeExpand: function () {
+				// //oTable.fnAdjustColumnSizing();
+				// //oTable.fnDraw();
+			// }
+		// });	
 		
-		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Detalle Quiebre: SKU/Sala</h5>");
+		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Detalle Quiebre: (%) de Quiebre SKU/Sala</h5>");
 	
 		/*
 		$(window).bind('resize', function () {
