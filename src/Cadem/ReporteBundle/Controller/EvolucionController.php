@@ -124,8 +124,8 @@ $form_region = $this->createFormBuilder($defaultData)
 		$max = 100;
 		
 		$tabla_resumen = array(
-		'head' => array('CATEGORIA',
-						'SKU/SALA',
+		'head' => array('SKU/SALA',
+						'CATEGORIA',						
 						'2013-02 SEM 07_09',
 						'2013-02 SEM 14_16',
 						'2013-02 SEM 21_23',
@@ -135,19 +135,19 @@ $form_region = $this->createFormBuilder($defaultData)
 						'52 Semanas',
 						),
 		'body' => array(	
-						array(
-								'categoria'=> 'CERVEZAS',
+						array(								
 								'SKU'=> 'IMPERIAL BOTELLA PACK 4X330CC',
-								'ST1' => mt_rand($min, $max),
-								'ST2' => mt_rand($min, $max),
-								'ST3' => mt_rand($min, $max),
-								'ST4' => mt_rand($min, $max),
-								'ST5' => mt_rand($min, $max),
-								'ST6' => mt_rand($min, $max),
-							),
-						array(
 								'categoria'=> 'CERVEZAS',
+								'ST1' => mt_rand($min, $max),
+								'ST2' => mt_rand($min, $max),
+								'ST3' => mt_rand($min, $max),
+								'ST4' => mt_rand($min, $max),
+								'ST5' => mt_rand($min, $max),
+								'ST6' => mt_rand($min, $max),
+							),
+						array(								
 								'SKU'=> 'CORONITA 5° CAJA 24 X 207CC',
+								'categoria'=> 'CERVEZAS',
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -155,19 +155,9 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST5' => mt_rand($min, $max),
 								'ST6' => mt_rand($min, $max),
 							),		
-						array(
-								'categoria'=> 'ENERGETICAS',
+						array(								
 								'SKU'=> 'RED BULL SUGAR FREE 250CC',
-								'ST1' => mt_rand($min, $max),
-								'ST2' => mt_rand($min, $max),
-								'ST3' => mt_rand($min, $max),
-								'ST4' => mt_rand($min, $max),
-								'ST5' => mt_rand($min, $max),
-								'ST6' => mt_rand($min, $max),
-							),
-						array(
 								'categoria'=> 'ENERGETICAS',
-								'SKU'=> 'RED BULL ENERGY DRINK VETTEL EDITION LATA 355CC',
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -176,8 +166,18 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST6' => mt_rand($min, $max),
 							),
 						array(
-								'categoria'=> 'ESPUMANTES',
+								'SKU'=> 'RED BULL ENERGY DRINK VETTEL EDITION LATA 355CC',
+								'categoria'=> 'ENERGETICAS',								
+								'ST1' => mt_rand($min, $max),
+								'ST2' => mt_rand($min, $max),
+								'ST3' => mt_rand($min, $max),
+								'ST4' => mt_rand($min, $max),
+								'ST5' => mt_rand($min, $max),
+								'ST6' => mt_rand($min, $max),
+							),
+						array(								
 								'SKU'=> 'CHAMPAGNE UNDURRAGA BRUT 12,5° 750CC',
+								'categoria'=> 'ESPUMANTES',
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -185,9 +185,9 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST5' => mt_rand($min, $max),
 								'ST6' => mt_rand($min, $max),
 							),		
-						array(
-								'categoria'=> 'RON',
+						array(								
 								'SKU'=> 'RON FLOR DE CAÑA 40° DORADO 1750CC',
+								'categoria'=> 'RON',
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -196,8 +196,8 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST6' => mt_rand($min, $max),
 							),
 						array(
-								'categoria'=> 'RON',
 								'SKU'=> 'RON FLOR DE CAÑA 40° 7 AÑOS 750CC',
+								'categoria'=> 'RON',
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -206,8 +206,8 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST6' => mt_rand($min, $max),
 							),					
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'CORTTON ERRAZURIZ CABERNET SAUVIGNON 750CC',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -216,8 +216,8 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST6' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'VINO UNDURRAGA PINOT CABERNET SAUVIGNON 750CC',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -226,8 +226,8 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST6' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'IMPERIAL BOTELLA PACK 4X330CC',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -236,8 +236,8 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST6' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'VINO CALITERRA RESERVA CABERNET SAUVIGNON',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -246,8 +246,8 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST6' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'VINO VERAMONTE SAUVIGNON BLANC',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -256,8 +256,8 @@ $form_region = $this->createFormBuilder($defaultData)
 								'ST6' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VODKA',
 								'SKU'=> 'VODKA STOLICHNAYA CLASSIC 40° 750CC',
+								'categoria'=> 'VODKA',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
