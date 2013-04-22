@@ -45,6 +45,10 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$cliente_johnson->setNombre('johnson');
 	$cliente_johnson->setRut('111-3');
 	$cliente_johnson->setTipo('fabricante');
+	$cliente_virutex = new Cliente();
+	$cliente_virutex->setNombre('johnson')
+	->setRut('111-3')
+	->setTipo('fabricante');
         
 	
 	$userManager = $this->container->get('fos_user.user_manager');
@@ -72,6 +76,14 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$user3->setCliente($cliente_johnson);
 	$user3->setEnabled(true);
 	$userManager->updateUser($user3,false);
+	
+	$user4 = $userManager->createUser();
+	$user4->setUsername('virutex')
+	->setEmail('usuario@virutex.cl')
+	->setPlainPassword('1234')
+	->setCliente($cliente_virutex)
+	->setEnabled(true);
+	$userManager->updateUser($user4,false);
 
 	$logo1 = new Logo();
 	$logo1->setFilename('logosoprole.gif');	
@@ -91,6 +103,12 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$logo3->setHeight('auto');	
 	$logo3->setActivo(true);	
 	$logo3->setCliente($cliente_johnson);
+	$logo4 = new Logo();
+	$logo4->setFilename('logovirutex.jpg')
+	->setWidth('auto')
+	->setHeight('auto')	
+	->setActivo(true)
+	->setCliente($cliente_virutex);
 	
 	$var1 = new Variable();
 	$var1->setNombre('quiebre');	
@@ -112,9 +130,11 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$manager->persist($cliente_soprole);
 	$manager->persist($cliente_nestle);
 	$manager->persist($cliente_johnson);
+	$manager->persist($cliente_virutex);
 	$manager->persist($logo1);
 	$manager->persist($logo2);	
-	$manager->persist($logo3);	
+	$manager->persist($logo3);
+	$manager->persist($logo4);
 	$manager->persist($var1);
 	$manager->persist($var2);	
 	$manager->persist($var3);	
@@ -154,6 +174,10 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	->setCliente($cliente_johnson)
 	->setVariable($var4)
 	->setActivo(true);
+	$varCli9 = (new VariableCliente())
+	->setCliente($cliente_virutex)
+	->setVariable($var1)
+	->setActivo(true);
 	
 	$manager->persist($varCli1);
 	$manager->persist($varCli2);	
@@ -163,6 +187,7 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$manager->persist($varCli6);			
 	$manager->persist($varCli7);			
 	$manager->persist($varCli8);
+	$manager->persist($varCli9);
 
 	$manager->flush();
     }
