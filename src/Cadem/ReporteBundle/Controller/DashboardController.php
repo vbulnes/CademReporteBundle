@@ -47,15 +47,19 @@ class DashboardController extends Controller
 		$logos = $cliente->getLogos();
 		$variables_clientes = $cliente->getVariablesClientes();
 		
-		$em_supi = $this->get('doctrine')->getManager('supi');
-		$conn_supi = $em_supi->getConnection();
-		$est = $conn_supi->fetchAll('SELECT * FROM ESTUDIO');
+		//$em_supi = $this->get('doctrine')->getManager('supi');
+		//$conn_supi = $em_supi->getConnection();
+		//$est = $conn_supi->fetchAll('SELECT * FROM ESTUDIO');
+		
+		$conn_supi   = $this->getDoctrine()->getConnection('supi');
+		$result = $conn_supi->findEstudios();
 		
 		$aux = "";
 		
-		foreach($est as $e) {
-			$aux .= $e['ID_ESTUDIO'].",";
+		while ($row = $result->fetch()) {
+			$aux .= $row['ID_ESTUDIO'].",";
 		}
+		
 		die($aux);
 		
 		//RESPONSE

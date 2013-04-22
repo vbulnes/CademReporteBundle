@@ -59,6 +59,7 @@ doctrine:
                 user:     "%database_user2%"
                 password: "%database_password2%"
                 charset:  UTF8
+                wrapper_class: 'Cadem\ReporteBundle\Doctrine\DBAL\SupiConnection'
         # if using pdo_sqlite as your database driver, add the path in parameters.yml
         # e.g. database_path: %kernel.root_dir%/data/data.db3
         # path:     %database_path%
