@@ -124,8 +124,8 @@ $form_region = $this->createFormBuilder($defaultData)
 		$max = 2;
 		
 $tabla_resumen = array(
-		'head' => array('CATEGORIA',
-						'SKU/SALA',
+		'head' => array('SKU/SALA',
+						'CATEGORIA',						
 						'BIGGER (RENDIC) CAUPOLICÁN 191',
 						'JUMBO COSTANERA CENTER',
 						'JUMBO ANTOFAGASTA ANGAMOS L534',
@@ -141,8 +141,8 @@ $tabla_resumen = array(
 						),
 		'body' => array(	
 						array(
-								'categoria'=> 'CERVEZAS',
 								'SKU'=> 'IMPERIAL BOTELLA PACK 4X330CC',
+								'categoria'=> 'CERVEZAS',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -157,8 +157,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),	
 							),
 						array(
-								'categoria'=> 'CERVEZAS',
-								'SKU'=> 'CORONITA 5° CAJA 24 X 207CC',
+								'SKU'=> 'CORONITA 5° CAJA 24 X 207CC',						
+								'categoria'=> 'CERVEZAS',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -173,8 +173,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),		
 						array(
-								'categoria'=> 'ENERGETICAS',
 								'SKU'=> 'RED BULL SUGAR FREE 250CC',
+								'categoria'=> 'ENERGETICAS',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -189,8 +189,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),
 						array(
-								'categoria'=> 'ENERGETICAS',
 								'SKU'=> 'RED BULL ENERGY DRINK VETTEL EDITION LATA 355CC',
+								'categoria'=> 'ENERGETICAS',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -205,8 +205,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),
 						array(
-								'categoria'=> 'ESPUMANTES',
 								'SKU'=> 'CHAMPAGNE UNDURRAGA BRUT 12,5° 750CC',
+								'categoria'=> 'ESPUMANTES',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -221,8 +221,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),		
 						array(
-								'categoria'=> 'RON',
 								'SKU'=> 'RON FLOR DE CAÑA 40° DORADO 1750CC',
+								'categoria'=> 'RON',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -237,8 +237,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),
 						array(
-								'categoria'=> 'RON',
 								'SKU'=> 'RON FLOR DE CAÑA 40° 7 AÑOS 750CC',
+								'categoria'=> 'RON',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -253,8 +253,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),					
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'CORTTON ERRAZURIZ CABERNET SAUVIGNON 750CC',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -269,8 +269,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'VINO UNDURRAGA PINOT CABERNET SAUVIGNON 750CC',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -285,8 +285,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'IMPERIAL BOTELLA PACK 4X330CC',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -301,8 +301,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'VINO CALITERRA RESERVA CABERNET SAUVIGNON',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -317,8 +317,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VINO',
 								'SKU'=> 'VINO VERAMONTE SAUVIGNON BLANC',
+								'categoria'=> 'VINO',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
@@ -333,8 +333,8 @@ $tabla_resumen = array(
 								'ST12' => mt_rand($min, $max),
 							),	
 						array(
-								'categoria'=> 'VODKA',
 								'SKU'=> 'VODKA STOLICHNAYA CLASSIC 40° 750CC',
+								'categoria'=> 'VODKA',								
 								'ST1' => mt_rand($min, $max),
 								'ST2' => mt_rand($min, $max),
 								'ST3' => mt_rand($min, $max),
