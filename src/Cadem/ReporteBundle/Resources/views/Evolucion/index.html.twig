@@ -18,7 +18,7 @@
 			<h4>Vista Evolución de Quiebres:</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<div class="row-fluid">
-							<table id="tabla_resumen" class="table table-bordered tabla_resumen display" width="100%">                      
+							<table id="tabla_resumen" class="tabla_resumen table-bordered table display">                      
 								<thead>
 									<tr>
 										{% for item in tabla_resumen.head %}
@@ -42,7 +42,7 @@
 												{{item2}}
 											</td>
 											{% elseif loop.index==1 %}
-											<td id_fil="{{loop.parent.loop.index-1}}" id_fil="{{loop.parent.loop.index-1}}" class='{{item['categoria']|trim}} tag' title="{{ item2 }}" title="{{item['SKU']}}">  
+											<td class='{{item['categoria']|trim}} tag' title="{{ item2 }}" title="{{item['SKU']}}">  
 												{% if item2|replace({' ':'_'})|length>15 and loop.index==1 %}
 													{{item2|replace({' ':'_'})[0:15]|upper}}...
 												{% else %}
@@ -104,27 +104,32 @@ span.indenter{
 	text-align: left !important;
 }
 
+/* Block out what is behind the fixed column's header and footer */
+table.DTFC_Cloned thead,
+table.DTFC_Cloned tfoot {
+	background-color: white !important;
+}
+
+/* Block out the gap above the scrollbar on the right, when there is a fixed
+ * right column
+ */
+div.DTFC_Blocker {
+	background-color: white !important;
+}
+
 {% endblock %}
 
 {% block stylesheets %}
-
-<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet"> 
-
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.css') }}" rel="stylesheet">		  
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">
-
+<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">			
 <link href="{{ asset('bundles/cademreporte/css/jquery.dataTables_themeroller.css') }}" rel="stylesheet">
 <link href="{{ asset('bundles/cademreporte/css/redmond/jquery-ui.min.css') }}" rel="stylesheet">
-
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('bundles/cademreporte/js/jquery.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
 
-<script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/dataTables.fixedColumns.js') }}"></script>
+
 <script>
 {% for item in variables_clientes %}
 {{"var i_"~item.variable.nombre~";"}}
@@ -132,47 +137,14 @@ span.indenter{
 
 $(document).ready(function () {
 
-	$('th').tooltip({
-		position: {
-			my: "center bottom-20",
-			at: "center top",
-		}
-    });
+	// $('th').tooltip({
+		// position: {
+			// my: "center bottom-20",
+			// at: "center top"
+		// }
+    // });	
 	
-	$('#tabla_resumen tr').click(function() {
-		var label= $(this).children(':first').text().trim();
-
-		$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
-			{% for item in variables_clientes %}
-				{% if loop.index == 1 %}
-					{{"i_"~item.variable.nombre}}.series[0].setData(data); 
-					{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
-				{% endif %}
-			{% endfor %}  					
-		});	
-	});
-	
-	// DEFINIR COLUMNAS PARA DATATABLES (COMPATIBILIDAD CON IE)
-	
-	function aoColDef(bVisible,aTargets,sWidth)
-	{
-		this.bVisible=bVisible;
-		this.aTargets=aTargets;
-		this.sWidth=sWidth;
-	}	
-
-	var aoColDefs= new Array();
-
-	{% for item in tabla_resumen.head %}
-		{% if loop.index == 2 %}
-		aoColDefs.push(new aoColDef(false,[{{loop.index-1}}],100/{{tabla_resumen.head|length-2}}+"%"));
-		//alert(100/{{tabla_resumen.head|length-1}});
-		{% else %}
-		aoColDefs.push(new aoColDef(true,[{{loop.index-1}}],100/{{tabla_resumen.head|length-2}}+"%"));
-		{% endif %}
-	{% endfor %}		
-	
-	oTable = $('#tabla_resumen').dataTable({
+	var oTable = $('#tabla_resumen').dataTable({
 		"sScrollY": "350px",
 		"sScrollX": "100%",
  		"sScrollXInner": "150%",
@@ -182,9 +154,11 @@ $(document).ready(function () {
 		"bInfo": false,
 		"bPaginate": false,
 		"bJQueryUI": true,
-		"bAutoWidth": false, 
-		"aoColumnDefs": aoColDefs,
-		"aaSortingFixed": [[ 1, 'asc' ]],
+		"bAutoWidth": false, 		
+		"aoColumnDefs": [
+			{ "bVisible": false, "aTargets": [1] }
+		],			
+		"aaSortingFixed": [[ 1, 'asc' ]]
 	//	"sDom": '<"H"Cfr>t<"F"ip>',					
 	});
 	
@@ -192,7 +166,7 @@ $(document).ready(function () {
 
 		new FixedColumns( oTable, {
 		"fnDrawCallback": function ( left, right ) {
-			/////////////////////////// Esta parte añade las filas de agregacion a la tabla //////////////////////////////////
+			///////////////////////// Esta parte añade las filas de agregacion a la tabla //////////////////////////////////
 			var oSettings = oTable.fnSettings();
 			if ( oSettings.aiDisplay.length === 0 )
 			{
@@ -217,12 +191,11 @@ $(document).ready(function () {
 					
 					var nCells= new Array();    
                   
-                    for(var j=0 ; j< cols-1 ; j++)
+                    for(var j=0 ; j< cols ; j++)
 					{
 						nCells[j] = document.createElement( 'td' );						 
 						nCells[j].className = "group";														
-						nCells[j].innerHTML = 0;
-																	
+						nCells[j].innerHTML = 0;																
 						nGroup.appendChild( nCells[j] );						 
 					}
                     nTrs[i].parentNode.insertBefore( nGroup, nTrs[i] );
@@ -243,6 +216,7 @@ $(document).ready(function () {
 					nCell.className = "group tag";
 					nCell.innerHTML = sGroup.toUpperCase();
 					nGroup.appendChild( nCell );
+
                     // Se añade fila de agregacion para tabla fija
 					$(nGroup).insertBefore( $('tbody tr:eq('+(i+iCorrector)+')', left.body)[0] );
 					
@@ -254,7 +228,8 @@ $(document).ready(function () {
 					
 				var totalesGlobales=new Array();
 				var contGlobal=0;
-				for (var i = 0; i < cols-1; i++) totalesGlobales[i] = 0;
+				for (var i = 0; i < cols; i++) totalesGlobales[i] = 0;
+				// Calculo para cada segmento
 				$('#tabla_resumen tbody tr.parent').each(function(){						
 					var totalesParciales= new Array();
 					for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
@@ -281,7 +256,8 @@ $(document).ready(function () {
 						
 				var nCells= new Array();
 				
-				for(var j=0 ; j<cols-1 ; j++)
+				// Calculo para total general
+				for(var j=0 ; j<cols ; j++)
 				{
 					nCells[j] = document.createElement( 'td' );					
 					nCells[j].className = "group";							
@@ -303,22 +279,21 @@ $(document).ready(function () {
                 // Se añade fila de agregacion para tabla fija
 				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );				
 				
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				
 				// $('.head').tooltip({
 					// position: {
 						// my: "center bottom-20",
-						// at: "center top",
+						// at: "center top"
 					// }
 				// });	
+				
+				//En Explorer hacer manualmente invisible el scroll horizontal de la tabla fija
+				
+				$('.DTFC_LeftBodyLiner').css('overflow-x','hidden');
 		}
 	});
 
-		$("#tabla_resumen tbody tr").mousedown(function() {
-			  $(".ui-state-active").removeClass("ui-state-active");
-			  $(".row_selected").removeClass("row_selected");
-			  $(this).addClass("row_selected");
-		});	
 		
 		$('#tabla_resumen_wrapper tr th').click(function() {
 			var label= $(this).text().trim();
