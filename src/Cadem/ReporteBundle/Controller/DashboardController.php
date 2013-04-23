@@ -48,8 +48,8 @@ class DashboardController extends Controller
 		$variables_clientes = $cliente->getVariablesClientes();
 		
 		$conn_supi   = $this->getDoctrine()->getConnection('supi');
-		$totalsalas = $conn_supi->getTotalSalas(11, 37, 15);
-		
+		$totalsalas = $conn_supi->getDatosQuiebre(11);
+		die(print_r($totalsalas));
 		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Dashboard:index.html.twig',
