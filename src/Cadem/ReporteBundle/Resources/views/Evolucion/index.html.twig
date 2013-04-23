@@ -135,38 +135,50 @@ div.DTFC_Blocker {
 {{"var i_"~item.variable.nombre~";"}}
 {% endfor %}
 
-$(document).ready(function () {
+var oTable;
+var maxWidth;
 
-	// $('th').tooltip({
-		// position: {
-			// my: "center bottom-20",
-			// at: "center top"
-		// }
-    // });	
+function calcularAnchoMaximo()
+{
+	// Calcula el ancho máximo de la tabla	
+	var extension={{tabla_resumen.head|length*10-100}};
 	
-	var oTable = $('#tabla_resumen').dataTable({
-		"sScrollY": "350px",
+	if(extension<0)
+		extension=0;
+		
+	maxWidth=100+extension;
+	
+	$('table').css('max-width',maxWidth+'%');
+	// alert('maxWidth='+maxWidth);
+}
+
+function construirTabla()
+{
+	oTable = $('#tabla_resumen').dataTable({
+		"sScrollY": "300px",
 		"sScrollX": "100%",
- 		"sScrollXInner": "150%",
+ 		"sScrollXInner": maxWidth+'%',
  		"bScrollCollapse": true,
 		"bFilter": false,
 		"bSort": false,
 		"bInfo": false,
 		"bPaginate": false,
 		"bJQueryUI": true,
-		"bAutoWidth": false, 		
+		"bAutoWidth": false, 
 		"aoColumnDefs": [
 			{ "bVisible": false, "aTargets": [1] }
-		],			
-		"aaSortingFixed": [[ 1, 'asc' ]]
+		],
+		"aaSortingFixed": [[ 1, 'asc' ]],
 	//	"sDom": '<"H"Cfr>t<"F"ip>',					
 	});
-	
-	$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Evolución Quiebre: (%) de Quiebre SKU/Sala</h5>");
+	$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: (%) de Quiebre Categoria/Cadena</h5>");
+}
 
+function fixedColumn()
+{
 		new FixedColumns( oTable, {
 		"fnDrawCallback": function ( left, right ) {
-			///////////////////////// Esta parte añade las filas de agregacion a la tabla //////////////////////////////////
+			/////////////////////////// Esta parte añade las filas de agregacion a la tabla //////////////////////////////////
 			var oSettings = oTable.fnSettings();
 			if ( oSettings.aiDisplay.length === 0 )
 			{
@@ -195,7 +207,8 @@ $(document).ready(function () {
 					{
 						nCells[j] = document.createElement( 'td' );						 
 						nCells[j].className = "group";														
-						nCells[j].innerHTML = 0;																
+						nCells[j].innerHTML = 0;
+																	
 						nGroup.appendChild( nCells[j] );						 
 					}
                     nTrs[i].parentNode.insertBefore( nGroup, nTrs[i] );
@@ -216,7 +229,6 @@ $(document).ready(function () {
 					nCell.className = "group tag";
 					nCell.innerHTML = sGroup.toUpperCase();
 					nGroup.appendChild( nCell );
-
                     // Se añade fila de agregacion para tabla fija
 					$(nGroup).insertBefore( $('tbody tr:eq('+(i+iCorrector)+')', left.body)[0] );
 					
@@ -228,8 +240,7 @@ $(document).ready(function () {
 					
 				var totalesGlobales=new Array();
 				var contGlobal=0;
-				for (var i = 0; i < cols; i++) totalesGlobales[i] = 0;
-				// Calculo para cada segmento
+				for (var i = 0; i < cols ; i++) totalesGlobales[i] = 0;
 				$('#tabla_resumen tbody tr.parent').each(function(){						
 					var totalesParciales= new Array();
 					for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
@@ -238,7 +249,6 @@ $(document).ready(function () {
 						contGlobal++;
 						var j=0;
 						$(this).children().each(function(){
-							// alert($(this).attr('value'));
 							totalesParciales[j]=totalesParciales[j]+parseInt($(this).attr('value'));
 							j++;
 						});
@@ -256,7 +266,6 @@ $(document).ready(function () {
 						
 				var nCells= new Array();
 				
-				// Calculo para total general
 				for(var j=0 ; j<cols ; j++)
 				{
 					nCells[j] = document.createElement( 'td' );					
@@ -278,22 +287,21 @@ $(document).ready(function () {
 				nGroup.appendChild( nCell );
                 // Se añade fila de agregacion para tabla fija
 				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );				
-				
-				/////////////////////////////////////////////////////////////////////////////////////////////////////////
-				
-				// $('.head').tooltip({
-					// position: {
-						// my: "center bottom-20",
-						// at: "center top"
-					// }
-				// });	
-				
-				//En Explorer hacer manualmente invisible el scroll horizontal de la tabla fija
-				
-				$('.DTFC_LeftBodyLiner').css('overflow-x','hidden');
+								
+                // Se añade fila de agregacion para tabla fija
+				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );					
+				///////////////////////////////////////////////////////////////////////////////////////////////////////////
 		}
 	});
+}
 
+$(document).ready(function () {
+
+	var callbacks = $.Callbacks();
+
+	callbacks.add( calcularAnchoMaximo() );
+	callbacks.add( construirTabla() );
+	callbacks.add( fixedColumn() );	
 		
 		$('#tabla_resumen_wrapper tr th').click(function() {
 			var label= $(this).text().trim();

@@ -129,26 +129,13 @@ legend {
 {% endblock %}
 
 {% block stylesheets %}
-
-<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">		
-
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.css') }}" rel="stylesheet">		  
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">
-
+<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">			
 <link href="{{ asset('bundles/cademreporte/css/jquery.dataTables_themeroller.css') }}" rel="stylesheet">
-<link href="{{ asset('bundles/cademreporte/css/redmond/jquery-ui.min.css') }}" rel="stylesheet">
-
 {% endblock %}
 
 {% block javascripts %}
-
-<script src="{{ asset('bundles/cademreporte/js/jquery.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script> 
-<!--script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script-->
-
-<script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
-
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/dataTables.fixedColumns.js') }}"></script>
 <script>
 //{% for item in variables_clientes %}
 //{{"var i_"~item.variable.nombre~";"}}
@@ -156,8 +143,173 @@ legend {
 
 var i_quiebre;
 var periodo = {{ periodos|raw }};
+var oTable;
+var maxWidth;
+
+function calcularAnchoMaximo()
+{
+	// Calcula el ancho máximo de la tabla	
+	var extension={{tabla_resumen.head|length*10-100}};
+	
+	if(extension<0)
+		extension=0;
+		
+	maxWidth=100+extension;
+	
+	$('table').css('max-width',maxWidth+'%');
+	// alert('maxWidth='+maxWidth);
+}
+
+function construirTabla()
+{
+	oTable = $('#tabla_resumen').dataTable({
+		"sScrollY": "300px",
+		"sScrollX": "100%",
+ 		"sScrollXInner": maxWidth+'%',
+ 		"bScrollCollapse": true,
+		"bFilter": false,
+		"bSort": false,
+		"bInfo": false,
+		"bPaginate": false,
+		"bJQueryUI": true,
+		"bAutoWidth": false, 
+		"aoColumnDefs": [
+			{ "bVisible": false, "aTargets": [1] }
+		],
+		"aaSortingFixed": [[ 1, 'asc' ]],
+	//	"sDom": '<"H"Cfr>t<"F"ip>',					
+	});
+	$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: (%) de Quiebre Categoria/Cadena</h5>");
+}
+
+function fixedColumn()
+{
+		new FixedColumns( oTable, {
+		"fnDrawCallback": function ( left, right ) {
+			/////////////////////////// Esta parte añade las filas de agregacion a la tabla //////////////////////////////////
+			var oSettings = oTable.fnSettings();
+			if ( oSettings.aiDisplay.length === 0 )
+			{
+				return;
+			}
+
+			var nGroup, nCell, iIndex, sGroup;
+			var sLastGroup = "", iCorrector=0;
+			var nTrs = $('#tabla_resumen tbody tr');
+			// var iColspan = nTrs[0].getElementsByTagName('td').length;
+            var cols=oTable.fnSettings().aoColumns.length-1;
+			
+			for ( var i=0 ; i<nTrs.length ; i++ )
+			{
+				iIndex = oSettings._iDisplayStart + i;
+
+				sGroup = oSettings.aoData[ oSettings.aiDisplay[iIndex] ]._aData[1];
+				
+				if ( sGroup != sLastGroup )
+				{
+              		var nGroup = document.createElement('tr');
+					
+					var nCells= new Array();    
+                  
+                    for(var j=0 ; j< cols ; j++)
+					{
+						nCells[j] = document.createElement( 'td' );						 
+						nCells[j].className = "group";														
+						nCells[j].innerHTML = 0;
+																	
+						nGroup.appendChild( nCells[j] );						 
+					}
+                    nTrs[i].parentNode.insertBefore( nGroup, nTrs[i] );
+					// Se crea atributo que asocie la fila de agregacion con sus filas hijas
+					var att=document.createAttribute("data-tt-id");
+					att.value=sGroup;
+					nTrs[i].previousSibling.setAttributeNode(att);
+					// Se agrega una clase que permita seleccionar cada fila de agregacion
+					var att=document.createAttribute("class");
+					att.value="parent";
+					// Se añade fila de agregacion para tabla principal
+					nTrs[i].previousSibling.setAttributeNode(att);				
+                    
+					// /* Cell to insert into the frozen columns */
+					
+                    nGroup = document.createElement( 'tr' );
+					nCell = document.createElement( 'td' );
+					nCell.className = "group tag";
+					nCell.innerHTML = sGroup.toUpperCase();
+					nGroup.appendChild( nCell );
+                    // Se añade fila de agregacion para tabla fija
+					$(nGroup).insertBefore( $('tbody tr:eq('+(i+iCorrector)+')', left.body)[0] );
+					
+					iCorrector++;
+					sLastGroup = sGroup;
+				}
+			}
+			//////////////// Esta parte calcula los valores de las agregaciones (SEGMENTO Y TOTAL) //////////////////////
+					
+				var totalesGlobales=new Array();
+				var contGlobal=0;
+				for (var i = 0; i < cols ; i++) totalesGlobales[i] = 0;
+				$('#tabla_resumen tbody tr.parent').each(function(){						
+					var totalesParciales= new Array();
+					for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
+					var cont=0;
+					$('#tabla_resumen tbody tr[data-tt-parent-id="'+$(this).attr('data-tt-id')+'"]').each(function(){
+						contGlobal++;
+						var j=0;
+						$(this).children().each(function(){
+							totalesParciales[j]=totalesParciales[j]+parseInt($(this).attr('value'));
+							j++;
+						});
+						cont++;
+					});
+					var j=0;
+					$(this).children().each(function(){
+						$(this).text(parseFloat((totalesParciales[j]/cont)).toFixed(1));
+						totalesGlobales[j]=totalesGlobales[j]+totalesParciales[j];							
+						j++;
+					});
+				});	
+				var nTrs = $('#tabla_resumen tbody tr');
+				var nGroup = document.createElement( 'tr' );
+						
+				var nCells= new Array();
+				
+				for(var j=0 ; j<cols ; j++)
+				{
+					nCells[j] = document.createElement( 'td' );					
+					nCells[j].className = "group";							
+						
+					nCells[j].innerHTML = parseFloat((totalesGlobales[j])/contGlobal).toFixed(1);//totales[j];					
+					nGroup.appendChild( nCells[j] );
+				}			
+				nTrs[0].parentNode.insertBefore( nGroup, nTrs[0] );
+				var att=document.createAttribute("class");
+				att.value="parent head";
+				// Se añade fila de agregacion para tabla principal
+				nTrs[0].previousSibling.setAttributeNode(att);		
+				
+                nGroup = document.createElement( 'tr' );
+				nCell = document.createElement( 'td' );
+				nCell.className = "group tag";
+				nCell.innerHTML = "QUIEBRE GENERAL";
+				nGroup.appendChild( nCell );
+                // Se añade fila de agregacion para tabla fija
+				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );				
+								
+                // Se añade fila de agregacion para tabla fija
+				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );					
+				///////////////////////////////////////////////////////////////////////////////////////////////////////////
+		}
+	});
+}
 
 $(document).ready(function () {
+	
+	var callbacks = $.Callbacks();
+
+	callbacks.add( calcularAnchoMaximo() );
+	callbacks.add( construirTabla() );
+	callbacks.add( fixedColumn() );
 	
 	{% for item in variables_clientes %}
         {% if loop.index == 1 %}
@@ -207,7 +359,7 @@ $(document).ready(function () {
                x: 400,
                verticalAlign: 'top',
                y: 0,
-               floating: true,
+               floating: true
             },				
 		credits: {
 			enabled: false
@@ -217,167 +369,8 @@ $(document).ready(function () {
 	{% endfor %}
 	
 	cargartooltip();
-	});	
-	
-	// DEFINIR COLUMNAS PARA DATATABLES (COMPATIBILIDAD CON IE)
-	
-	function aoColDef(bVisible,aTargets,sWidth)
-	{
-		this.bVisible=bVisible;
-		this.aTargets=aTargets;
-		this.sWidth=sWidth;
-	}	
-
-	var aoColDefs= new Array();
-
-	{% for item in tabla_resumen.head %}
-		{% if loop.index == 2 %}
-		aoColDefs.push(new aoColDef(false,[{{loop.index-1}}],100/{{tabla_resumen.head|length-2}}+"%"));
-		{% else %}
-		aoColDefs.push(new aoColDef(true,[{{loop.index-1}}],100/{{tabla_resumen.head|length-2}}+"%"));
-		{% endif %}
-	{% endfor %}	
-
-	oTable = $('#tabla_resumen').dataTable({
-		"sScrollY": "300px",
-		"sScrollX": "100%",
- 		"sScrollXInner": "150%",
- 		"bScrollCollapse": true,
-		"bFilter": false,
-		"bSort": false,
-		"bInfo": false,
-		"bPaginate": false,
-		"bJQueryUI": true,
-		"bAutoWidth": false, 
-		"aoColumnDefs": aoColDefs,
-		"aaSortingFixed": [[ 1, 'asc' ]],
-	//	"sDom": '<"H"Cfr>t<"F"ip>',					
-	});
+	});						
 		
-		$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: (%) de Quiebre Categoria/Cadena</h5>");
-		
-		new FixedColumns( oTable, {
-		"fnDrawCallback": function ( left, right ) {
-			/////////////////////////// Esta parte añade las filas de agregacion a la tabla //////////////////////////////////
-			var oSettings = oTable.fnSettings();
-			if ( oSettings.aiDisplay.length === 0 )
-			{
-				return;
-			}
-
-			var nGroup, nCell, iIndex, sGroup;
-			var sLastGroup = "", iCorrector=0;
-			var nTrs = $('#tabla_resumen tbody tr');
-			// var iColspan = nTrs[0].getElementsByTagName('td').length;
-            var cols=oTable.fnSettings().aoColumns.length-1;
-			
-			for ( var i=0 ; i<nTrs.length ; i++ )
-			{
-				iIndex = oSettings._iDisplayStart + i;
-
-				sGroup = oSettings.aoData[ oSettings.aiDisplay[iIndex] ]._aData[1];
-				
-				if ( sGroup != sLastGroup )
-				{
-              		var nGroup = document.createElement('tr');
-					
-					var nCells= new Array();    
-                  
-                    for(var j=0 ; j< cols-1 ; j++)
-					{
-						nCells[j] = document.createElement( 'td' );						 
-						nCells[j].className = "group";														
-						nCells[j].innerHTML = 0;
-																	
-						nGroup.appendChild( nCells[j] );						 
-					}
-                    nTrs[i].parentNode.insertBefore( nGroup, nTrs[i] );
-					// Se crea atributo que asocie la fila de agregacion con sus filas hijas
-					var att=document.createAttribute("data-tt-id");
-					att.value=sGroup;
-					nTrs[i].previousSibling.setAttributeNode(att);
-					// Se agrega una clase que permita seleccionar cada fila de agregacion
-					var att=document.createAttribute("class");
-					att.value="parent";
-					// Se añade fila de agregacion para tabla principal
-					nTrs[i].previousSibling.setAttributeNode(att);				
-                    
-					// /* Cell to insert into the frozen columns */
-					
-                    nGroup = document.createElement( 'tr' );
-					nCell = document.createElement( 'td' );
-					nCell.className = "group tag";
-					nCell.innerHTML = sGroup.toUpperCase();
-					nGroup.appendChild( nCell );
-                    // Se añade fila de agregacion para tabla fija
-					$(nGroup).insertBefore( $('tbody tr:eq('+(i+iCorrector)+')', left.body)[0] );
-					
-					iCorrector++;
-					sLastGroup = sGroup;
-				}
-			}
-			//////////////// Esta parte calcula los valores de las agregaciones (SEGMENTO Y TOTAL) //////////////////////
-					
-				var totalesGlobales=new Array();
-				var contGlobal=0;
-				for (var i = 0; i < cols-1; i++) totalesGlobales[i] = 0;
-				$('#tabla_resumen tbody tr.parent').each(function(){						
-					var totalesParciales= new Array();
-					for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
-					var cont=0;
-					$('#tabla_resumen tbody tr[data-tt-parent-id="'+$(this).attr('data-tt-id')+'"]').each(function(){
-						contGlobal++;
-						var j=0;
-						$(this).children().each(function(){
-							totalesParciales[j]=totalesParciales[j]+parseInt($(this).attr('value'));
-							j++;
-						});
-						cont++;
-					});
-					var j=0;
-					$(this).children().each(function(){
-						$(this).text(parseFloat((totalesParciales[j]/cont)).toFixed(1));
-						totalesGlobales[j]=totalesGlobales[j]+totalesParciales[j];							
-						j++;
-					});
-				});	
-				var nTrs = $('#tabla_resumen tbody tr');
-				var nGroup = document.createElement( 'tr' );
-						
-				var nCells= new Array();
-				
-				for(var j=0 ; j<cols-1 ; j++)
-				{
-					nCells[j] = document.createElement( 'td' );					
-					nCells[j].className = "group";							
-						
-					nCells[j].innerHTML = parseFloat((totalesGlobales[j])/contGlobal).toFixed(1);//totales[j];					
-					nGroup.appendChild( nCells[j] );
-				}			
-				nTrs[0].parentNode.insertBefore( nGroup, nTrs[0] );
-				var att=document.createAttribute("class");
-				att.value="parent head";
-				// Se añade fila de agregacion para tabla principal
-				nTrs[0].previousSibling.setAttributeNode(att);		
-				
-                nGroup = document.createElement( 'tr' );
-				nCell = document.createElement( 'td' );
-				nCell.className = "group tag";
-				nCell.innerHTML = "QUIEBRE GENERAL";
-				nGroup.appendChild( nCell );
-                // Se añade fila de agregacion para tabla fija
-				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );				
-				
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////
-				
-				// $('.head').tooltip({
-					// position: {
-						// my: "center bottom-20",
-						// at: "center top",
-					// }
-				// });	
-		}
-	});
 		
 		// $("#tabla_resumen").treetable({ 
 			// expandable: true, 
@@ -445,6 +438,5 @@ $(document).ready(function () {
 			});
 		});	
 	}
-	
  </script>
 {% endblock %}
