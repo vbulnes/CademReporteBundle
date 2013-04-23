@@ -104,27 +104,15 @@ span.indenter{
 {% endblock %}
 
 {% block stylesheets %}
-<link href="{{ asset('bundles/cademreporte/css/dataTables.bootstrap.css') }}" rel="stylesheet">
-<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">
-
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.css') }}" rel="stylesheet">		  
-<link href="{{ asset('bundles/cademreporte/css/jquery.treetable.theme.default.css') }}" rel="stylesheet">
-
+<link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">			
 <link href="{{ asset('bundles/cademreporte/css/jquery.dataTables_themeroller.css') }}" rel="stylesheet">
 <link href="{{ asset('bundles/cademreporte/css/redmond/jquery-ui.min.css') }}" rel="stylesheet">
-
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('bundles/cademreporte/js/jquery.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.js') }}"></script>
 
-<script src="{{ asset('bundles/cademreporte/js/jquery.treetable.js') }}"></script>
-
-<script src="{{ asset('bundles/cademreporte/js/FixedColumns.js') }}"></script>
-<script src="{{ asset('bundles/cademreporte/js/jquery-ui.min.js') }}"></script>
-
-<script src="{{ asset('bundles/cademreporte/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('bundles/cademreporte/js/dataTables.fixedColumns.js') }}"></script>
 <script>
 {% for item in variables_clientes %}
 {{"var i_"~item.variable.nombre~";"}}
@@ -144,25 +132,6 @@ $(document).ready(function () {
 			{% endfor %}  					
 		});	
 	});
-
-// DEFINIR COLUMNAS PARA DATATABLES (COMPATIBILIDAD CON IE)
-
-function aoColDef(bVisible,aTargets,sWidth)
-{
-	this.bVisible=bVisible;
-	this.aTargets=aTargets;
-	this.sWidth=sWidth;
-}	
-
-var aoColDefs= new Array();
-
-{% for item in tabla_resumen.head %}
-	{% if loop.index == 2 %}
-	aoColDefs.push(new aoColDef(false,[{{loop.index-1}}],"30%"));
-	{% else %}
-	aoColDefs.push(new aoColDef(true,[{{loop.index-1}}],"10%"));
-	{% endif %}
-{% endfor %}
 	
 oTable = $('#tabla_resumen').dataTable({
 		"sScrollY": "350px",
@@ -175,10 +144,9 @@ oTable = $('#tabla_resumen').dataTable({
 		"bPaginate": false,
 		"bJQueryUI": true,
 		"bAutoWidth": false, 
-		"aoColumnDefs": aoColDefs,
-		// "aoColumnDefs": [
-			// { "bVisible": false, "aTargets": [1] }
-		// ],
+		"aoColumnDefs": [
+			{ "bVisible": false, "aTargets": [1] }
+		],
 		"aaSortingFixed": [[ 1, 'asc' ]]
 	//	"sDom": '<"H"Cfr>t<"F"ip>',					
 	});
@@ -212,7 +180,7 @@ oTable = $('#tabla_resumen').dataTable({
 					
 					var nCells= new Array();    
                   
-                    for(var j=0 ; j< cols-1 ; j++)
+                    for(var j=0 ; j< cols ; j++)
 					{
 						nCells[j] = document.createElement( 'td' );						 
 						nCells[j].className = "group";														
@@ -250,7 +218,7 @@ oTable = $('#tabla_resumen').dataTable({
 					
 				var totalesGlobales=new Array();
 				var contGlobal=0;
-				for (var i = 0; i < cols-1; i++) totalesGlobales[i] = 0;
+				for (var i = 0; i < cols; i++) totalesGlobales[i] = 0;
 				$('#tabla_resumen tbody tr.parent').each(function(){						
 					var totalesParciales= new Array();
 					for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
@@ -276,7 +244,7 @@ oTable = $('#tabla_resumen').dataTable({
 						
 				var nCells= new Array();
 				
-				for(var j=0 ; j<cols-1 ; j++)
+				for(var j=0 ; j<cols ; j++)
 				{
 					nCells[j] = document.createElement( 'td' );					
 					nCells[j].className = "group";							
@@ -307,6 +275,10 @@ oTable = $('#tabla_resumen').dataTable({
 						// at: "center top",
 					// }
 				// });	
+				
+				//En Explorer hacer manualmente invisible el scroll horizontal de la tabla fija
+				
+				$('.DTFC_LeftBodyLiner').css('overflow-x','hidden');				
 		}
 	});
 				
