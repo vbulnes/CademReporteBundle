@@ -22,13 +22,26 @@
 								<thead>
 									<tr>
 										{% for item in tabla_resumen.head %}
-										<th title="{{ item }}">
-											{% if loop.index>2 %}
-												{{item|replace({' ':'_'})[0:10]}}...
-											{% else %}	
-												{{item}}
-											{% endif %}		
+										{% set cadena=item|split('|') %}
+										{% if loop.index>2 %}										
+										<th title="{{ cadena[1] }}">
+											{{cadena[1]|trim}}
 										</th>
+										{% else %}	
+										<th rowspan="2" style='vertical-align:middle'>
+											{{cadena[0]}}
+										</th>
+										{% endif %}		
+										{% endfor %}
+									</tr>
+									<tr>
+										{% for item in tabla_resumen.head %}
+										{% set cadena=item|split('|') %}
+										{% if loop.index>2 %}
+										<th title="{{ cadena[0] }}">
+											{{cadena[0]|replace({' ':'_'})[0:10]}}...											
+										</th>
+										{% endif %}		
 										{% endfor %}
 									</tr>
 								</thead>
@@ -106,7 +119,6 @@ span.indenter{
 {% block stylesheets %}
 <link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">			
 <link href="{{ asset('bundles/cademreporte/css/jquery.dataTables_themeroller.css') }}" rel="stylesheet">
-<link href="{{ asset('bundles/cademreporte/css/redmond/jquery-ui.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
@@ -118,25 +130,31 @@ span.indenter{
 {{"var i_"~item.variable.nombre~";"}}
 {% endfor %}
 
-$(document).ready(function () {
-			
-	$('#tabla_resumen tr').click(function() {
-		var label= $(this).children(':first').text().trim();
+var oTable;
+var maxWidth;
+var maxHeight;
 
-		$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
-			{% for item in variables_clientes %}
-				{% if loop.index == 1 %}
-					{{"i_"~item.variable.nombre}}.series[0].setData(data); 
-					{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
-				{% endif %}
-			{% endfor %}  					
-		});	
-	});
+function calcularAnchoMaximo()
+{
+	// Calcula el ancho máximo de la tabla	
+	var extension={{tabla_resumen.head|length*15-100}};
 	
-oTable = $('#tabla_resumen').dataTable({
-		"sScrollY": "350px",
+	if(extension<0)
+		extension=0;
+		
+	maxWidth=100+extension;
+	
+	$('table').css('max-width',maxWidth+'%');
+	// alert('maxWidth='+maxWidth);	
+	maxHeight={{(tabla_resumen.body|length)*27}}
+}
+
+function construirTabla()
+{
+	oTable = $('#tabla_resumen').dataTable({
+		"sScrollY": maxHeight+'px',
 		"sScrollX": "100%",
- 		// "sScrollXInner": "1000%",
+ 		"sScrollXInner": maxWidth+'%',
  		"bScrollCollapse": true,
 		"bFilter": false,
 		"bSort": false,
@@ -147,13 +165,17 @@ oTable = $('#tabla_resumen').dataTable({
 		"aoColumnDefs": [
 			{ "bVisible": false, "aTargets": [1] }
 		],
-		"aaSortingFixed": [[ 1, 'asc' ]]
-	//	"sDom": '<"H"Cfr>t<"F"ip>',					
+		"aaSortingFixed": [[ 1, 'asc' ]],
+		//"sDom": 'T<"clear">lfrtip',		
+		"sDom": '<"H"Cfr>t<"F"ip>',					
 	});
-
-	$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Detalle Quiebre: (%) de Quiebre SKU/Sala</h5>");
+	 $('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: (%) de Quiebre Categoria/Cadena</h5>");
 	
-	new FixedColumns( oTable, {
+}
+
+function fixedColumn()
+{
+		new FixedColumns( oTable, {
 		"fnDrawCallback": function ( left, right ) {
 			/////////////////////////// Esta parte añade las filas de agregacion a la tabla //////////////////////////////////
 			var oSettings = oTable.fnSettings();
@@ -165,7 +187,7 @@ oTable = $('#tabla_resumen').dataTable({
 			var nGroup, nCell, iIndex, sGroup;
 			var sLastGroup = "", iCorrector=0;
 			var nTrs = $('#tabla_resumen tbody tr');
-			var iColspan = nTrs[0].getElementsByTagName('td').length;
+			// var iColspan = nTrs[0].getElementsByTagName('td').length;
             var cols=oTable.fnSettings().aoColumns.length-1;
 			
 			for ( var i=0 ; i<nTrs.length ; i++ )
@@ -185,9 +207,8 @@ oTable = $('#tabla_resumen').dataTable({
 						nCells[j] = document.createElement( 'td' );						 
 						nCells[j].className = "group";														
 						nCells[j].innerHTML = 0;
-						//nCells[j].colSpan = iColspan;			
-						nGroup.appendChild( nCells[j] );
-						//break;
+																	
+						nGroup.appendChild( nCells[j] );						 
 					}
                     nTrs[i].parentNode.insertBefore( nGroup, nTrs[i] );
 					// Se crea atributo que asocie la fila de agregacion con sus filas hijas
@@ -218,7 +239,7 @@ oTable = $('#tabla_resumen').dataTable({
 					
 				var totalesGlobales=new Array();
 				var contGlobal=0;
-				for (var i = 0; i < cols; i++) totalesGlobales[i] = 0;
+				for (var i = 0; i < cols ; i++) totalesGlobales[i] = 0;
 				$('#tabla_resumen tbody tr.parent').each(function(){						
 					var totalesParciales= new Array();
 					for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
@@ -248,10 +269,9 @@ oTable = $('#tabla_resumen').dataTable({
 				{
 					nCells[j] = document.createElement( 'td' );					
 					nCells[j].className = "group";							
-					//nCells[j].colSpan = iColspan;	
+						
 					nCells[j].innerHTML = parseFloat((totalesGlobales[j])/contGlobal).toFixed(1);//totales[j];					
 					nGroup.appendChild( nCells[j] );
-					//break;
 				}			
 				nTrs[0].parentNode.insertBefore( nGroup, nTrs[0] );
 				var att=document.createAttribute("class");
@@ -265,34 +285,31 @@ oTable = $('#tabla_resumen').dataTable({
 				nCell.innerHTML = "QUIEBRE GENERAL";
 				nGroup.appendChild( nCell );
                 // Se añade fila de agregacion para tabla fija
-				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );				
-				
+				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );																
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////
 				
-				// $('.head').tooltip({
-					// position: {
-						// my: "center bottom-20",
-						// at: "center top",
-					// }
-				// });	
+				// $('.dataTables_scrollHeadInner').css('padding-right','17px');
+				// $('.dataTables_scrollHeadInner').css('width','1861px');
+				// $('.dataTables_scrollHead').css('padding-right','17px');
 				
-				//En Explorer hacer manualmente invisible el scroll horizontal de la tabla fija
-				
-				$('.DTFC_LeftBodyLiner').css('overflow-x','hidden');				
 		}
 	});
-				
+}
+
+$(document).ready(function () {
+	
+	var callbacks = $.Callbacks();
+
+	callbacks.add( calcularAnchoMaximo() );
+	callbacks.add( construirTabla() );
+	callbacks.add( fixedColumn() );	
+			
 		/*
 		$(window).bind('resize', function () {
 			oTable.fnAdjustColumnSizing();
 		});
 		*/
 		
-		$("#tabla_resumen tbody tr").mousedown(function() {
-			  $(".ui-state-active").removeClass("ui-state-active");
-			  $(".row_selected").removeClass("row_selected");
-			  $(this).addClass("row_selected");
-		});	
 		
 		$('#tabla_resumen_wrapper tr th').click(function() {
 			var label= $(this).text().trim();
