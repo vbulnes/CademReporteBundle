@@ -20,4 +20,8 @@ services:
         class: Cadem\ReporteBundle\EventListener\ResponseListener
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse  }
+    cadem_reporte.twig.rst_extension:
+        class: Cadem\ReporteBundle\Twig\RstExtension
+        tags:
+            - { name: twig.extension }
     

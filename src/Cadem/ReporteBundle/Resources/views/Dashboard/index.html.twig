@@ -66,9 +66,14 @@
               <p><a class="btn" href="#">Ver detalles &raquo;</a></p>
             </div><!--/span-->
             <div class="span4">
-              <h3>Heading</h3>
-              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-              <p><a class="btn" href="#">View details &raquo;</a></p>
+              {{ "
+			  Actualización
+			  =============
+			  Se ha trabajado en una actualización con las siguientes características:
+			  - Cambio de noticia a RST
+			  - Cambio de base de datos
+			  " | rst2html | raw }}
+              <p><a class="btn" href="#">Ver detalles &raquo;</a></p>
             </div><!--/span-->
             <div class="span4">
               <h3>Heading</h3>
