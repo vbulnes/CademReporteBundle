@@ -20,6 +20,9 @@ class RstExtension extends \Twig_Extension
 			$process = new Process('rst2html --no-doc-title --initial-header-level=3');
 			$process->setStdin($rst);
 			$process->run();
+			if (!$process->isSuccessful()) {
+				throw new \RuntimeException($process->getErrorOutput());
+			}
 			$html = $process->getOutput();
 
 			$startpos = strpos($html, '<body>') + 6 + 23;
