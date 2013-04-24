@@ -137,6 +137,7 @@ div.DTFC_Blocker {
 
 var oTable;
 var maxWidth;
+var maxHeight;
 
 function calcularAnchoMaximo()
 {
@@ -150,12 +151,13 @@ function calcularAnchoMaximo()
 	
 	$('table').css('max-width',maxWidth+'%');
 	// alert('maxWidth='+maxWidth);
+	maxHeight={{(tabla_resumen.body|length)*27}}
 }
 
 function construirTabla()
 {
 	oTable = $('#tabla_resumen').dataTable({
-		"sScrollY": "300px",
+		"sScrollY": maxHeight+'px',
 		"sScrollX": "100%",
  		"sScrollXInner": maxWidth+'%',
  		"bScrollCollapse": true,

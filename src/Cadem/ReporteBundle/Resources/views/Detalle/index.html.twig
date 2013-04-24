@@ -22,13 +22,26 @@
 								<thead>
 									<tr>
 										{% for item in tabla_resumen.head %}
-										<th title="{{ item }}">
-											{% if loop.index>2 %}
-												{{item|replace({' ':'_'})[0:10]}}...
-											{% else %}	
-												{{item}}
-											{% endif %}		
+										{% set cadena=item|split('|') %}
+										{% if loop.index>2 %}										
+										<th title="{{ cadena[1] }}">
+											{{cadena[1]|trim}}
 										</th>
+										{% else %}	
+										<th rowspan="2" style='vertical-align:middle'>
+											{{cadena[0]}}
+										</th>
+										{% endif %}		
+										{% endfor %}
+									</tr>
+									<tr>
+										{% for item in tabla_resumen.head %}
+										{% set cadena=item|split('|') %}
+										{% if loop.index>2 %}
+										<th title="{{ cadena[0] }}">
+											{{cadena[0]|replace({' ':'_'})[0:10]}}...											
+										</th>
+										{% endif %}		
 										{% endfor %}
 									</tr>
 								</thead>
@@ -106,7 +119,6 @@ span.indenter{
 {% block stylesheets %}
 <link href="{{ asset('bundles/cademreporte/css/demo_table.css') }}" rel="stylesheet">			
 <link href="{{ asset('bundles/cademreporte/css/jquery.dataTables_themeroller.css') }}" rel="stylesheet">
-<link href="{{ asset('bundles/cademreporte/css/redmond/jquery-ui.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block javascripts %}
@@ -120,6 +132,7 @@ span.indenter{
 
 var oTable;
 var maxWidth;
+var maxHeight;
 
 function calcularAnchoMaximo()
 {
@@ -132,13 +145,14 @@ function calcularAnchoMaximo()
 	maxWidth=100+extension;
 	
 	$('table').css('max-width',maxWidth+'%');
-	// alert('maxWidth='+maxWidth);
+	// alert('maxWidth='+maxWidth);	
+	maxHeight={{(tabla_resumen.body|length)*27}}
 }
 
 function construirTabla()
 {
 	oTable = $('#tabla_resumen').dataTable({
-		"sScrollY": "300px",
+		"sScrollY": maxHeight+'px',
 		"sScrollX": "100%",
  		"sScrollXInner": maxWidth+'%',
  		"bScrollCollapse": true,
@@ -152,9 +166,11 @@ function construirTabla()
 			{ "bVisible": false, "aTargets": [1] }
 		],
 		"aaSortingFixed": [[ 1, 'asc' ]],
+		"sDom": 'T<"clear">lfrtip',		
 	//	"sDom": '<"H"Cfr>t<"F"ip>',					
 	});
-	$('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: (%) de Quiebre Categoria/Cadena</h5>");
+	// $('div.fg-toolbar:first').append("<h5 style='float:left;margin:0em'>Tabla Resumen Quiebre: (%) de Quiebre Categoria/Cadena</h5>");
+	
 }
 
 function fixedColumn()
@@ -269,11 +285,13 @@ function fixedColumn()
 				nCell.innerHTML = "QUIEBRE GENERAL";
 				nGroup.appendChild( nCell );
                 // Se añade fila de agregacion para tabla fija
-				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );				
-								
-                // Se añade fila de agregacion para tabla fija
-				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );					
+				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );																
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////
+				
+				// $('.dataTables_scrollHeadInner').css('padding-right','17px');
+				// $('.dataTables_scrollHeadInner').css('width','1861px');
+				// $('.dataTables_scrollHead').css('padding-right','17px');
+				
 		}
 	});
 }
