@@ -120,8 +120,8 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$manager->persist($var3);	
 	$manager->persist($var4);	
 	
-	$varCli1 = (new VariableCliente())
-	->setCliente($cliente_soprole)
+	$varCli1 = new VariableCliente();
+	$varCli1->setCliente($cliente_soprole)
 	->setVariable($var1)
 	->setActivo(true);
 
@@ -146,12 +146,12 @@ class LoadUserData implements FixtureInterface, ContainerAwareInterface
 	$varCli6->setVariable($var4);		
 	$varCli6->setActivo(true);
 	
-	$varCli7 = (new VariableCliente())
-	->setCliente($cliente_johnson)
+	$varCli7 = new VariableCliente();
+	$varCli7->setCliente($cliente_johnson)
 	->setVariable($var3)
 	->setActivo(true);
-	$varCli8 = (new VariableCliente())
-	->setCliente($cliente_johnson)
+	$varCli8 = new VariableCliente();
+	$varCli8->setCliente($cliente_johnson)
 	->setVariable($var4)
 	->setActivo(true);
 	
