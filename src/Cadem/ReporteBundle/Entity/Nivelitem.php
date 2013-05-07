@@ -5,12 +5,12 @@ namespace Cadem\ReporteBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Variable
+ * Nivelitem
  *
- * @ORM\Table(name="VARIABLE")
+ * @ORM\Table(name="NIVELITEM")
  * @ORM\Entity
  */
-class Variable
+class Nivelitem
 {
     /**
      * @var integer
@@ -29,18 +29,21 @@ class Variable
     private $nombre;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="DESCRIPCION", type="string", length=256, nullable=true)
-     */
-    private $descripcion;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="ACTIVO", type="boolean", nullable=false)
      */
     private $activo;
+
+    /**
+     * @var \Clasnivelitem
+     *
+     * @ORM\ManyToOne(targetEntity="Clasnivelitem")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CLASNIVELITEM_ID", referencedColumnName="ID")
+     * })
+     */
+    private $clasnivelitem;
 
 
 
@@ -58,7 +61,7 @@ class Variable
      * Set nombre
      *
      * @param string $nombre
-     * @return Variable
+     * @return Nivelitem
      */
     public function setNombre($nombre)
     {
@@ -78,33 +81,10 @@ class Variable
     }
 
     /**
-     * Set descripcion
-     *
-     * @param string $descripcion
-     * @return Variable
-     */
-    public function setDescripcion($descripcion)
-    {
-        $this->descripcion = $descripcion;
-    
-        return $this;
-    }
-
-    /**
-     * Get descripcion
-     *
-     * @return string 
-     */
-    public function getDescripcion()
-    {
-        return $this->descripcion;
-    }
-
-    /**
      * Set activo
      *
      * @param boolean $activo
-     * @return Variable
+     * @return Nivelitem
      */
     public function setActivo($activo)
     {
@@ -121,5 +101,28 @@ class Variable
     public function getActivo()
     {
         return $this->activo;
+    }
+
+    /**
+     * Set clasnivelitem
+     *
+     * @param \Cadem\ReporteBundle\Entity\Clasnivelitem $clasnivelitem
+     * @return Nivelitem
+     */
+    public function setClasnivelitem(\Cadem\ReporteBundle\Entity\Clasnivelitem $clasnivelitem = null)
+    {
+        $this->clasnivelitem = $clasnivelitem;
+    
+        return $this;
+    }
+
+    /**
+     * Get clasnivelitem
+     *
+     * @return \Cadem\ReporteBundle\Entity\Clasnivelitem 
+     */
+    public function getClasnivelitem()
+    {
+        return $this->clasnivelitem;
     }
 }

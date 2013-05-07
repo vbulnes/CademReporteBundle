@@ -5,12 +5,12 @@ namespace Cadem\ReporteBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Variable
+ * Clasnivelitem
  *
- * @ORM\Table(name="VARIABLE")
+ * @ORM\Table(name="CLASNIVELITEM")
  * @ORM\Entity
  */
-class Variable
+class Clasnivelitem
 {
     /**
      * @var integer
@@ -29,18 +29,21 @@ class Variable
     private $nombre;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="DESCRIPCION", type="string", length=256, nullable=true)
-     */
-    private $descripcion;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="ACTIVO", type="boolean", nullable=false)
      */
     private $activo;
+
+    /**
+     * @var \Cliente
+     *
+     * @ORM\ManyToOne(targetEntity="Cliente")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="CLIENTE_ID", referencedColumnName="ID")
+     * })
+     */
+    private $cliente;
 
 
 
@@ -58,7 +61,7 @@ class Variable
      * Set nombre
      *
      * @param string $nombre
-     * @return Variable
+     * @return Clasnivelitem
      */
     public function setNombre($nombre)
     {
@@ -78,33 +81,10 @@ class Variable
     }
 
     /**
-     * Set descripcion
-     *
-     * @param string $descripcion
-     * @return Variable
-     */
-    public function setDescripcion($descripcion)
-    {
-        $this->descripcion = $descripcion;
-    
-        return $this;
-    }
-
-    /**
-     * Get descripcion
-     *
-     * @return string 
-     */
-    public function getDescripcion()
-    {
-        return $this->descripcion;
-    }
-
-    /**
      * Set activo
      *
      * @param boolean $activo
-     * @return Variable
+     * @return Clasnivelitem
      */
     public function setActivo($activo)
     {
@@ -121,5 +101,28 @@ class Variable
     public function getActivo()
     {
         return $this->activo;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \Cadem\ReporteBundle\Entity\Cliente $cliente
+     * @return Clasnivelitem
+     */
+    public function setCliente(\Cadem\ReporteBundle\Entity\Cliente $cliente = null)
+    {
+        $this->cliente = $cliente;
+    
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \Cadem\ReporteBundle\Entity\Cliente 
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
     }
 }

@@ -12,40 +12,61 @@ class DashboardController extends Controller
     
 	public function indexAction()
     {
+		$user = $this->getUser();
+		$em = $this->getDoctrine()->getManager();
+		
+		$query = $em->createQuery(
+			'SELECT e,c FROM CademReporteBundle:Estudio e
+			JOIN e.cliente c
+			JOIN c.usuarios u
+			WHERE u.id = :id AND c.activo = 1 AND e.activo = 1')
+			->setParameter('id', $user->getId());
+		$estudios = $query->getResult();
+		$choices = array('0' => 'TODOS');
+		foreach($estudios as $e)
+		{
+			$choices[$e->getId()] = strtoupper($e->getNombre());
+		}
+		
 		$defaultData = array();
 		$form_estudio = $this->createFormBuilder($defaultData)
 			->add('Estudio', 'choice', array(
-				'choices'   => array(
-						'0' => 'TODOS',
-						'1' => 'QUIEBRE Y PRECIO',
-						'2' => 'COBERTURA',
-				),
+				'choices'   => $choices,
 				'required'  => true,
 				'multiple'  => false,
 				'data' => '0'			
 			))
 			->getForm();
 		
-			
+		if(count($estudios) > 0){
+			$logofilename = $estudios[0]->getCliente()->getLogofilename();
+			$logostyle = $estudios[0]->getCliente()->getLogostyle();
+		}
+		
+		
 		
 			
 		
 		
 		//PARAMETROS
-		$user = $this->getUser();
-		$em = $this->getDoctrine()->getManager();
-		$query = $em->createQuery(
-			'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
-            JOIN c.variables_clientes vc
-			JOIN vc.variable v
-			JOIN c.logos l
-			JOIN c.usuarios u
-            WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
-		)->setParameter('id', $user->getId());
+		// $user = $this->getUser();
+		// $em = $this->getDoctrine()->getManager();
+		// $query = $em->createQuery(
+			// 'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
+            // JOIN c.variables_clientes vc
+			// JOIN vc.variable v
+			// JOIN c.logos l
+			// JOIN c.usuarios u
+            // WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
+		// )->setParameter('id', $user->getId());
 		
-		$cliente = $query->getSingleResult();
-		$logos = $cliente->getLogos();
-		$variables_clientes = $cliente->getVariablesClientes();
+		
+		
+		// $repository = $this->getDoctrine()->getRepository('CademReporteBundle:Estudio');
+		// $products = $repository->findAll();
+		// $r = $products[0];
+		// print_r($r->getId());
+		
 
 		
 		//RESPONSE
@@ -54,9 +75,9 @@ class DashboardController extends Controller
 			'forms' => array(
 				'form_estudio' => $form_estudio->createView(),
 			),
-			'logo' => $logos[0],
-			'variables_clientes' => $variables_clientes)
-		);
+			'logofilename' => $logofilename,
+			'logostyle' => $logostyle
+		));
 
 		//CACHE
 		$response->setPrivate();

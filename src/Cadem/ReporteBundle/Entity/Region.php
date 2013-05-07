@@ -5,12 +5,12 @@ namespace Cadem\ReporteBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Variable
+ * Region
  *
- * @ORM\Table(name="VARIABLE")
+ * @ORM\Table(name="REGION")
  * @ORM\Entity
  */
-class Variable
+class Region
 {
     /**
      * @var integer
@@ -31,9 +31,9 @@ class Variable
     /**
      * @var string
      *
-     * @ORM\Column(name="DESCRIPCION", type="string", length=256, nullable=true)
+     * @ORM\Column(name="NUMERO", type="string", length=64, nullable=false)
      */
-    private $descripcion;
+    private $numero;
 
     /**
      * @var boolean
@@ -58,7 +58,7 @@ class Variable
      * Set nombre
      *
      * @param string $nombre
-     * @return Variable
+     * @return Region
      */
     public function setNombre($nombre)
     {
@@ -78,33 +78,33 @@ class Variable
     }
 
     /**
-     * Set descripcion
+     * Set numero
      *
-     * @param string $descripcion
-     * @return Variable
+     * @param string $numero
+     * @return Region
      */
-    public function setDescripcion($descripcion)
+    public function setNumero($numero)
     {
-        $this->descripcion = $descripcion;
+        $this->numero = $numero;
     
         return $this;
     }
 
     /**
-     * Get descripcion
+     * Get numero
      *
      * @return string 
      */
-    public function getDescripcion()
+    public function getNumero()
     {
-        return $this->descripcion;
+        return $this->numero;
     }
 
     /**
      * Set activo
      *
      * @param boolean $activo
-     * @return Variable
+     * @return Region
      */
     public function setActivo($activo)
     {

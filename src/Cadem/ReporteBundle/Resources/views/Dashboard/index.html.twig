@@ -24,13 +24,13 @@
 						<div class="span3">
 							<div id="i_quiebre2" style="height: 200px;"></div>
 						</div>
-					{% for item in variables_clientes %}
+					{# % for item in variables_clientes % #}
 						<div class="span3">
-							{% if item.variable.nombre != "cobertura" %}
-							<div id="i_{{item.variable.nombre}}" style="height: 200px;"></div>
-							{% endif %}
+							{# % if item.variable.nombre != "cobertura" % #}
+							<div id="i_{#{item.variable.nombre}#}" style="height: 200px;"></div>
+							{# % endif % #}
 						</div>
-					{% endfor %}		
+					{# % endfor % #}		
 					</div>
 				</div>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
@@ -91,9 +91,9 @@ Se ha trabajado en una actualización con las siguientes características:
 <script src="{{ asset('bundles/cademreporte/js/highcharts.regression.js') }}"></script>
 <script src="{{ asset('bundles/cademreporte/js/highcharts-more.js') }}"></script>
 <script>
-{% for item in variables_clientes %}
-{{"var i_"~item.variable.nombre~";"}}
-{% endfor %}
+{# % for item in variables_clientes % #}
+{#{"var i_"~item.variable.nombre~";"}#}
+{# % endfor % #}
 var i_cobertura;
 var evo_quiebre_precio;
 var evo_cobertura;
@@ -335,15 +335,15 @@ $(document).ready(function () {
 
 	$('form#filtros').submit(function() {
 		$.get( "{{ path('dashboard_indicadores') }}", $(this).serialize(), function(data) {
-				{% for item in variables_clientes %}
-				if (typeof data.{{item.variable.nombre}} != 'undefined'){
-					if ({{"i_"~item.variable.nombre}}.series.length) {
-						{{"i_"~item.variable.nombre}}.series[0].remove();
+				{# % for item in variables_clientes % #}
+				if (typeof data.{#{item.variable.nombre}#} != 'undefined'){
+					if ({#{"i_"~item.variable.nombre}#}.series.length) {
+						{#{"i_"~item.variable.nombre}#}.series[0].remove();
 					}
-					{{"i_"~item.variable.nombre}}.addSeries(data.{{item.variable.nombre}});
-					{{"i_"~item.variable.nombre}}.setTitle({ text: data.{{item.variable.nombre}}.name});
+					{#{"i_"~item.variable.nombre}#}.addSeries(data.{#{item.variable.nombre}#});
+					{#{"i_"~item.variable.nombre}#}.setTitle({ text: data.{#{item.variable.nombre}#}.name});
 				}
-				{% endfor %}
+				{# % endfor % #}
 				
 				
 				
@@ -357,131 +357,131 @@ $(document).ready(function () {
 		return false;
 	});
 	
-	$.get( "{{ path('dashboard_indicadores') }}", $('form#filtros').serialize(), function(data) {
+	// $.get( "{{ path('dashboard_indicadores') }}", $('form#filtros').serialize(), function(data) {
 	
-		{% for item in variables_clientes %}
-		{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
-			chart: {
-				renderTo: 'i_{{item.variable.nombre}}',
-				plotBackgroundColor: null,
-				plotBorderWidth: null,
-				plotShadow: false
-			},
-			title: {
-				text: '{{item.variable.nombre|capitalize}}'
-			},
-			tooltip: {
-				pointFormat: '{series.name}: <b>{point.percentage}%</b>',
-				percentageDecimals: 1,
-				enabled: false
-			},
-			plotOptions: {
-				pie: {
-					allowPointSelect: true,
-					cursor: 'pointer',
-					dataLabels: {
-						enabled: true,
-						formatter: function() {
-							return this.point.percentage.toFixed(1) + ' %';
-						},
-						distance: -20,
-						color:'white'
-					},
-					showInLegend: true
-				}
-			},
-			series: [data.{{item.variable.nombre}}],
-			credits: {
-				enabled: false
-			}
-		});
-		{% endfor %}
+		// {# % for item in variables_clientes % #}
+		// {#{"i_"~item.variable.nombre}#} = new Highcharts.Chart({
+			// chart: {
+				// renderTo: 'i_{#{item.variable.nombre}#}',
+				// plotBackgroundColor: null,
+				// plotBorderWidth: null,
+				// plotShadow: false
+			// },
+			// title: {
+				// text: '{#{item.variable.nombre|capitalize}#}'
+			// },
+			// tooltip: {
+				// pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+				// percentageDecimals: 1,
+				// enabled: false
+			// },
+			// plotOptions: {
+				// pie: {
+					// allowPointSelect: true,
+					// cursor: 'pointer',
+					// dataLabels: {
+						// enabled: true,
+						// formatter: function() {
+							// return this.point.percentage.toFixed(1) + ' %';
+						// },
+						// distance: -20,
+						// color:'white'
+					// },
+					// showInLegend: true
+				// }
+			// },
+			// series: [data.{#{item.variable.nombre}#}],
+			// credits: {
+				// enabled: false
+			// }
+		// });
+		// {# % endfor % #}
 		
 		
-		evo_quiebre_precio = new Highcharts.Chart({
-            chart: {
-                zoomType: 'x',
-				renderTo: 'evo_quiebre_precio'
-            },
-            title: {
-                text: 'Evolutivo Quiebre y Precio'
-            },
-            xAxis: [{
-                categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-                    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-            }],
-            yAxis: [{
-                title: {
-                    text: 'Promedio Quiebre (%)',
-                    style: {
-                        color: '#4572A7'
-                    }
-                }
+		// evo_quiebre_precio = new Highcharts.Chart({
+            // chart: {
+                // zoomType: 'x',
+				// renderTo: 'evo_quiebre_precio'
+            // },
+            // title: {
+                // text: 'Evolutivo Quiebre y Precio'
+            // },
+            // xAxis: [{
+                // categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                    // 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+            // }],
+            // yAxis: [{
+                // title: {
+                    // text: 'Promedio Quiebre (%)',
+                    // style: {
+                        // color: '#4572A7'
+                    // }
+                // }
     
-            }, {
-                //gridLineWidth: 0,
-                title: {
-                    text: 'Promedio Precio ($)',
-                    style: {
-                        color: '#89A54E'
-                    }
-                },
-                opposite: true
-            }],
-            tooltip: {
-                shared: true
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'center',
-                x: 0,
-                verticalAlign: 'top',
-                y: 30,
-                floating: true,
-                backgroundColor: '#FFFFFF'
-            },
-            series: [data.evo_quiebre_precio.precio, data.evo_quiebre_precio.quiebre,
-			{
-				type: 'line',
-				marker: { enabled: false },
-				/* function returns data for trend-line */
-				data: (function() {
-					  return fitData(data.evo_quiebre_precio.quiebre.data).data;
-					})(),
-				name: 'Tendencia Quiebre'
-			}
+            // }, {
+                // //gridLineWidth: 0,
+                // title: {
+                    // text: 'Promedio Precio ($)',
+                    // style: {
+                        // color: '#89A54E'
+                    // }
+                // },
+                // opposite: true
+            // }],
+            // tooltip: {
+                // shared: true
+            // },
+            // legend: {
+                // layout: 'vertical',
+                // align: 'center',
+                // x: 0,
+                // verticalAlign: 'top',
+                // y: 30,
+                // floating: true,
+                // backgroundColor: '#FFFFFF'
+            // },
+            // series: [data.evo_quiebre_precio.precio, data.evo_quiebre_precio.quiebre,
+			// {
+				// type: 'line',
+				// marker: { enabled: false },
+				// /* function returns data for trend-line */
+				// data: (function() {
+					  // return fitData(data.evo_quiebre_precio.quiebre.data).data;
+					// })(),
+				// name: 'Tendencia Quiebre'
+			// }
 			
-			],
-			credits: {
-				enabled: false
-			},
-            plotOptions: {
-                series: {
-                        events: {
-                            legendItemClick: function () {
-                                var series = this.chart.series;
-                                var seriesIndex = this.index;
-                                if(seriesIndex == 1){//QUIEBRE
-                                    if(series[1].visible == false && series[0].visible == false) mostrarbandaquiebre();
-                                    if(series[1].visible == true && series[0].visible == true) mostrarbandaprecio();
-                                }
-                                if(seriesIndex == 0){//PRECIO
-                                    if(series[1].visible == true && series[0].visible == true) mostrarbandaquiebre();
-                                    if(series[1].visible == false && series[0].visible == false) mostrarbandaprecio();
-                                }
+			// ],
+			// credits: {
+				// enabled: false
+			// },
+            // plotOptions: {
+                // series: {
+                        // events: {
+                            // legendItemClick: function () {
+                                // var series = this.chart.series;
+                                // var seriesIndex = this.index;
+                                // if(seriesIndex == 1){//QUIEBRE
+                                    // if(series[1].visible == false && series[0].visible == false) mostrarbandaquiebre();
+                                    // if(series[1].visible == true && series[0].visible == true) mostrarbandaprecio();
+                                // }
+                                // if(seriesIndex == 0){//PRECIO
+                                    // if(series[1].visible == true && series[0].visible == true) mostrarbandaquiebre();
+                                    // if(series[1].visible == false && series[0].visible == false) mostrarbandaprecio();
+                                // }
                                 
-                                if((series[0].visible == false && series[1].visible == true) || (series[0].visible == true && series[1].visible == false)) borrarbandas();
+                                // if((series[0].visible == false && series[1].visible == true) || (series[0].visible == true && series[1].visible == false)) borrarbandas();
                                 
                                 
                                 
-                                //return false; // <== returning false will cancel the default action
-                            }
-                        }
-                    ,
-                    showInLegend: true
-                }
-            }
-        });
+                                // //return false; // <== returning false will cancel the default action
+                            // }
+                        // }
+                    // ,
+                    // showInLegend: true
+                // }
+            // }
+        // });
         
         function mostrarbandaquiebre(){
             borrarbandas();

@@ -5,12 +5,12 @@ namespace Cadem\ReporteBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Variable
+ * Cadena
  *
- * @ORM\Table(name="VARIABLE")
+ * @ORM\Table(name="CADENA")
  * @ORM\Entity
  */
-class Variable
+class Cadena
 {
     /**
      * @var integer
@@ -29,18 +29,21 @@ class Variable
     private $nombre;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="DESCRIPCION", type="string", length=256, nullable=true)
-     */
-    private $descripcion;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="ACTIVO", type="boolean", nullable=false)
      */
     private $activo;
+
+    /**
+     * @var \Holding
+     *
+     * @ORM\ManyToOne(targetEntity="Holding")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="HOLDING_ID", referencedColumnName="ID")
+     * })
+     */
+    private $holding;
 
 
 
@@ -58,7 +61,7 @@ class Variable
      * Set nombre
      *
      * @param string $nombre
-     * @return Variable
+     * @return Cadena
      */
     public function setNombre($nombre)
     {
@@ -78,33 +81,10 @@ class Variable
     }
 
     /**
-     * Set descripcion
-     *
-     * @param string $descripcion
-     * @return Variable
-     */
-    public function setDescripcion($descripcion)
-    {
-        $this->descripcion = $descripcion;
-    
-        return $this;
-    }
-
-    /**
-     * Get descripcion
-     *
-     * @return string 
-     */
-    public function getDescripcion()
-    {
-        return $this->descripcion;
-    }
-
-    /**
      * Set activo
      *
      * @param boolean $activo
-     * @return Variable
+     * @return Cadena
      */
     public function setActivo($activo)
     {
@@ -121,5 +101,28 @@ class Variable
     public function getActivo()
     {
         return $this->activo;
+    }
+
+    /**
+     * Set holding
+     *
+     * @param \Cadem\ReporteBundle\Entity\Holding $holding
+     * @return Cadena
+     */
+    public function setHolding(\Cadem\ReporteBundle\Entity\Holding $holding = null)
+    {
+        $this->holding = $holding;
+    
+        return $this;
+    }
+
+    /**
+     * Get holding
+     *
+     * @return \Cadem\ReporteBundle\Entity\Holding 
+     */
+    public function getHolding()
+    {
+        return $this->holding;
     }
 }

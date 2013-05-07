@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Cliente
  *
- * @ORM\Table()
+ * @ORM\Table(name="CLIENTE")
  * @ORM\Entity
  */
 class Cliente
@@ -16,39 +16,74 @@ class Cliente
     /**
      * @var integer
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=64)
+     * @ORM\Column(name="NOMBREFANTASIA", type="string", length=64, nullable=false)
      */
-    private $nombre;
+    private $nombrefantasia;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="rut", type="string", length=13)
+     * @ORM\Column(name="RAZONSOCIAL", type="string", length=64, nullable=false)
+     */
+    private $razonsocial;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="RUT", type="string", length=16, nullable=true)
      */
     private $rut;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="tipo", type="string", length=64)
+     * @ORM\Column(name="LOGOFILENAME", type="string", length=128, nullable=true)
      */
-    private $tipo;
+    private $logofilename;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="comentario", type="string", length=255, nullable=true)
+     * @ORM\Column(name="LOGOSTYLE", type="string", length=128, nullable=true)
      */
-    private $comentario;
+    private $logostyle;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="ACTIVO", type="boolean", nullable=false)
+     */
+    private $activo;
+
+	/**
+     * @ORM\OneToMany(targetEntity="Usuario", mappedBy="cliente")
+     */
+	 
+	 protected $usuarios;
+	 
+	 /**
+     * @ORM\OneToMany(targetEntity="Estudio", mappedBy="cliente")
+     */
+	 
+	 protected $estudios;
+	 
+	 
+	 
+	 
+	 public function __construct()
+    {
+        $this->usuarios = new ArrayCollection();
+        $this->estudios = new ArrayCollection();
+    }
 
 
     /**
@@ -62,26 +97,49 @@ class Cliente
     }
 
     /**
-     * Set nombre
+     * Set nombrefantasia
      *
-     * @param string $nombre
+     * @param string $nombrefantasia
      * @return Cliente
      */
-    public function setNombre($nombre)
+    public function setNombrefantasia($nombrefantasia)
     {
-        $this->nombre = $nombre;
+        $this->nombrefantasia = $nombrefantasia;
     
         return $this;
     }
 
     /**
-     * Get nombre
+     * Get nombrefantasia
      *
      * @return string 
      */
-    public function getNombre()
+    public function getNombrefantasia()
     {
-        return $this->nombre;
+        return $this->nombrefantasia;
+    }
+
+    /**
+     * Set razonsocial
+     *
+     * @param string $razonsocial
+     * @return Cliente
+     */
+    public function setRazonsocial($razonsocial)
+    {
+        $this->razonsocial = $razonsocial;
+    
+        return $this;
+    }
+
+    /**
+     * Get razonsocial
+     *
+     * @return string 
+     */
+    public function getRazonsocial()
+    {
+        return $this->razonsocial;
     }
 
     /**
@@ -108,106 +166,86 @@ class Cliente
     }
 
     /**
-     * Set tipo
+     * Set logofilename
      *
-     * @param string $tipo
+     * @param string $logofilename
      * @return Cliente
      */
-    public function setTipo($tipo)
+    public function setLogofilename($logofilename)
     {
-        $this->tipo = $tipo;
+        $this->logofilename = $logofilename;
     
         return $this;
     }
 
     /**
-     * Get tipo
+     * Get logofilename
      *
      * @return string 
      */
-    public function getTipo()
+    public function getLogofilename()
     {
-        return $this->tipo;
+        return $this->logofilename;
     }
 
     /**
-     * Set comentario
+     * Set logostyle
      *
-     * @param string $comentario
+     * @param string $logostyle
      * @return Cliente
      */
-    public function setComentario($comentario)
+    public function setLogostyle($logostyle)
     {
-        $this->comentario = $comentario;
+        $this->logostyle = $logostyle;
     
         return $this;
     }
 
     /**
-     * Get comentario
+     * Get logostyle
      *
      * @return string 
      */
-    public function getComentario()
+    public function getLogostyle()
     {
-        return $this->comentario;
-    }
-	
-	
-	/**
-     * @ORM\OneToMany(targetEntity="Logo", mappedBy="cliente")
-     */
-    protected $logos;
-	
-	
-	/**
-     * @ORM\OneToMany(targetEntity="VariableCliente", mappedBy="cliente")
-     */
-    protected $variables_clientes;
-
-    public function __construct()
-    {
-        $this->logos = new ArrayCollection();
-        $this->variables_clientes = new ArrayCollection();
+        return $this->logostyle;
     }
 
     /**
-     * Add logos
+     * Set activo
      *
-     * @param \Cadem\ReporteBundle\Entity\Logo $logos
+     * @param boolean $activo
      * @return Cliente
      */
-    public function addLogo(\Cadem\ReporteBundle\Entity\Logo $logos)
+    public function setActivo($activo)
     {
-        $this->logos[] = $logos;
+        $this->activo = $activo;
     
         return $this;
     }
 
     /**
-     * Remove logos
+     * Get activo
      *
-     * @param \Cadem\ReporteBundle\Entity\Logo $logos
+     * @return boolean 
      */
-    public function removeLogo(\Cadem\ReporteBundle\Entity\Logo $logos)
+    public function getActivo()
     {
-        $this->logos->removeElement($logos);
+        return $this->activo;
     }
 
     /**
-     * Get logos
+     * Set id
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @param integer $id
+     * @return Cliente
      */
-    public function getLogos()
+    public function setId($id)
     {
-        return $this->logos;
+        $this->id = $id;
+    
+        return $this;
     }
-	
-	/**
-     * @ORM\OneToMany(targetEntity="Usuario", mappedBy="cliente")
-     */
-    protected $usuarios;
 
     /**
      * Add usuarios
@@ -243,35 +281,35 @@ class Cliente
     }
 
     /**
-     * Add variables_clientes
+     * Add estudios
      *
-     * @param \Cadem\ReporteBundle\Entity\VariableCliente $variablesClientes
+     * @param \Cadem\ReporteBundle\Entity\Estudio $estudios
      * @return Cliente
      */
-    public function addVariablesCliente(\Cadem\ReporteBundle\Entity\VariableCliente $variablesClientes)
+    public function addEstudio(\Cadem\ReporteBundle\Entity\Estudio $estudios)
     {
-        $this->variables_clientes[] = $variablesClientes;
+        $this->estudios[] = $estudios;
     
         return $this;
     }
 
     /**
-     * Remove variables_clientes
+     * Remove estudios
      *
-     * @param \Cadem\ReporteBundle\Entity\VariableCliente $variablesClientes
+     * @param \Cadem\ReporteBundle\Entity\Estudio $estudios
      */
-    public function removeVariablesCliente(\Cadem\ReporteBundle\Entity\VariableCliente $variablesClientes)
+    public function removeEstudio(\Cadem\ReporteBundle\Entity\Estudio $estudios)
     {
-        $this->variables_clientes->removeElement($variablesClientes);
+        $this->estudios->removeElement($estudios);
     }
 
     /**
-     * Get variables_clientes
+     * Get estudios
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getVariablesClientes()
+    public function getEstudios()
     {
-        return $this->variables_clientes;
+        return $this->estudios;
     }
 }

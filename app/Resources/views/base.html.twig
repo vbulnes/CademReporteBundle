@@ -88,8 +88,8 @@
         <div class="span3">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
-              <li class="nav-header">LOGO CLIENTE</li>
-              <li class="text-center"><img class="img-rounded" alt="140x140" style="width: {{logo.width}}; height: {{logo.height}};" src="{{ asset('bundles/cademreporte/images/'~logo.filename) }}"></li>
+              <li class="nav-header"><!-- LOGO CLIENTE --></li>
+              <li class="text-center"><img class="img-rounded" alt="140x140" style="{{logostyle}}" src="{{ asset('bundles/cademreporte/images/'~logofilename) }}"></li>
               <li class="nav-header">FILTROS</li>
               <li>{% block filtro %}{% endblock %}</li>
               <!-- <li class="nav-header">NAV</li>

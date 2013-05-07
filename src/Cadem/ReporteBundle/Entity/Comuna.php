@@ -5,12 +5,12 @@ namespace Cadem\ReporteBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Variable
+ * Comuna
  *
- * @ORM\Table(name="VARIABLE")
+ * @ORM\Table(name="COMUNA")
  * @ORM\Entity
  */
-class Variable
+class Comuna
 {
     /**
      * @var integer
@@ -29,18 +29,21 @@ class Variable
     private $nombre;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="DESCRIPCION", type="string", length=256, nullable=true)
-     */
-    private $descripcion;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="ACTIVO", type="boolean", nullable=false)
      */
     private $activo;
+
+    /**
+     * @var \Provincia
+     *
+     * @ORM\ManyToOne(targetEntity="Provincia")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="PROVINCIA_ID", referencedColumnName="ID")
+     * })
+     */
+    private $provincia;
 
 
 
@@ -58,7 +61,7 @@ class Variable
      * Set nombre
      *
      * @param string $nombre
-     * @return Variable
+     * @return Comuna
      */
     public function setNombre($nombre)
     {
@@ -78,33 +81,10 @@ class Variable
     }
 
     /**
-     * Set descripcion
-     *
-     * @param string $descripcion
-     * @return Variable
-     */
-    public function setDescripcion($descripcion)
-    {
-        $this->descripcion = $descripcion;
-    
-        return $this;
-    }
-
-    /**
-     * Get descripcion
-     *
-     * @return string 
-     */
-    public function getDescripcion()
-    {
-        return $this->descripcion;
-    }
-
-    /**
      * Set activo
      *
      * @param boolean $activo
-     * @return Variable
+     * @return Comuna
      */
     public function setActivo($activo)
     {
@@ -121,5 +101,28 @@ class Variable
     public function getActivo()
     {
         return $this->activo;
+    }
+
+    /**
+     * Set provincia
+     *
+     * @param \Cadem\ReporteBundle\Entity\Provincia $provincia
+     * @return Comuna
+     */
+    public function setProvincia(\Cadem\ReporteBundle\Entity\Provincia $provincia = null)
+    {
+        $this->provincia = $provincia;
+    
+        return $this;
+    }
+
+    /**
+     * Get provincia
+     *
+     * @return \Cadem\ReporteBundle\Entity\Provincia 
+     */
+    public function getProvincia()
+    {
+        return $this->provincia;
     }
 }

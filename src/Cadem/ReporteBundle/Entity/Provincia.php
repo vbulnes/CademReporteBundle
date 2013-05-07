@@ -5,12 +5,12 @@ namespace Cadem\ReporteBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Variable
+ * Provincia
  *
- * @ORM\Table(name="VARIABLE")
+ * @ORM\Table(name="PROVINCIA")
  * @ORM\Entity
  */
-class Variable
+class Provincia
 {
     /**
      * @var integer
@@ -29,18 +29,21 @@ class Variable
     private $nombre;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="DESCRIPCION", type="string", length=256, nullable=true)
-     */
-    private $descripcion;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="ACTIVO", type="boolean", nullable=false)
      */
     private $activo;
+
+    /**
+     * @var \Region
+     *
+     * @ORM\ManyToOne(targetEntity="Region")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="REGION_ID", referencedColumnName="ID")
+     * })
+     */
+    private $region;
 
 
 
@@ -58,7 +61,7 @@ class Variable
      * Set nombre
      *
      * @param string $nombre
-     * @return Variable
+     * @return Provincia
      */
     public function setNombre($nombre)
     {
@@ -78,33 +81,10 @@ class Variable
     }
 
     /**
-     * Set descripcion
-     *
-     * @param string $descripcion
-     * @return Variable
-     */
-    public function setDescripcion($descripcion)
-    {
-        $this->descripcion = $descripcion;
-    
-        return $this;
-    }
-
-    /**
-     * Get descripcion
-     *
-     * @return string 
-     */
-    public function getDescripcion()
-    {
-        return $this->descripcion;
-    }
-
-    /**
      * Set activo
      *
      * @param boolean $activo
-     * @return Variable
+     * @return Provincia
      */
     public function setActivo($activo)
     {
@@ -121,5 +101,28 @@ class Variable
     public function getActivo()
     {
         return $this->activo;
+    }
+
+    /**
+     * Set region
+     *
+     * @param \Cadem\ReporteBundle\Entity\Region $region
+     * @return Provincia
+     */
+    public function setRegion(\Cadem\ReporteBundle\Entity\Region $region = null)
+    {
+        $this->region = $region;
+    
+        return $this;
+    }
+
+    /**
+     * Get region
+     *
+     * @return \Cadem\ReporteBundle\Entity\Region 
+     */
+    public function getRegion()
+    {
+        return $this->region;
     }
 }
