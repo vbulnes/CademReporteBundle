@@ -15,6 +15,7 @@ class DashboardController extends Controller
 		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
 		
+		//CLIENTE, ESTUDIO
 		$query = $em->createQuery(
 			'SELECT c,e FROM CademReporteBundle:Cliente c
 			JOIN c.estudios e
@@ -43,7 +44,18 @@ class DashboardController extends Controller
 		$logofilename = $cliente->getLogofilename();
 		$logostyle = $cliente->getLogostyle();
 		
-
+		//QUIEBRE ULTIMA MEDICION |||| OCUPANDO CASE Y DBAL SE PUEDE HACER CON UNA SOLA CONSULTA
+		$query = $em->createQuery(
+			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q
+			WHERE q.hayquiebre = 1');
+		$quiebre = $query->getSingleScalarResult();
+		
+		$query = $em->createQuery(
+			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q');
+		$cantidad_total = $query->getSingleScalarResult();
+		
+		$porc_quiebre = $quiebre/$cantidad_total*100;
+		
 		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Dashboard:index.html.twig',
@@ -52,7 +64,8 @@ class DashboardController extends Controller
 				'form_estudio' => $form_estudio->createView(),
 			),
 			'logofilename' => $logofilename,
-			'logostyle' => $logostyle
+			'logostyle' => $logostyle,
+			'porc_quiebre' => $porc_quiebre
 		));
 
 		//CACHE

@@ -18,9 +18,9 @@
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<!-- <h3>Indicadores</h3> -->
 					<div class="row-fluid">
-						<div class="span3">
+						<!-- <div class="span3">
 							<div id="i_quiebre1" style="height: 200px;"></div>
-						</div>
+						</div> -->
 						<div class="span3">
 							<div id="i_quiebre2" style="height: 200px;"></div>
 						</div>
@@ -97,121 +97,11 @@ Se ha trabajado en una actualización con las siguientes características:
 var i_cobertura;
 var evo_quiebre_precio;
 var evo_cobertura;
-var i_quiebre1, i_quiebre2;
+var i_quiebre2;
 
 $(document).ready(function () {
 		
-	i_quiebre1 = new Highcharts.Chart({
-		chart: {
-	        type: 'gauge',
-	        plotBorderWidth: 1,
-	        plotBackgroundColor: {
-	        	linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-	        	stops: [
-	        		[0, '#FFF4C6'],
-	        		[0.3, '#FFFFFF'],
-	        		[1, '#FFF4C6']
-	        	]
-	        },
-	        plotBackgroundImage: null,
-	        height: 200,
-			renderTo: 'i_quiebre1'
-	    },
 	
-	    title: {
-	        text: 'Quiebre'
-	    },
-	    
-	    pane: [{
-	        startAngle: -45,
-	        endAngle: 45,
-	        background: null,
-	        center: ['50%', '110%'],
-	        size: 180
-	    }],	    		        
-	
-	    yAxis: [{
-	        min: 0,
-	        max: 100,
-	        minorTickPosition: 'outside',
-	        tickPosition: 'outside',
-	        labels: {
-	        	rotation: 'auto',
-	        	distance: 20
-	        },
-	        plotBands: [{
-	        	from: 30,
-	        	to: 70,
-	        	color: 'yellow',
-	        	innerRadius: '100%',
-	        	outerRadius: '102%'
-	        },{
-	        	from: 0,
-	        	to: 30,
-	        	color: 'green',
-	        	innerRadius: '100%',
-	        	outerRadius: '102%'
-	        },{
-	        	from: 70,
-	        	to: 100,
-	        	color: 'red',
-	        	innerRadius: '100%',
-	        	outerRadius: '102%'
-	        }],
-	        pane: 0,
-	        title: {
-	        	text: 'Quiebre',
-	        	y: -30
-	        }
-	    }],
-	    
-	    plotOptions: {
-	    	gauge: {
-	    		dataLabels: {
-	    			enabled: false
-	    		},
-	    		dial: {
-	    			radius: '100%'
-	    		}
-	    	}
-	    },
-	    	
-	
-	    series: [{
-	        data: [10],
-	        yAxis: 0
-	    }],
-		credits: {
-				enabled: false
-			}
-	
-	},
-	
-	// Let the music play
-	function(chart) {
-	    setInterval(function() {
-	        var left = chart.series[0].points[0],
-	            leftVal,
-                texto = "",
-	            inc = (Math.random()) * 5;
-	
-	        leftVal =  left.y + inc;
-	        if (leftVal < 0 || leftVal > 100) {
-	            leftVal = left.y - inc;
-	        }
-            
-            if(leftVal >= 0 && leftVal <= 30) texto = 'Quiebre<br/><span style="font-size:10px">Bueno</span>'
-            if(leftVal > 30 && leftVal <= 70) texto = 'Quiebre<br/><span style="font-size:10px">Regular</span>'
-            if(leftVal > 70 && leftVal <= 100) texto = 'Quiebre<br/><span style="font-size:10px">Pésimo</span>'
-	        chart.yAxis[0].setTitle({
-                text: texto
-            });
-	        left.update(leftVal, false);
-	        chart.redraw();
-	
-	    }, 500);
-	
-	});
 
 	i_quiebre2 = new Highcharts.Chart({
 		chart: {
@@ -304,60 +194,66 @@ $(document).ready(function () {
 	
 	    series: [{
 	        name: 'Quiebre',
-	        data: [10],
+	        data: [{{porc_quiebre|number_format(1)}}],
 	        tooltip: {
 	            valueSuffix: ' %'
-	        }
+	        },
+			dataLabels: {
+				formatter: function () {
+					return  this.y.toString().replace(".",",");
+				}
+			}
 	    }],
 		credits: {
 				enabled: false
 			}
 	
-	}, 
-	// Add some life
-	function (chart) {
-		if (!chart.renderer.forExport) {
-		    setInterval(function () {
-		        var point = chart.series[0].points[0],
-		            newVal,
-		            inc = Math.round((Math.random() - 0.1) * 20);
+	// }
+	// , 
+	// // Add some life
+	// function (chart) {
+		// if (!chart.renderer.forExport) {
+		    // setInterval(function () {
+		        // var point = chart.series[0].points[0],
+		            // newVal,
+		            // inc = Math.round((Math.random() - 0.1) * 20);
 		        
-		        newVal = point.y + inc;
-		        if (newVal < 0 || newVal > 100) {
-		            newVal = point.y - inc;
-		        }
+		        // newVal = point.y + inc;
+		        // if (newVal < 0 || newVal > 100) {
+		            // newVal = point.y - inc;
+		        // }
 		        
-		        point.update(newVal);
+		        // //point.update(newVal);
 		        
-		    }, 3000);
-		}
+		    // }, 3000);
+		// }
 	});
 
 	$('form#filtros').submit(function() {
 		$.get( "{{ path('dashboard_indicadores') }}", $(this).serialize(), function(data) {
 				{# % for item in variables_clientes % #}
-				if (typeof data.{#{item.variable.nombre}#} != 'undefined'){
-					if ({#{"i_"~item.variable.nombre}#}.series.length) {
-						{#{"i_"~item.variable.nombre}#}.series[0].remove();
-					}
-					{#{"i_"~item.variable.nombre}#}.addSeries(data.{#{item.variable.nombre}#});
-					{#{"i_"~item.variable.nombre}#}.setTitle({ text: data.{#{item.variable.nombre}#}.name});
-				}
-				{# % endfor % #}
+				// if (typeof data.{#{item.variable.nombre}#} != 'undefined'){
+					// if ({#{"i_"~item.variable.nombre}#}.series.length) {
+						// {#{"i_"~item.variable.nombre}#}.series[0].remove();
+					// }
+					// {#{"i_"~item.variable.nombre}#}.addSeries(data.{#{item.variable.nombre}#});
+					// {#{"i_"~item.variable.nombre}#}.setTitle({ text: data.{#{item.variable.nombre}#}.name});
+				// }
+				// {# % endfor % #}
 				
 				
 				
-				evo_quiebre_precio.series[0].remove();
-				evo_quiebre_precio.series[0].remove();				
-				evo_quiebre_precio.addSeries(data.evo_quiebre_precio.precio);
-				evo_quiebre_precio.addSeries(data.evo_quiebre_precio.quiebre);
+				// evo_quiebre_precio.series[0].remove();
+				// evo_quiebre_precio.series[0].remove();				
+				// evo_quiebre_precio.addSeries(data.evo_quiebre_precio.precio);
+				// evo_quiebre_precio.addSeries(data.evo_quiebre_precio.quiebre);
 				
 			},
 		'json');
 		return false;
 	});
 	
-	// $.get( "{{ path('dashboard_indicadores') }}", $('form#filtros').serialize(), function(data) {
+	$.get( "{{ path('dashboard_indicadores') }}", $('form#filtros').serialize(), function(data) {
 	
 		// {# % for item in variables_clientes % #}
 		// {#{"i_"~item.variable.nombre}#} = new Highcharts.Chart({
