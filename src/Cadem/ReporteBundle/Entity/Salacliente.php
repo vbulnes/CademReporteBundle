@@ -38,7 +38,7 @@ class Salacliente
     /**
      * @var \Cliente
      *
-     * @ORM\ManyToOne(targetEntity="Cliente")
+     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="salaclientes")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CLIENTE_ID", referencedColumnName="ID")
      * })
@@ -48,7 +48,7 @@ class Salacliente
     /**
      * @var \Empleado
      *
-     * @ORM\ManyToOne(targetEntity="Empleado")
+     * @ORM\ManyToOne(targetEntity="Empleado", inversedBy="salaclientes")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="EMPLEADO_ID", referencedColumnName="ID")
      * })
@@ -58,7 +58,7 @@ class Salacliente
     /**
      * @var \Sala
      *
-     * @ORM\ManyToOne(targetEntity="Sala")
+     * @ORM\ManyToOne(targetEntity="Sala", inversedBy="salaclientes")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="SALA_ID", referencedColumnName="ID")
      * })

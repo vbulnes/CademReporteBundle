@@ -3,6 +3,7 @@
 namespace Cadem\ReporteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Sala
@@ -80,7 +81,7 @@ class Sala
     /**
      * @var \Comuna
      *
-     * @ORM\ManyToOne(targetEntity="Comuna")
+     * @ORM\ManyToOne(targetEntity="Comuna", inversedBy="salas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="COMUNA_ID", referencedColumnName="ID")
      * })
@@ -90,7 +91,7 @@ class Sala
     /**
      * @var \Formato
      *
-     * @ORM\ManyToOne(targetEntity="Formato")
+     * @ORM\ManyToOne(targetEntity="Formato", inversedBy="salas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="FORMATO_ID", referencedColumnName="ID")
      * })
@@ -100,7 +101,7 @@ class Sala
     /**
      * @var \Cadena
      *
-     * @ORM\ManyToOne(targetEntity="Cadena")
+     * @ORM\ManyToOne(targetEntity="Cadena", inversedBy="salas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CADENA_ID", referencedColumnName="ID")
      * })
@@ -110,14 +111,24 @@ class Sala
     /**
      * @var \Canal
      *
-     * @ORM\ManyToOne(targetEntity="Canal")
+     * @ORM\ManyToOne(targetEntity="Canal", inversedBy="salas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="CANAL_ID", referencedColumnName="ID")
      * })
      */
     private $canal;
+	
+	/**
+     * @ORM\OneToMany(targetEntity="Salacliente", mappedBy="sala")
+     */
+	 
+	protected $salaclientes;
 
 
+	public function __construct()
+    {
+        $this->salaclientes = new ArrayCollection();
+    }
 
     /**
      * Get id

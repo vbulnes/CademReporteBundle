@@ -3,6 +3,7 @@
 namespace Cadem\ReporteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Comuna
@@ -38,12 +39,23 @@ class Comuna
     /**
      * @var \Provincia
      *
-     * @ORM\ManyToOne(targetEntity="Provincia")
+     * @ORM\ManyToOne(targetEntity="Provincia", inversedBy="comunas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="PROVINCIA_ID", referencedColumnName="ID")
      * })
      */
     private $provincia;
+	
+	/**
+     * @ORM\OneToMany(targetEntity="Sala", mappedBy="comuna")
+     */
+	 
+	protected $salas;
+	
+	public function __construct()
+    {
+        $this->salas = new ArrayCollection();
+    }
 
 
 

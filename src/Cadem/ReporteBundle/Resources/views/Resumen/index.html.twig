@@ -137,9 +137,9 @@ legend {
 <script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('bundles/cademreporte/js/dataTables.fixedColumns.js') }}"></script>
 <script>
-//{% for item in variables_clientes %}
-//{{"var i_"~item.variable.nombre~";"}}
-//{% endfor %}
+//{#% for item in variables_clientes %#}
+//{#{"var i_"~item.variable.nombre~";"}#}
+//{#% endfor %#}
 
 var i_quiebre;
 var periodo = {{ periodos|raw }};
@@ -311,9 +311,9 @@ $(document).ready(function () {
 	callbacks.add( construirTabla() );
 	callbacks.add( fixedColumn() );
 	
-	{% for item in variables_clientes %}
-        {% if loop.index == 1 %}
-		//{{"i_"~item.variable.nombre}} = new Highcharts.Chart({
+	{#% for item in variables_clientes %#}
+        {#% if loop.index == 1 %#}
+		//{#{"i_"~item.variable.nombre}#} = new Highcharts.Chart({
 		i_quiebre = new Highcharts.Chart({
 		chart: {    
 			renderTo: 'i_quiebre',
@@ -365,8 +365,8 @@ $(document).ready(function () {
 			enabled: false
 		}
 	});
-        {% endif %}
-	{% endfor %}
+        {#% endif %#}
+	{#% endfor %#}
 	
 	cargartooltip();
 	});						
@@ -384,13 +384,13 @@ $(document).ready(function () {
 		
 			$(".ui-state-active").removeClass("ui-state-active");
 			$(this).addClass("ui-state-active");
-			$.get( "{{ path('resumen_evolutivo') }}", label, function(data) {	
-				{% for item in variables_clientes %}
-					{% if loop.index == 1 %}
+			$.get( "{#{ path('resumen_evolutivo') }#}", label, function(data) {	
+				{#% for item in variables_clientes %#}
+					{#% if loop.index == 1 %#}
 						i_quiebre.series[0].setData(data); 
 						i_quiebre.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
-					{% endif %}
-				{% endfor %}
+					{#% endif %#}
+				{#% endfor %#}
 				cargartooltip();
 			});
 		});
@@ -418,12 +418,12 @@ $(document).ready(function () {
 							cont++;
 						});
 					});
-				{% for item in variables_clientes %}
-					{% if loop.index == 1 %}
+				{#% for item in variables_clientes %#}
+					{#% if loop.index == 1 %#}
 						i_quiebre.series[0].setData(data.evolutivo); 
 						i_quiebre.setTitle({ text: "Evolucion Quiebre General"});
-					{% endif %}
-				{% endfor %} 
+					{#% endif %#}
+				{#% endfor %#} 
 				},
 				'json');
 			}

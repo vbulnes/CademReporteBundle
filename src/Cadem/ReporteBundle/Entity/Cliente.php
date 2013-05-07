@@ -68,21 +68,28 @@ class Cliente
      * @ORM\OneToMany(targetEntity="Usuario", mappedBy="cliente")
      */
 	 
-	 protected $usuarios;
+	protected $usuarios;
 	 
 	 /**
      * @ORM\OneToMany(targetEntity="Estudio", mappedBy="cliente")
      */
 	 
-	 protected $estudios;
+	protected $estudios;
+	 
+	 /**
+     * @ORM\OneToMany(targetEntity="Salacliente", mappedBy="cliente")
+     */
+	 
+	protected $salaclientes;
 	 
 	 
 	 
 	 
-	 public function __construct()
+	public function __construct()
     {
         $this->usuarios = new ArrayCollection();
         $this->estudios = new ArrayCollection();
+        $this->salaclientes = new ArrayCollection();
     }
 
 
@@ -311,5 +318,38 @@ class Cliente
     public function getEstudios()
     {
         return $this->estudios;
+    }
+	
+	/**
+     * Add salacliente
+     *
+     * @param \Cadem\ReporteBundle\Entity\Salacliente $salaclientes
+     * @return Cliente
+     */
+    public function addSalacliente(\Cadem\ReporteBundle\Entity\Salacliente $salaclientes)
+    {
+        $this->salaclientes[] = $salaclientes;
+    
+        return $this;
+    }
+
+    /**
+     * Remove salaclientes
+     *
+     * @param \Cadem\ReporteBundle\Entity\Salacliente $salaclientes
+     */
+    public function removeSalacliente(\Cadem\ReporteBundle\Entity\Salacliente $salaclientes)
+    {
+        $this->salaclientes->removeElement($salaclientes);
+    }
+
+    /**
+     * Get salaclientes
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSalacliente()
+    {
+        return $this->salaclientes;
     }
 }

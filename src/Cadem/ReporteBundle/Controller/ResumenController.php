@@ -12,17 +12,88 @@ class ResumenController extends Controller
     
 	public function indexAction()
     {
+		$user = $this->getUser();
+		$em = $this->getDoctrine()->getManager();
+		//CLIENTE Y ESTUDIO, LOGO
+		$query = $em->createQuery(
+			'SELECT c,e FROM CademReporteBundle:Cliente c
+			JOIN c.estudios e
+			JOIN c.usuarios u
+			WHERE u.id = :id AND c.activo = 1 AND e.activo = 1')
+			->setParameter('id', $user->getId());
+		$clientes = $query->getResult();
+		$cliente = $clientes[0];
+		$estudios = $cliente->getEstudios();
+		
+		$choices_estudio = array('0' => 'TODOS');
+		foreach($estudios as $e)
+		{
+			$choices_estudio[$e->getId()] = strtoupper($e->getNombre());
+		}
+		
+		$logofilename = $cliente->getLogofilename();
+		$logostyle = $cliente->getLogostyle();
+		
+		//REGIONES
+		$query = $em->createQuery(
+			'SELECT DISTINCT r FROM CademReporteBundle:Region r
+			JOIN r.provincias p
+			JOIN p.comunas c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$regiones = $query->getResult();
+		
+		$choices_regiones = array();
+		foreach($regiones as $r)
+		{
+			$choices_regiones[$r->getId()] = strtoupper($r->getNombre());
+		}
+
+		//PROVINCIA
+		$query = $em->createQuery(
+			'SELECT DISTINCT p FROM CademReporteBundle:Provincia p
+			JOIN p.comunas c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$provincias = $query->getResult();
+		
+		$choices_provincias = array();
+		foreach($provincias as $r)
+		{
+			$choices_provincias[$r->getId()] = strtoupper($r->getNombre());
+		}
+		
+		//COMUNA
+		$query = $em->createQuery(
+			'SELECT DISTINCT c FROM CademReporteBundle:Comuna c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$comunas = $query->getResult();
+		
+		$choices_comunas = array();
+		foreach($comunas as $r)
+		{
+			$choices_comunas[$r->getId()] = strtoupper($r->getNombre());
+		}
+		
+		
+		
 		$defaultData = array();
 		$form_periodo = $this->createFormBuilder($defaultData)
 			->add('Estudio', 'choice', array(
-				'choices'   => array(
-						'1' => 'QUIEBRE',
-						'2' => 'QUIEBRE Y PRECIO',
-						'3' => 'COBERTURA',
-				),
+				'choices'   => $choices_estudio,
 				'required'  => true,
 				'multiple'  => false,
-				'data' => '1'			
+				'data' => '0'			
 			))		
 			->add('Periodo', 'choice', array(
 				'choices'   => array(
@@ -50,75 +121,47 @@ class ResumenController extends Controller
 			))
 			->getForm();
 			
-	$form_region = $this->createFormBuilder($defaultData)
+		$form_region = $this->createFormBuilder($defaultData)
 			->add('Region', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Arica y Parinacota'),
-						'2' => strtoupper ('Tarapacá'),
-						'3' => strtoupper ('Antofagasta'),
-						'4' => strtoupper ('Atacama'),
-						'5' => strtoupper ('Coquimbo'),
-						'6' => strtoupper ('Valparaíso'),
-						'7' => strtoupper ('Metropolitana de Santiago'),
-						'8' => strtoupper ('Libertador General Bernardo O\'Higgins'),
-						'9' => strtoupper ('Maule'),
-				),
+				'choices'   => $choices_regiones,
 				'required'  => true,
 				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6','7','8','9')			
+				'data' => array_keys($choices_regiones)
 			))
 			->getForm();
 			
 		$form_provincia = $this->createFormBuilder($defaultData)
 			->add('Provincia', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Chacabuco'),
-						'2' => strtoupper ('Cordillera'),
-						'3' => strtoupper ('Maipo'),
-						'4' => strtoupper ('Melipilla'),
-						'5' => strtoupper ('Santiago'),
-						'6' => strtoupper ('Talagante'),
-				),
+				'choices'   => $choices_provincias,
 				'required'  => true,
 				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6')			
+				'data' => array_keys($choices_provincias)
 			))
 			->getForm();
 			
 		$form_comuna = $this->createFormBuilder($defaultData)
 			->add('Comuna', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Colina'),
-						'2' => strtoupper ('Lampa'),
-						'3' => strtoupper ('Puente Alto'),
-						'4' => strtoupper ('San José de Maipo'),
-						'5' => strtoupper ('Calera de Tango'),
-						'6' => strtoupper ('Curacaví'),
-						'7' => strtoupper ('Cerrillos'),
-						'8' => strtoupper ('La Pintana'),
-						'9' => strtoupper ('Lo Barnechea'),
-				),
+				'choices'   => $choices_comunas,
 				'required'  => true,
 				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6','7','8','9')			
+				'data' => array_keys($choices_comunas)
 			))
 			->getForm();
 			
 		//PARAMETROS
-		$user = $this->getUser();
-		$em = $this->getDoctrine()->getManager();
-		$query = $em->createQuery(
-			'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
-            JOIN c.variables_clientes vc
-			JOIN vc.variable v
-			JOIN c.logos l
-			JOIN c.usuarios u
-            WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
-		)->setParameter('id', $user->getId());
 		
-		$cliente = $query->getSingleResult();
-		$logos = $cliente->getLogos();
-		$variables_clientes = $cliente->getVariablesClientes();
+		// $query = $em->createQuery(
+			// 'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
+            // JOIN c.variables_clientes vc
+			// JOIN vc.variable v
+			// JOIN c.logos l
+			// JOIN c.usuarios u
+            // WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
+		// )->setParameter('id', $user->getId());
+		
+		// $cliente = $query->getSingleResult();
+		// $logos = $cliente->getLogos();
+		// $variables_clientes = $cliente->getVariablesClientes();
 		
 		$min = 0;
 		$max = 100;
@@ -296,6 +339,10 @@ $tabla_resumen = array(
 		);
 		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));	
 		
+		
+		
+		
+		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Resumen:index.html.twig',
 		array(
@@ -306,8 +353,8 @@ $tabla_resumen = array(
 				'form_comuna' 	=> $form_comuna->createView(),
 			),
 			'tabla_resumen' => $tabla_resumen,
-			'logo' => $logos[0],
-			'variables_clientes' => $variables_clientes,
+			'logofilename' => $logofilename,
+			'logostyle' => $logostyle,
 			'evolutivo' => json_encode($evolutivo),
 			'periodos' => json_encode($periodos)
 			)

@@ -16,56 +16,32 @@ class DashboardController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		
 		$query = $em->createQuery(
-			'SELECT e,c FROM CademReporteBundle:Estudio e
-			JOIN e.cliente c
+			'SELECT c,e FROM CademReporteBundle:Cliente c
+			JOIN c.estudios e
 			JOIN c.usuarios u
 			WHERE u.id = :id AND c.activo = 1 AND e.activo = 1')
 			->setParameter('id', $user->getId());
-		$estudios = $query->getResult();
-		$choices = array('0' => 'TODOS');
+		$clientes = $query->getResult();
+		$cliente = $clientes[0];
+		$estudios = $cliente->getEstudios();
+		$choices_estudio = array('0' => 'TODOS');
 		foreach($estudios as $e)
 		{
-			$choices[$e->getId()] = strtoupper($e->getNombre());
+			$choices_estudio[$e->getId()] = strtoupper($e->getNombre());
 		}
 		
 		$defaultData = array();
 		$form_estudio = $this->createFormBuilder($defaultData)
 			->add('Estudio', 'choice', array(
-				'choices'   => $choices,
+				'choices'   => $choices_estudio,
 				'required'  => true,
 				'multiple'  => false,
 				'data' => '0'			
 			))
 			->getForm();
 		
-		if(count($estudios) > 0){
-			$logofilename = $estudios[0]->getCliente()->getLogofilename();
-			$logostyle = $estudios[0]->getCliente()->getLogostyle();
-		}
-		
-		
-		
-			
-		
-		
-		//PARAMETROS
-		// $user = $this->getUser();
-		// $em = $this->getDoctrine()->getManager();
-		// $query = $em->createQuery(
-			// 'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
-            // JOIN c.variables_clientes vc
-			// JOIN vc.variable v
-			// JOIN c.logos l
-			// JOIN c.usuarios u
-            // WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
-		// )->setParameter('id', $user->getId());
-		
-		
-		
-		// $repository = $this->getDoctrine()->getRepository('CademReporteBundle:Estudio');
-		// $products = $repository->findAll();
-		// $r = $products[0];
-		// print_r($r->getId());
+		$logofilename = $cliente->getLogofilename();
+		$logostyle = $cliente->getLogostyle();
 		
 
 		

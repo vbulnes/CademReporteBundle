@@ -3,6 +3,7 @@
 namespace Cadem\ReporteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Region
@@ -41,6 +42,17 @@ class Region
      * @ORM\Column(name="ACTIVO", type="boolean", nullable=false)
      */
     private $activo;
+	
+	/**
+     * @ORM\OneToMany(targetEntity="Provincia", mappedBy="region")
+     */
+	 
+	protected $provincias;
+	
+	public function __construct()
+    {
+        $this->provincias = new ArrayCollection();
+    }
 
 
 
