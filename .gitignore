@@ -10,5 +10,8 @@ web/uploads/*
 web/bundles/*
 bin/
 # Configuration files
-#app/config/parameters.ini
+app/config/parameters.ini
 app/config/parameters.yml
+
+# arhivos doctrine xml
+src/Cadem/ReporteBundle/Resources/config/doctrine
