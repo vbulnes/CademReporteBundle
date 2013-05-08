@@ -340,12 +340,65 @@ $tabla_resumen = array(
 							// ),
 						// ),
 					// );
+					
+					
+					
+		$em = $this->getDoctrine()->getManager();
+
+		$user = $this->getUser();
+		
+		//medicion join estudio
+		$query = $em->createQuery(
+			'SELECT m.nombre, m.fechafin FROM CademReporteBundle:Medicion m
+			JOIN m.estudio e
+			JOIN e.cliente c
+			JOIN c.usuarios u
+			WHERE u.id = :id')
+			->setParameter('id', $user->getId());
+		$mediciones_q = $query->getArrayResult();
+		
+		foreach($mediciones_q as $m)
+		{
+			$mediciones[] = $m['nombre'];
+			$mediciones_corta[] = $m['fechafin']->format('d/m');
+		}
+		
+		//quiebre join salamedicion join medicion
+		$query = $em->createQuery(
+			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q
+			JOIN q.salamedicion sm
+			JOIN sm.medicion m
+			JOIN m.estudio e
+			JOIN e.cliente c
+			JOIN c.usuarios u
+			WHERE u.id = :id
+			GROUP BY m.id')
+			->setParameter('id', $user->getId());
+		$quiebres_totales = $query->getResult();
+
+		$query = $em->createQuery(
+			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q
+			JOIN q.salamedicion sm
+			JOIN sm.medicion m
+			JOIN m.estudio e
+			JOIN e.cliente c
+			JOIN c.usuarios u
+			WHERE u.id = :id
+			AND q.hayquiebre = 1
+			GROUP BY m.id')
+			->setParameter('id', $user->getId());
+		$quiebres = $query->getResult();
+		
+		foreach ($quiebres_totales as $key => $value) $porc_quiebre[] = $quiebres[$key][1]/$quiebres_totales[$key][1]*100;
+		
+		
+		
 		
 		$periodos= array(
-			'tooltip' => array('2012-03 SEM 1_7','2013-03 SEM 8_13','2013-03 SEM 15_20','2013-03 SEM 21_26','2013-03 SEM 27_31','2013-04 SEM 1_7','2013-04 SEM 8_13','2013-04 SEM 14_19'),
-			'data' => array('SEM1','SEM2','SEM3','SEM4','SEM5','SEM6','SEM7','SEM8'),
+			'tooltip' => $mediciones,
+			'data' => $mediciones_corta,
 		);
-		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));	
+		$evolutivo= $porc_quiebre;	
 		
 		
 		
