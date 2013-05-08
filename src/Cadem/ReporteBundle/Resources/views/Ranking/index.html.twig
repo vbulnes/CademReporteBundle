@@ -40,60 +40,33 @@
                             </tr>
                           </thead>
                           <tbody>
+							{% set rank = 1 %}
+							{% for row in ranking_sala %}
                             <tr>
-                              <td>1</td>
-                              <td>Lider 123</td>
-                              <td>3</td>
-                              <td>15</td>
-                              <td>12
-							  <div style="height:20px;display:inline">
-								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem">
-							  <div>
+                              <td>{{rank}}</td>
+                              <td>[{{row.codigosala}}] {{row.calle}} {{row.numerocalle}}</td>
+                              <td>{% if row.quiebre_anterior is not null %} {{row.quiebre_anterior|number_format(1)}} {% else %} NO {% endif %}</td>
+                              <td>{% if row.quiebre is not null %} {{row.quiebre|number_format(1)}} {% else %} NO {% endif %}</td>
+                              <td>{% if row.diferencia is not null %}
+							  {{row.diferencia|number_format(1)}}
+									{% if row.diferencia > 0 %}
+									<div style="height:20px;display:inline">
+										<img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem">
+									<div>
+									{% elseif row.diferencia < 0 %}
+									<div style="height:20px;display:inline">
+										<img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
+									<div>
+									{% else %}
+									{% endif %}
+							  {% else %}
+							  NO
+							  {% endif %}
+							  
 							  </td>
                             </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>Jumbo 234</td>
-                              <td>45</td>
-                              <td>85</td>
-                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem"><div></td>
-                            </tr>
-                            <tr>
-                              <td>3</td>
-                              <td>Santa Isabel 657</td>
-                              <td>23</td>
-                              <td>12</td>
-                              <td>-11 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
-                            <tr>
-                              <td>4</td>
-                              <td>Santa Isabel 234</td>
-                              <td>40</td>
-                              <td>12</td>
-                              <td>-28 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
-                            <tr>
-                              <td>5</td>
-                              <td>Santa Isabel 73</td>
-                              <td>23</td>
-                              <td>22</td>
-                              <td>-1 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
-                            <tr>
-                              <td>6</td>
-                              <td>Santa Isabel 8563</td>
-                              <td>23</td>
-                              <td>30</td>
-                              <td>7 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
+							{% set rank = rank+1 %}
+							{% endfor %}
                           </tbody>
                         </table>
 					
@@ -122,62 +95,38 @@
                             </tr>
                           </thead>
                           <tbody>
+                            {% set rank = 1 %}
+							{% for row in ranking_item %}
                             <tr>
-                              <td>1</td>
-                              <td>Yoghurt A</td>
-                              <td>3</td>
-                              <td>15</td>
-                              <td>12
-							  <div style="height:20px;display:inline">
-								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem">
-							  <div>
+                              <td>{{rank}}</td>
+                              <td>{{row.codigoitem}}</td>
+                              <td>{% if row.quiebre_anterior is not null %} {{row.quiebre_anterior|number_format(1)}} {% else %} NO {% endif %}</td>
+                              <td>{% if row.quiebre is not null %} {{row.quiebre|number_format(1)}} {% else %} NO {% endif %}</td>
+                              <td>{% if row.diferencia is not null %}
+							  {{row.diferencia|number_format(1)}}
+									{% if row.diferencia > 0 %}
+									<div style="height:20px;display:inline">
+										<img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem">
+									<div>
+									{% elseif row.diferencia < 0 %}
+									<div style="height:20px;display:inline">
+										<img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
+									<div>
+									{% else %}
+									{% endif %}
+							  {% else %}
+							  NO
+							  {% endif %}
+							  
 							  </td>
                             </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>Yoghurt B</td>
-                              <td>45</td>
-                              <td>85</td>
-                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem"><div></td>
-                            </tr>
-                            <tr>
-                              <td>3</td>
-                              <td>Yoghurt C</td>
-                              <td>23</td>
-                              <td>12</td>
-                              <td>-11 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
-                              <td>4</td>
-                              <td>Yoghurt D</td>
-                              <td>230</td>
-                              <td>12</td>
-                              <td>-111 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
-                              <td>5</td>
-                              <td>Yoghurt F</td>
-                              <td>24</td>
-                              <td>26</td>
-                              <td>2 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
-                              <td>6</td>
-                              <td>Yoghurt G</td>
-                              <td>23</td>
-                              <td>12</td>
-                              <td>-11 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
+							{% set rank = rank+1 %}
+							{% endfor %}
                           </tbody>
                         </table>
 				</div>
                 <div class="hero-unit" style="padding:15px;margin-bottom:10px">
-					<h5 style="float:left">Ranking por Vendedor</h5>
+					<h5 style="float:left">Ranking por Empleado</h5>
 						<form style="float:right">
 							<label class="radio inline">
 							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
@@ -193,46 +142,46 @@
                           <thead>
                             <tr>
                               <th>#</th>
-                              <th>Vendedor</th>
+                              <th>Empleado</th>
                               <th>% Quiebre ant</th>
                               <th>% Quiebre act</th>
                               <th>Ptos Dif</th>
                             </tr>
                           </thead>
                           <tbody>
+                            {% set rank = 1 %}
+							{% for row in ranking_empleado %}
                             <tr>
-                              <td>1</td>
-                              <td>Juan Perez</td>
-                              <td>3</td>
-                              <td>15</td>
-                              <td>12
-							  <div style="height:20px;display:inline">
-								  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem">
-							  <div>
+                              <td>{{rank}}</td>
+                              <td>{{row.nombre}}</td>
+                              <td>{% if row.quiebre_anterior is not null %} {{row.quiebre_anterior|number_format(1)}} {% else %} NO {% endif %}</td>
+                              <td>{% if row.quiebre is not null %} {{row.quiebre|number_format(1)}} {% else %} NO {% endif %}</td>
+                              <td>{% if row.diferencia is not null %}
+							  {{row.diferencia|number_format(1)}}
+									{% if row.diferencia > 0 %}
+									<div style="height:20px;display:inline">
+										<img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem">
+									<div>
+									{% elseif row.diferencia < 0 %}
+									<div style="height:20px;display:inline">
+										<img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
+									<div>
+									{% else %}
+									{% endif %}
+							  {% else %}
+							  NO
+							  {% endif %}
+							  
 							  </td>
                             </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>Juan Junior</td>
-                              <td>45</td>
-                              <td>85</td>
-                              <td>40 <div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem"><div></td>
-                            </tr>
-                            <tr>
-                              <td>3</td>
-                              <td>Juan Antonio</td>
-                              <td>23</td>
-                              <td>12</td>
-                              <td>-11 <div style="height:20px;display:inline">
-							  <img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem">
-							  <div></td>
-                            </tr>
+							{% set rank = rank+1 %}
+							{% endfor %}
                           </tbody>
                         </table>
 				</div>
 			</div>
 			
-			<div class="container-fluid well" style="padding-top:0">
+			<!-- <div class="container-fluid well" style="padding-top:0">
 				<h4>Estudio Cobertura</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
                     <h5 style="float:left">Ranking por Sala</h5>
@@ -396,7 +345,7 @@
                           </tbody>
                         </table>
 				</div>
-			</div>
+			</div> -->
             
         </div><!--/span-->
 {% endblock %}

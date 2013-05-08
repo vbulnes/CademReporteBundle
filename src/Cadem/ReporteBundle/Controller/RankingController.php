@@ -6,20 +6,108 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 class RankingController extends Controller
 {
     
 	public function indexAction()
     {
+		$user = $this->getUser();
+		$em = $this->getDoctrine()->getManager();
+		//CLIENTE Y ESTUDIO, LOGO
+		$query = $em->createQuery(
+			'SELECT c,e FROM CademReporteBundle:Cliente c
+			JOIN c.estudios e
+			JOIN c.usuarios u
+			WHERE u.id = :id AND c.activo = 1 AND e.activo = 1')
+			->setParameter('id', $user->getId());
+		$clientes = $query->getResult();
+		$cliente = $clientes[0];
+		$estudios = $cliente->getEstudios();
+		
+		$choices_estudio = array('0' => 'TODOS');
+		foreach($estudios as $e)
+		{
+			$choices_estudio[$e->getId()] = strtoupper($e->getNombre());
+		}
+		
+		$logofilename = $cliente->getLogofilename();
+		$logostyle = $cliente->getLogostyle();
+		
+		//REGIONES
+		$query = $em->createQuery(
+			'SELECT DISTINCT r FROM CademReporteBundle:Region r
+			JOIN r.provincias p
+			JOIN p.comunas c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$regiones = $query->getResult();
+		
+		$choices_regiones = array();
+		foreach($regiones as $r)
+		{
+			$choices_regiones[$r->getId()] = strtoupper($r->getNombre());
+		}
+
+		//PROVINCIA
+		$query = $em->createQuery(
+			'SELECT DISTINCT p FROM CademReporteBundle:Provincia p
+			JOIN p.comunas c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$provincias = $query->getResult();
+		
+		$choices_provincias = array();
+		foreach($provincias as $r)
+		{
+			$choices_provincias[$r->getId()] = strtoupper($r->getNombre());
+		}
+		
+		//COMUNA
+		$query = $em->createQuery(
+			'SELECT DISTINCT c FROM CademReporteBundle:Comuna c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$comunas = $query->getResult();
+		
+		$choices_comunas = array();
+		foreach($comunas as $r)
+		{
+			$choices_comunas[$r->getId()] = strtoupper($r->getNombre());
+		}
+		
+		
+		//MEDICION
+		$query = $em->createQuery(
+			'SELECT m.id, m.nombre FROM CademReporteBundle:Medicion m
+			JOIN m.estudio e
+			JOIN e.cliente c
+			WHERE c.id = :id
+			ORDER BY m.fechainicio DESC')
+			->setParameter('id', $cliente->getId());
+		$mediciones_q = $query->getArrayResult();
+		
+		foreach($mediciones_q as $m) $mediciones[$m['id']] = $m['nombre'];
+		
+		if(count($mediciones) > 0) $ultima_medicion = array_keys($mediciones)[0];
+		else $ultima_medicion = null;
+		
+		
 		$defaultData = array();
 		$form_estudio = $this->createFormBuilder($defaultData)
 			->add('Estudio', 'choice', array(
-				'choices'   => array(
-						'0' => 'TODOS',
-						'1' => 'QUIEBRE Y PRECIO',
-						'2' => 'COBERTURA',
-				),
+				'choices'   => $choices_estudio,
 				'required'  => true,
 				'multiple'  => false,
 				'data' => '0'			
@@ -27,31 +115,16 @@ class RankingController extends Controller
 			->getForm();
 		$form_periodo = $this->createFormBuilder($defaultData)
 			->add('Periodo', 'choice', array(
-				'choices'   => array(
-						'1' => '2013 - 03 - SEM 01_10',
-						'2' => '2013 - 03 - SEM 11_15',
-						'3' => '2013 - 03 - SEM 15_22',
-						'4' => '2013 - 03 - SEM 22_31',
-				),
+				'choices'   => $mediciones,
 				'required'  => true,
 				'multiple'  => false,
-				'data' => '4'			
+				'data' => $ultima_medicion			
 			))
 			->getForm();
 			
 		$form_region = $this->createFormBuilder($defaultData)
 			->add('Region', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Arica y Parinacota'),
-						'2' => strtoupper ('Tarapacá'),
-						'3' => strtoupper ('Antofagasta'),
-						'4' => strtoupper ('Atacama'),
-						'5' => strtoupper ('Coquimbo'),
-						'6' => strtoupper ('Valparaíso'),
-						'7' => strtoupper ('Metropolitana de Santiago'),
-						'8' => strtoupper ('Libertador General Bernardo O\'Higgins'),
-						'9' => strtoupper ('Maule'),
-				),
+				'choices'   => $choices_regiones,
 				'required'  => true,
 				'multiple'  => true,
 				'data' => array('1','2','3','4','5','6','7','8','9')			
@@ -60,14 +133,7 @@ class RankingController extends Controller
 			
 		$form_provincia = $this->createFormBuilder($defaultData)
 			->add('Provincia', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Chacabuco'),
-						'2' => strtoupper ('Cordillera'),
-						'3' => strtoupper ('Maipo'),
-						'4' => strtoupper ('Melipilla'),
-						'5' => strtoupper ('Santiago'),
-						'6' => strtoupper ('Talagante'),
-				),
+				'choices'   => $choices_provincias,
 				'required'  => true,
 				'multiple'  => true,
 				'data' => array('1','2','3','4','5','6')			
@@ -76,17 +142,7 @@ class RankingController extends Controller
 			
 		$form_comuna = $this->createFormBuilder($defaultData)
 			->add('Comuna', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Colina'),
-						'2' => strtoupper ('Lampa'),
-						'3' => strtoupper ('Puente Alto'),
-						'4' => strtoupper ('San José de Maipo'),
-						'5' => strtoupper ('Calera de Tango'),
-						'6' => strtoupper ('Curacaví'),
-						'7' => strtoupper ('Cerrillos'),
-						'8' => strtoupper ('La Pintana'),
-						'9' => strtoupper ('Lo Barnechea'),
-				),
+				'choices'   => $choices_comunas,
 				'required'  => true,
 				'multiple'  => true,
 				'data' => array('1','2','3','4','5','6','7','8','9')			
@@ -95,35 +151,139 @@ class RankingController extends Controller
 			
 		
 		
-		//PARAMETROS
-		$user = $this->getUser();
-		$em = $this->getDoctrine()->getManager();
-		$query = $em->createQuery(
-			'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
-            JOIN c.variables_clientes vc
-			JOIN vc.variable v
-			JOIN c.logos l
-			JOIN c.usuarios u
-            WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
-		)->setParameter('id', $user->getId());
+		//RANKING POR SALA--------------------------------------------------------------------
+		// $rsm = new ResultSetMapping;
+		// $rsm->addEntityResult('CademReporteBundle:Sala', 's');
+		// $rsm->addJoinedEntityResult('CademReporteBundle:Salacliente' , 'sc', 's', 'salaclientes');
+		// $rsm->addJoinedEntityResult('CademReporteBundle:Salamedicion' , 'sm', 'sc', 'salamediciones');
+		// $rsm->addJoinedEntityResult('CademReporteBundle:Cliente' , 'c', 'sc', 'cliente');
+		// $rsm->addJoinedEntityResult('CademReporteBundle:Medicion' , 'm', 'sm', 'medicion');
+		// $rsm->addJoinedEntityResult('CademReporteBundle:Quiebre' , 'q', 'sm', 'quiebres');
+		// $rsm->addScalarResult('quiebre','quiebre');
+		// $rsm->addScalarResult('quiebre2','quiebre2');
+		// $rsm->addScalarResult('id2','id2');
+		// $rsm->addScalarResult('id','id');
 		
-		$cliente = $query->getSingleResult();
-		$logos = $cliente->getLogos();
-		$variables_clientes = $cliente->getVariablesClientes();
+
+		// $query = $em->createNativeQuery('SELECT * FROM 
+// (SELECT s.id, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALA s
+			// INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
+			// INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			// INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			// INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			// INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			// WHERE c.id = 12 AND m.id = 1
+			// GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
+			// ) AS A LEFT JOIN
+			
+// (SELECT s.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre2 FROM SALA s
+			// INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
+			// INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			// INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			// INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			// INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			// WHERE c.id = 12 AND m.id = 2
+			// GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
+			// ) AS B on A.ID = B.id2', $rsm);
+
+		// $result = $query->getArrayResult();
+		
+		
+		
+		$sql = "SELECT *, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+(SELECT s.id, s.calle, s.numerocalle, sc.codigosala, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALA s
+			INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			WHERE c.id = 12 AND m.id = 1
+			GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
+			) AS A LEFT JOIN
+			
+(SELECT s.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre_anterior FROM SALA s
+			INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			WHERE c.id = 12 AND m.id = 2
+			GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
+			) AS B on A.ID = B.id2
+			ORDER BY quiebre ASC";
+
+		$ranking_sala = $em->getConnection()->executeQuery($sql)->fetchAll();
+		
+		//RANKING POR PRODUCTO-----------------------------------------------
+		$sql = "SELECT *, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+(SELECT ic.id, ic.codigoitem,(SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALACLIENTE sc
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			INNER JOIN ITEMCLIENTE ic on q.ITEMCLIENTE_ID = ic.ID
+			WHERE c.ID = 12 AND m.ID = 1
+			GROUP BY ic.id, ic.codigoitem
+			) AS A LEFT JOIN
+			
+(SELECT ic.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre_anterior FROM SALACLIENTE sc
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			INNER JOIN ITEMCLIENTE ic on q.ITEMCLIENTE_ID = ic.ID
+			WHERE c.ID = 12 AND m.ID = 2
+			GROUP BY ic.id
+			) AS B on A.ID = B.ID2
+			ORDER BY quiebre ASC";
+			
+		$ranking_item = $em->getConnection()->executeQuery($sql)->fetchAll();
+		
+		
+		// RANKING POR VENDEDOR--------------------------------------------------
+		$sql = "SELECT *, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+(SELECT e.id, e.nombre,(SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALACLIENTE sc
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			INNER JOIN EMPLEADO e on e.ID = sc.EMPLEADO_ID
+			WHERE c.ID = 12 AND m.ID = 1
+			GROUP BY e.ID, e.NOMBRE
+			) AS A LEFT JOIN
+			
+(SELECT e.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre_anterior FROM SALACLIENTE sc
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			INNER JOIN EMPLEADO e on e.ID = sc.EMPLEADO_ID
+			WHERE c.ID = 12 AND m.ID = 2
+			GROUP BY e.ID
+			) AS B on A.ID = B.ID2
+			ORDER BY quiebre ASC";
+			
+		$ranking_empleado = $em->getConnection()->executeQuery($sql)->fetchAll();
+		
+		// return print_r($ranking_sala,true);
 
 		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Ranking:index.html.twig',
-		array(
-			'forms' => array(
-				'form_estudio' 	=> $form_estudio->createView(),
-				'form_periodo' 	=> $form_periodo->createView(),
-				'form_region' 	=> $form_region->createView(),
-				'form_provincia' => $form_provincia->createView(),
-				'form_comuna' 	=> $form_comuna->createView(),
-			),
-			'logo' => $logos[0],
-			'variables_clientes' => $variables_clientes)
+			array(
+				'forms' => array(
+					'form_estudio' 	=> $form_estudio->createView(),
+					'form_periodo' 	=> $form_periodo->createView(),
+					'form_region' 	=> $form_region->createView(),
+					'form_provincia' => $form_provincia->createView(),
+					'form_comuna' 	=> $form_comuna->createView(),
+					),
+				'logofilename' => $logofilename,
+				'logostyle' => $logostyle,
+				'ranking_sala' => $ranking_sala,
+				'ranking_empleado' => $ranking_empleado,
+				'ranking_item' => $ranking_item,
+			)
 		);
 
 		//CACHE
