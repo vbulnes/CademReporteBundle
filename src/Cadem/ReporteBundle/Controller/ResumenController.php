@@ -85,7 +85,20 @@ class ResumenController extends Controller
 			$choices_comunas[$r->getId()] = strtoupper($r->getNombre());
 		}
 		
+		//MEDICION
+		$query = $em->createQuery(
+			'SELECT m.id, m.nombre FROM CademReporteBundle:Medicion m
+			JOIN m.estudio e
+			JOIN e.cliente c
+			WHERE c.id = :id
+			ORDER BY m.fechainicio DESC')
+			->setParameter('id', $cliente->getId());
+		$mediciones_q = $query->getArrayResult();
 		
+		foreach($mediciones_q as $m) $mediciones[$m['id']] = $m['nombre'];
+		
+		if(count($mediciones) > 0) $ultima_medicion = array_keys($mediciones)[0];
+		else $ultima_medicion = null;
 		
 		$defaultData = array();
 		$form_periodo = $this->createFormBuilder($defaultData)
@@ -96,15 +109,10 @@ class ResumenController extends Controller
 				'data' => '0'			
 			))		
 			->add('Periodo', 'choice', array(
-				'choices'   => array(
-						'1' => '2013-03 SEM 1_7',
-						'2' => '2013-03 SEM 8_14',
-						'3' => '2013-03 SEM 15_24',
-						'4' => '2013-03 SEM 25_31'
-				),
+				'choices'   => $mediciones,
 				'required'  => true,
 				'multiple'  => false,
-				'data' => '1'			
+				'data' => $ultima_medicion
 			))
 			->getForm();
 		$form_canal = $this->createFormBuilder($defaultData)
