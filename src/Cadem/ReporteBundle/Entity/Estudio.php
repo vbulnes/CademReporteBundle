@@ -3,6 +3,7 @@
 namespace Cadem\ReporteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Estudio
@@ -69,6 +70,24 @@ class Estudio
      */
     private $empleado;
 
+	/**
+     * @ORM\OneToMany(targetEntity="Estudiovariable", mappedBy="estudio")
+     */
+	 
+	protected $estudiovariables;
+	
+	/**
+     * @ORM\OneToMany(targetEntity="Medicion", mappedBy="estudio")
+     */
+	 
+	protected $mediciones;
+
+	
+	public function __construct()
+    {
+        $this->estudiovariables = new ArrayCollection();
+        $this->mediciones = new ArrayCollection();
+    }
 
 
     /**
@@ -230,5 +249,71 @@ class Estudio
         $this->id = $id;
     
         return $this;
+    }
+
+    /**
+     * Add estudiovariables
+     *
+     * @param \Cadem\ReporteBundle\Entity\Estudiovariable $estudiovariables
+     * @return Estudio
+     */
+    public function addEstudiovariable(\Cadem\ReporteBundle\Entity\Estudiovariable $estudiovariables)
+    {
+        $this->estudiovariables[] = $estudiovariables;
+    
+        return $this;
+    }
+
+    /**
+     * Remove estudiovariables
+     *
+     * @param \Cadem\ReporteBundle\Entity\Estudiovariable $estudiovariables
+     */
+    public function removeEstudiovariable(\Cadem\ReporteBundle\Entity\Estudiovariable $estudiovariables)
+    {
+        $this->estudiovariables->removeElement($estudiovariables);
+    }
+
+    /**
+     * Get estudiovariables
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEstudiovariables()
+    {
+        return $this->estudiovariables;
+    }
+
+    /**
+     * Add mediciones
+     *
+     * @param \Cadem\ReporteBundle\Entity\Medicion $mediciones
+     * @return Estudio
+     */
+    public function addMedicione(\Cadem\ReporteBundle\Entity\Medicion $mediciones)
+    {
+        $this->mediciones[] = $mediciones;
+    
+        return $this;
+    }
+
+    /**
+     * Remove mediciones
+     *
+     * @param \Cadem\ReporteBundle\Entity\Medicion $mediciones
+     */
+    public function removeMedicione(\Cadem\ReporteBundle\Entity\Medicion $mediciones)
+    {
+        $this->mediciones->removeElement($mediciones);
+    }
+
+    /**
+     * Get mediciones
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMediciones()
+    {
+        return $this->mediciones;
     }
 }

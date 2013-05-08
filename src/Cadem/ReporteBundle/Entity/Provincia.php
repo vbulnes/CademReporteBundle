@@ -136,4 +136,37 @@ class Provincia
     {
         return $this->region;
     }
+
+    /**
+     * Add comunas
+     *
+     * @param \Cadem\ReporteBundle\Entity\Comuna $comunas
+     * @return Provincia
+     */
+    public function addComuna(\Cadem\ReporteBundle\Entity\Comuna $comunas)
+    {
+        $this->comunas[] = $comunas;
+    
+        return $this;
+    }
+
+    /**
+     * Remove comunas
+     *
+     * @param \Cadem\ReporteBundle\Entity\Comuna $comunas
+     */
+    public function removeComuna(\Cadem\ReporteBundle\Entity\Comuna $comunas)
+    {
+        $this->comunas->removeElement($comunas);
+    }
+
+    /**
+     * Get comunas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getComunas()
+    {
+        return $this->comunas;
+    }
 }

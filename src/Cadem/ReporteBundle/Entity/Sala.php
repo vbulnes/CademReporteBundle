@@ -415,4 +415,37 @@ class Sala
     {
         return $this->canal;
     }
+
+    /**
+     * Add salaclientes
+     *
+     * @param \Cadem\ReporteBundle\Entity\Salacliente $salaclientes
+     * @return Sala
+     */
+    public function addSalacliente(\Cadem\ReporteBundle\Entity\Salacliente $salaclientes)
+    {
+        $this->salaclientes[] = $salaclientes;
+    
+        return $this;
+    }
+
+    /**
+     * Remove salaclientes
+     *
+     * @param \Cadem\ReporteBundle\Entity\Salacliente $salaclientes
+     */
+    public function removeSalacliente(\Cadem\ReporteBundle\Entity\Salacliente $salaclientes)
+    {
+        $this->salaclientes->removeElement($salaclientes);
+    }
+
+    /**
+     * Get salaclientes
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSalaclientes()
+    {
+        return $this->salaclientes;
+    }
 }

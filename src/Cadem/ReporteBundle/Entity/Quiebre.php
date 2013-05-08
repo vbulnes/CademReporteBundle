@@ -62,13 +62,13 @@ class Quiebre
     /**
      * @var \Salamedicion
      *
-     * @ORM\ManyToOne(targetEntity="Salamedicion")
+     * @ORM\ManyToOne(targetEntity="Salamedicion", inversedBy="quiebres")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="SALAMEDICION_ID", referencedColumnName="ID")
      * })
      */
     private $salamedicion;
-
+	
 
 
     /**

@@ -38,7 +38,7 @@ class Estudiovariable
     /**
      * @var \Estudio
      *
-     * @ORM\ManyToOne(targetEntity="Estudio")
+     * @ORM\ManyToOne(targetEntity="Estudio", inversedBy="estudiovariables")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ESTUDIO_ID", referencedColumnName="ID")
      * })
@@ -48,7 +48,7 @@ class Estudiovariable
     /**
      * @var \Variable
      *
-     * @ORM\ManyToOne(targetEntity="Variable")
+     * @ORM\ManyToOne(targetEntity="Variable", inversedBy="estudiovariables")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="VARIABLE_ID", referencedColumnName="ID")
      * })

@@ -3,6 +3,7 @@
 namespace Cadem\ReporteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Medicion
@@ -52,14 +53,24 @@ class Medicion
     /**
      * @var \Estudio
      *
-     * @ORM\ManyToOne(targetEntity="Estudio")
+     * @ORM\ManyToOne(targetEntity="Estudio", inversedBy="mediciones")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ESTUDIO_ID", referencedColumnName="ID")
      * })
      */
     private $estudio;
+	
+	/**
+     * @ORM\OneToMany(targetEntity="Salamedicion", mappedBy="medicion")
+     */
+	 
+	protected $salamediciones;
 
-
+	
+	public function __construct()
+    {
+        $this->salamediciones = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -184,5 +195,38 @@ class Medicion
     public function getEstudio()
     {
         return $this->estudio;
+    }
+
+    /**
+     * Add salamediciones
+     *
+     * @param \Cadem\ReporteBundle\Entity\Salamedicion $salamediciones
+     * @return Medicion
+     */
+    public function addSalamedicione(\Cadem\ReporteBundle\Entity\Salamedicion $salamediciones)
+    {
+        $this->salamediciones[] = $salamediciones;
+    
+        return $this;
+    }
+
+    /**
+     * Remove salamediciones
+     *
+     * @param \Cadem\ReporteBundle\Entity\Salamedicion $salamediciones
+     */
+    public function removeSalamedicione(\Cadem\ReporteBundle\Entity\Salamedicion $salamediciones)
+    {
+        $this->salamediciones->removeElement($salamediciones);
+    }
+
+    /**
+     * Get salamediciones
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSalamediciones()
+    {
+        return $this->salamediciones;
     }
 }

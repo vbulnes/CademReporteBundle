@@ -3,6 +3,7 @@
 namespace Cadem\ReporteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Variable
@@ -42,6 +43,17 @@ class Variable
      */
     private $activo;
 
+	/**
+     * @ORM\OneToMany(targetEntity="Estudiovariable", mappedBy="variable")
+     */
+	 
+	protected $estudiovariables;
+
+	 
+	public function __construct()
+    {
+        $this->estudiovariables = new ArrayCollection();
+    }
 
 
     /**
@@ -121,5 +133,38 @@ class Variable
     public function getActivo()
     {
         return $this->activo;
+    }
+
+    /**
+     * Add estudiovariables
+     *
+     * @param \Cadem\ReporteBundle\Entity\Estudiovariable $estudiovariables
+     * @return Variable
+     */
+    public function addEstudiovariable(\Cadem\ReporteBundle\Entity\Estudiovariable $estudiovariables)
+    {
+        $this->estudiovariables[] = $estudiovariables;
+    
+        return $this;
+    }
+
+    /**
+     * Remove estudiovariables
+     *
+     * @param \Cadem\ReporteBundle\Entity\Estudiovariable $estudiovariables
+     */
+    public function removeEstudiovariable(\Cadem\ReporteBundle\Entity\Estudiovariable $estudiovariables)
+    {
+        $this->estudiovariables->removeElement($estudiovariables);
+    }
+
+    /**
+     * Get estudiovariables
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEstudiovariables()
+    {
+        return $this->estudiovariables;
     }
 }

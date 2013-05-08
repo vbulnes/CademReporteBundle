@@ -134,4 +134,37 @@ class Region
     {
         return $this->activo;
     }
+
+    /**
+     * Add provincias
+     *
+     * @param \Cadem\ReporteBundle\Entity\Provincia $provincias
+     * @return Region
+     */
+    public function addProvincia(\Cadem\ReporteBundle\Entity\Provincia $provincias)
+    {
+        $this->provincias[] = $provincias;
+    
+        return $this;
+    }
+
+    /**
+     * Remove provincias
+     *
+     * @param \Cadem\ReporteBundle\Entity\Provincia $provincias
+     */
+    public function removeProvincia(\Cadem\ReporteBundle\Entity\Provincia $provincias)
+    {
+        $this->provincias->removeElement($provincias);
+    }
+
+    /**
+     * Get provincias
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getProvincias()
+    {
+        return $this->provincias;
+    }
 }

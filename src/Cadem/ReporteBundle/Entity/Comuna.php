@@ -137,4 +137,37 @@ class Comuna
     {
         return $this->provincia;
     }
+
+    /**
+     * Add salas
+     *
+     * @param \Cadem\ReporteBundle\Entity\Sala $salas
+     * @return Comuna
+     */
+    public function addSala(\Cadem\ReporteBundle\Entity\Sala $salas)
+    {
+        $this->salas[] = $salas;
+    
+        return $this;
+    }
+
+    /**
+     * Remove salas
+     *
+     * @param \Cadem\ReporteBundle\Entity\Sala $salas
+     */
+    public function removeSala(\Cadem\ReporteBundle\Entity\Sala $salas)
+    {
+        $this->salas->removeElement($salas);
+    }
+
+    /**
+     * Get salas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSalas()
+    {
+        return $this->salas;
+    }
 }

@@ -3,6 +3,7 @@
 namespace Cadem\ReporteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Salamedicion
@@ -31,7 +32,7 @@ class Salamedicion
     /**
      * @var \Medicion
      *
-     * @ORM\ManyToOne(targetEntity="Medicion")
+     * @ORM\ManyToOne(targetEntity="Medicion", inversedBy="salamediciones")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="MEDICION_ID", referencedColumnName="ID")
      * })
@@ -41,7 +42,7 @@ class Salamedicion
     /**
      * @var \Salacliente
      *
-     * @ORM\ManyToOne(targetEntity="Salacliente")
+     * @ORM\ManyToOne(targetEntity="Salacliente", inversedBy="salamediciones")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="SALACLIENTE_ID", referencedColumnName="ID")
      * })
@@ -49,6 +50,18 @@ class Salamedicion
     private $salacliente;
 
 
+	/**
+     * @ORM\OneToMany(targetEntity="Quiebre", mappedBy="salamedicion")
+     */
+	 
+	protected $quiebres;
+	
+	
+	public function __construct()
+    {
+        $this->quiebres = new ArrayCollection();
+    }
+	
 
     /**
      * Get id
@@ -127,5 +140,38 @@ class Salamedicion
     public function getSalacliente()
     {
         return $this->salacliente;
+    }
+
+    /**
+     * Add quiebres
+     *
+     * @param \Cadem\ReporteBundle\Entity\Quiebre $quiebres
+     * @return Salamedicion
+     */
+    public function addQuiebre(\Cadem\ReporteBundle\Entity\Quiebre $quiebres)
+    {
+        $this->quiebres[] = $quiebres;
+    
+        return $this;
+    }
+
+    /**
+     * Remove quiebres
+     *
+     * @param \Cadem\ReporteBundle\Entity\Quiebre $quiebres
+     */
+    public function removeQuiebre(\Cadem\ReporteBundle\Entity\Quiebre $quiebres)
+    {
+        $this->quiebres->removeElement($quiebres);
+    }
+
+    /**
+     * Get quiebres
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getQuiebres()
+    {
+        return $this->quiebres;
     }
 }

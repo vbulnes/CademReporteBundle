@@ -352,4 +352,14 @@ class Cliente
     {
         return $this->salaclientes;
     }
+
+    /**
+     * Get salaclientes
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSalaclientes()
+    {
+        return $this->salaclientes;
+    }
 }
