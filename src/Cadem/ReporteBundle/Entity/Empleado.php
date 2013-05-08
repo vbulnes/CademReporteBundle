@@ -87,17 +87,23 @@ class Empleado
      */
     private $empleado;
 	
-	
 	/**
      * @ORM\OneToMany(targetEntity="Estudio", mappedBy="empleado")
      */
 	 
 	protected $estudios;
+	
+	/**
+     * @ORM\OneToMany(targetEntity="Salacliente", mappedBy="empleado")
+     */
+	 
+	protected $salaclientes;
 
 	 
 	public function __construct()
     {
         $this->estudios = new ArrayCollection();
+        $this->salaclientes = new ArrayCollection();
     }
 
 
