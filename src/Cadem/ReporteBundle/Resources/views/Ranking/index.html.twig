@@ -44,7 +44,7 @@
 							{% for row in ranking_sala %}
                             <tr>
                               <td>{{rank}}</td>
-                              <td>[{{row.codigosala}}] {{row.calle}} {{row.numerocalle}}</td>
+                              <td title="{{row.calle}} {{row.numerocalle}}">[{{row.codigosala}}] {{row.calle|slice(0,35)}} {{row.numerocalle}}</td>
                               <td>{% if row.quiebre_anterior is not null %} {{row.quiebre_anterior|number_format(1)}} {% else %} NO {% endif %}</td>
                               <td>{% if row.quiebre is not null %} {{row.quiebre|number_format(1)}} {% else %} NO {% endif %}</td>
                               <td>{% if row.diferencia is not null %}
@@ -99,7 +99,7 @@
 							{% for row in ranking_item %}
                             <tr>
                               <td>{{rank}}</td>
-                              <td>{{row.codigoitem}}</td>
+                              <td title="{{row.nombre}}">[{{row.codigoitem}}] {{row.nombre|slice(0,42)}}</td>
                               <td>{% if row.quiebre_anterior is not null %} {{row.quiebre_anterior|number_format(1)}} {% else %} NO {% endif %}</td>
                               <td>{% if row.quiebre is not null %} {{row.quiebre|number_format(1)}} {% else %} NO {% endif %}</td>
                               <td>{% if row.diferencia is not null %}

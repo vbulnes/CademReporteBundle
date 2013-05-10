@@ -56,7 +56,7 @@ class DashboardController extends Controller
 			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q');
 		$cantidad_total = $query->getSingleScalarResult();
 		
-		$porc_quiebre = $quiebre/$cantidad_total*100;
+		$porc_quiebre = round($quiebre/$cantidad_total*100,1);
 		
 		
 		//RESPONSE
@@ -146,7 +146,7 @@ class DashboardController extends Controller
 			->setParameter('id', $user->getId());
 		$quiebres = $query->getResult();
 		
-		foreach ($quiebres_totales as $key => $value) $porc_quiebre[] = $quiebres[$key][1]/$quiebres_totales[$key][1]*100;
+		foreach ($quiebres_totales as $key => $value) $porc_quiebre[] = round($quiebres[$key][1]/$quiebres_totales[$key][1]*100,1);
 		
 		$time_taken = microtime(true) - $start;
 		

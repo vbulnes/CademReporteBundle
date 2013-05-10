@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use PDO;
 
 class RankingController extends Controller
 {
@@ -127,7 +128,7 @@ class RankingController extends Controller
 				'choices'   => $choices_regiones,
 				'required'  => true,
 				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6','7','8','9')			
+				'data' => array('1','2','3','4','5','6','7','8','9')
 			))
 			->getForm();
 			
@@ -152,6 +153,8 @@ class RankingController extends Controller
 		
 		
 		//RANKING POR SALA--------------------------------------------------------------------
+		
+		
 		// $rsm = new ResultSetMapping;
 		// $rsm->addEntityResult('CademReporteBundle:Sala', 's');
 		// $rsm->addJoinedEntityResult('CademReporteBundle:Salacliente' , 'sc', 's', 'salaclientes');
@@ -190,14 +193,15 @@ class RankingController extends Controller
 		
 		
 		
-		$sql = "SELECT *, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+		$sql = "DECLARE @id_cliente integer = :id_cliente;
+		SELECT TOP(20)*, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
 (SELECT s.id, s.calle, s.numerocalle, sc.codigosala, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALA s
 			INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
 			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
 			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
 			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
 			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
-			WHERE c.id = 12 AND m.id = 1
+			WHERE c.id = @id_cliente AND m.id = :id_medicion_actual
 			GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
 			) AS A LEFT JOIN
 			
@@ -207,23 +211,25 @@ class RankingController extends Controller
 			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
 			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
 			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
-			WHERE c.id = 12 AND m.id = 2
+			WHERE c.id = @id_cliente AND m.id = :id_medicion_anterior
 			GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
 			) AS B on A.ID = B.id2
 			ORDER BY quiebre ASC";
-
-		$ranking_sala = $em->getConnection()->executeQuery($sql)->fetchAll();
+		$param = array('id_cliente' => 14, 'id_medicion_actual' => 1, 'id_medicion_anterior' => 2);
+		$ranking_sala = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
 		//RANKING POR PRODUCTO-----------------------------------------------
-		$sql = "SELECT *, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
-(SELECT ic.id, ic.codigoitem,(SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALACLIENTE sc
+		$sql = "DECLARE @id_cliente integer = :id_cliente;
+		SELECT TOP(20)*, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+(SELECT ic.id, ic.codigoitem, i.nombre,(SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALACLIENTE sc
 			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
 			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
 			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
 			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
 			INNER JOIN ITEMCLIENTE ic on q.ITEMCLIENTE_ID = ic.ID
-			WHERE c.ID = 12 AND m.ID = 1
-			GROUP BY ic.id, ic.codigoitem
+			INNER JOIN ITEM i on i.ID = ic.ITEM_ID
+			WHERE c.ID = @id_cliente AND m.ID = :id_medicion_actual
+			GROUP BY ic.id, ic.codigoitem, i.nombre
 			) AS A LEFT JOIN
 			
 (SELECT ic.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre_anterior FROM SALACLIENTE sc
@@ -232,23 +238,24 @@ class RankingController extends Controller
 			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
 			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
 			INNER JOIN ITEMCLIENTE ic on q.ITEMCLIENTE_ID = ic.ID
-			WHERE c.ID = 12 AND m.ID = 2
+			WHERE c.ID = @id_cliente AND m.ID = :id_medicion_anterior
 			GROUP BY ic.id
 			) AS B on A.ID = B.ID2
-			ORDER BY quiebre ASC";
-			
-		$ranking_item = $em->getConnection()->executeQuery($sql)->fetchAll();
+			ORDER BY quiebre DESC";
+		$param = array('id_cliente' => 14, 'id_medicion_actual' => 1, 'id_medicion_anterior' => 2);
+		$ranking_item = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
 		
 		// RANKING POR VENDEDOR--------------------------------------------------
-		$sql = "SELECT *, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+		$sql = "DECLARE @id_cliente integer = :id_cliente;
+		SELECT *, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
 (SELECT e.id, e.nombre,(SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALACLIENTE sc
 			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
 			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
 			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
 			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
 			INNER JOIN EMPLEADO e on e.ID = sc.EMPLEADO_ID
-			WHERE c.ID = 12 AND m.ID = 1
+			WHERE c.ID = @id_cliente AND m.ID = :id_medicion_actual
 			GROUP BY e.ID, e.NOMBRE
 			) AS A LEFT JOIN
 			
@@ -258,12 +265,13 @@ class RankingController extends Controller
 			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
 			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
 			INNER JOIN EMPLEADO e on e.ID = sc.EMPLEADO_ID
-			WHERE c.ID = 12 AND m.ID = 2
+			WHERE c.ID = @id_cliente AND m.ID = :id_medicion_anterior
 			GROUP BY e.ID
 			) AS B on A.ID = B.ID2
 			ORDER BY quiebre ASC";
 			
-		$ranking_empleado = $em->getConnection()->executeQuery($sql)->fetchAll();
+		$param = array('id_cliente' => 14, 'id_medicion_actual' => 1, 'id_medicion_anterior' => 2);
+		$ranking_empleado = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
 		// return print_r($ranking_sala,true);
 

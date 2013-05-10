@@ -84,7 +84,7 @@ $(document).ready(function () {
 	
 	{% for ev in estudios[0].getEstudiovariables %}//COMIENZA FOR
 	
-		{% if ev.getVariable.getNombre == "quiebre"  %}
+		{% if ev.getVariable.getNombre == "QUIEBRE"  %}
 		
 		{{"i_"~ev.getVariable.getNombre}} = new Highcharts.Chart({
 			chart: {
@@ -224,7 +224,7 @@ $(document).ready(function () {
 	
 		{% for ev in estudios[0].getEstudiovariables %}//COMIENZA FOR
 		
-			{% if ev.getVariable.getNombre == "quiebre"  %}
+			{% if ev.getVariable.getNombre == "QUIEBRE"  %}
 			
 			
 			
