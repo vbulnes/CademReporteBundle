@@ -18,13 +18,13 @@
 				<h4>Estudio Quiebre y precio</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px;">
 						<h5 style="float:left">Ranking por Sala</h5>
-						<form style="float:right">
+						<form style="float:right" id="topbottom_sala" class="tb">
 							<label class="radio inline">
-							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  <input type="radio" name="tb_sala" id="optionsRadios1" value="t" checked>
 							  Top
 							</label>
 							<label class="radio inline">
-							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  <input type="radio" name="tb_sala" id="optionsRadios2" value="b">
 							  Bottom
 							</label>
 						</form>
@@ -73,13 +73,13 @@
 				</div>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<h5 style="float:left">Ranking por Producto</h5>
-						<form style="float:right">
+						<form style="float:right" id="topbottom_producto" class="tb">
 							<label class="radio inline">
-							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  <input type="radio" name="tb_producto" id="optionsRadios1" value="t" checked>
 							  Top
 							</label>
 							<label class="radio inline">
-							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  <input type="radio" name="tb_producto" id="optionsRadios2" value="b">
 							  Bottom
 							</label>
 						</form>
@@ -127,13 +127,13 @@
 				</div>
                 <div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<h5 style="float:left">Ranking por Empleado</h5>
-						<form style="float:right">
+						<form style="float:right" id="topbottom_empleado" class="tb">
 							<label class="radio inline">
-							  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+							  <input type="radio" name="tb_empleado" id="optionsRadios1" value="t" checked>
 							  Top
 							</label>
 							<label class="radio inline">
-							  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+							  <input type="radio" name="tb_empleado" id="optionsRadios2" value="b">
 							  Bottom
 							</label>
 						</form>
@@ -385,7 +385,7 @@
 	<script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 <script>
 
-
+var oTables = [];
 $(document).ready(function () {
 	
 	var lang_es = {
@@ -413,7 +413,7 @@ $(document).ready(function () {
 				}
 			};
 	
-	var oTables = [];
+	
 	
 	$('.datatable').each(function( index ) {
 		var $this = $(this);
@@ -443,26 +443,84 @@ $(document).ready(function () {
 		$boton_presionado = $(this);
 	});
 
-	//LOGICA DEL SUBMIT DEL FORMULARIO, SE DEBERIA OCUPAR AJAX
+	//FORMULARIO
 	$('form#filtros').submit(function(event) {
 		if($boton_presionado.attr("value") === "Limpiar Filtros"){
 			$('form#filtros select[multiple="multiple"] option').prop('selected',true);
 		}
-	
-		// $.get( "{#{ path('dashboard_indicadores') }#}", $(this).serialize(), function(data) {
-				
-				
-			// },
-		// 'json');
 		
-		
+		procesarform();
+
 		return false;
 	});
 	
+	$("form.tb").change(function(){
+		procesarform();
+	});
 	
+	//REGION
+	$(document).on('change', '#f_region_Region', function(){
+		//RECARGAR PROVINCIA
+		var datos = $(this).serialize();
+		$('#f_provincia_Provincia').before('<img id="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
+		$.get( "{{ path('ranking_filtros_region') }}", datos, function(data) {
+			$('#f_provincia').html(data);
+		},'html')
+		.done(function() {quitarloader(); $('#f_provincia_Provincia').change();})
+		.fail(function() { alert("Se produjo un error al cargar las provincias");quitarloader();})
+		.always(function() { /*alert("finished");*/});
+	});
 	
-	
+	//PROVINCIA
+	$(document).on('change', '#f_provincia_Provincia', function(){
+		//RECARGAR COMUNA
+		var datos = $(this).serialize();
+		$('#f_comuna_Comuna').before('<img id="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
+		$.get( "{{ path('ranking_filtros_provincia') }}", datos, function(data) {
+			$('#f_comuna').html(data);
+		},'html')
+		.done(function() { /*alert("second success");*/ })
+		.fail(function() { alert("Se produjo un error al cargar las comunas"); })
+		.always(function() { /*alert("finished");*/ quitarloader();});
+	});
 	
 });
+
+
+	//LOGICA DEL SUBMIT DEL FORMULARIO, SE DEBERIA OCUPAR AJAX
+	function procesarform(){
+		//AGREGO INFO TOPBOTTOM
+		var dataform = $('form#filtros').serialize();
+		var topbottom_empleado = $('#topbottom_empleado').serialize();
+		var topbottom_producto = $('#topbottom_producto').serialize();
+		var topbottom_sala = $('#topbottom_sala').serialize();
+		var senddata = dataform + "&" + topbottom_empleado + "&" + topbottom_producto + "&" + topbottom_sala;
+		
+	
+		$.get( "{{ path('ranking_filtros') }}", senddata, function(data) {
+				//RANKING SALAS
+				oTables[0].fnClearTable();
+				var row = data.ranking_sala;
+				var cont = 1;
+				for(var i in row)
+				{
+					oTables[0].fnAddData([
+						cont,
+						"["+row[i].codigosala+"] "+row[i].calle+" "+row[i].numerocalle,
+						(row[i].quiebre_anterior != null)?parseFloat(row[i].quiebre_anterior).toFixed(1):"NO",
+						(row[i].quiebre != null)?parseFloat(row[i].quiebre).toFixed(1):"NO",
+						(row[i].diferencia != null)?parseFloat(row[i].diferencia).toFixed(1):"NO"
+					]);
+					cont++;
+				}
+				
+			},
+		'json');
+	}
+	
+	function quitarloader(){
+		if($('#loader').length > 0) $('#loader').remove();
+	}
+
  </script>
 {% endblock %}

@@ -105,16 +105,17 @@ class RankingController extends Controller
 		else $ultima_medicion = null;
 		
 		
-		$defaultData = array();
-		$form_estudio = $this->createFormBuilder($defaultData)
+
+		$form_estudio = $this->get('form.factory')->createNamedBuilder('f_estudio', 'form')
 			->add('Estudio', 'choice', array(
 				'choices'   => $choices_estudio,
 				'required'  => true,
 				'multiple'  => false,
-				'data' => '0'			
+				'data' => '0',
+				'attr' => array('id' => 'myValue')
 			))
 			->getForm();
-		$form_periodo = $this->createFormBuilder($defaultData)
+		$form_periodo = $this->get('form.factory')->createNamedBuilder('f_periodo', 'form')
 			->add('Periodo', 'choice', array(
 				'choices'   => $mediciones,
 				'required'  => true,
@@ -123,76 +124,36 @@ class RankingController extends Controller
 			))
 			->getForm();
 			
-		$form_region = $this->createFormBuilder($defaultData)
+		$form_region = $this->get('form.factory')->createNamedBuilder('f_region', 'form')
 			->add('Region', 'choice', array(
 				'choices'   => $choices_regiones,
 				'required'  => true,
 				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6','7','8','9')
+				'data' => array_keys($choices_regiones)
 			))
 			->getForm();
 			
-		$form_provincia = $this->createFormBuilder($defaultData)
+		$form_provincia = $this->get('form.factory')->createNamedBuilder('f_provincia', 'form')
 			->add('Provincia', 'choice', array(
 				'choices'   => $choices_provincias,
 				'required'  => true,
 				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6')			
+				'data' => array_keys($choices_provincias)
 			))
 			->getForm();
 			
-		$form_comuna = $this->createFormBuilder($defaultData)
+		$form_comuna = $this->get('form.factory')->createNamedBuilder('f_comuna', 'form')
 			->add('Comuna', 'choice', array(
 				'choices'   => $choices_comunas,
 				'required'  => true,
 				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6','7','8','9')			
+				'data' => array_keys($choices_comunas)
 			))
 			->getForm();
 			
 		
 		
 		//RANKING POR SALA--------------------------------------------------------------------
-		
-		
-		// $rsm = new ResultSetMapping;
-		// $rsm->addEntityResult('CademReporteBundle:Sala', 's');
-		// $rsm->addJoinedEntityResult('CademReporteBundle:Salacliente' , 'sc', 's', 'salaclientes');
-		// $rsm->addJoinedEntityResult('CademReporteBundle:Salamedicion' , 'sm', 'sc', 'salamediciones');
-		// $rsm->addJoinedEntityResult('CademReporteBundle:Cliente' , 'c', 'sc', 'cliente');
-		// $rsm->addJoinedEntityResult('CademReporteBundle:Medicion' , 'm', 'sm', 'medicion');
-		// $rsm->addJoinedEntityResult('CademReporteBundle:Quiebre' , 'q', 'sm', 'quiebres');
-		// $rsm->addScalarResult('quiebre','quiebre');
-		// $rsm->addScalarResult('quiebre2','quiebre2');
-		// $rsm->addScalarResult('id2','id2');
-		// $rsm->addScalarResult('id','id');
-		
-
-		// $query = $em->createNativeQuery('SELECT * FROM 
-// (SELECT s.id, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALA s
-			// INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
-			// INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
-			// INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
-			// INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
-			// INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
-			// WHERE c.id = 12 AND m.id = 1
-			// GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
-			// ) AS A LEFT JOIN
-			
-// (SELECT s.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre2 FROM SALA s
-			// INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
-			// INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
-			// INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
-			// INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
-			// INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
-			// WHERE c.id = 12 AND m.id = 2
-			// GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
-			// ) AS B on A.ID = B.id2', $rsm);
-
-		// $result = $query->getArrayResult();
-		
-		
-		
 		$sql = "DECLARE @id_cliente integer = :id_cliente;
 		SELECT TOP(20)*, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
 (SELECT s.id, s.calle, s.numerocalle, sc.codigosala, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALA s
@@ -241,7 +202,7 @@ class RankingController extends Controller
 			WHERE c.ID = @id_cliente AND m.ID = :id_medicion_anterior
 			GROUP BY ic.id
 			) AS B on A.ID = B.ID2
-			ORDER BY quiebre DESC";
+			ORDER BY quiebre ASC";
 		$param = array('id_cliente' => 14, 'id_medicion_actual' => 1, 'id_medicion_anterior' => 2);
 		$ranking_item = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
@@ -273,7 +234,7 @@ class RankingController extends Controller
 		$param = array('id_cliente' => 14, 'id_medicion_actual' => 1, 'id_medicion_anterior' => 2);
 		$ranking_empleado = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
-		// return print_r($ranking_sala,true);
+
 
 		
 		//RESPONSE
@@ -302,170 +263,71 @@ class RankingController extends Controller
 		return $response;
     }
 	
-	public function indicadoresAction(Request $request)
+	public function filtrosAction(Request $request)
     {
-		// $start = microtime(true);
-
-		// $em = $this->getDoctrine()->getManager();
-		// $query = $em->createQuery(
-			// 'SELECT t FROM CademReporteBundle:Test t'
-		// )->setMaxResults(10000);
-		
-		// $cacheDriver = new \Doctrine\Common\Cache\ApcCache();
-
-		
-		//$cacheDriver->deleteAll();
-		// if($prueba = $cacheDriver->contains('my_query_result')){
-			// $test = $cacheDriver->fetch('my_query_result');
-		// }
-		// else{
-			// $test = $query->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-			// $cacheDriver->save('my_query_result', $test, 20);
-		// }
-		
-		// $time_taken = microtime(true) - $start;
-		
+		$user = $this->getUser();
+		$em = $this->getDoctrine()->getManager();
 		$data = $request->query->all();
+		
+		
+		//CLIENTE
+		$query = $em->createQuery(
+			'SELECT c FROM CademReporteBundle:Cliente c
+			JOIN c.usuarios u
+			WHERE u.id = :id AND c.activo = 1')
+			->setParameter('id', $user->getId());
+		$clientes = $query->getResult();
+		$cliente = $clientes[0];
+		//DATOS
+		$id_cliente = $cliente->getId();
+		$id_medicion_actual = intval($data['f_periodo']['Periodo']);
+		$id_estudio = intval($data['f_estudio']['Estudio']);// 0 = TODOS
+		$array_region = $data['f_region']['Region'];
+		$array_provincia = $data['f_provincia']['Provincia'];
+		$array_comuna = $data['f_comuna']['Comuna'];
+		foreach($array_comuna as $k => $v) $array_comuna[$k] = intval($v);
+		
+		$id_medicion_anterior = 1;//BUSCAR FORMA DE OBTENER LA MED ANTERIOR
+		if($data['tb_sala'] === 't') $orderby_sala = "ASC";
+		else $orderby_sala = "DESC";
+		
+		
 
+		// return print_r($data, true);
 		
+		//RANKING POR SALA--------------------------------------------------------------------
+		$sql = "DECLARE @id_cliente_ integer = ? ;
+		SELECT TOP(20)*, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+(SELECT s.id, s.calle, s.numerocalle, sc.codigosala, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALA s
+			INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			WHERE c.id = @id_cliente_ AND m.id = ? AND s.COMUNA_ID IN ( ? )
+			GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
+			) AS A LEFT JOIN
+			
+(SELECT s.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre_anterior FROM SALA s
+			INNER JOIN SALACLIENTE sc on s.ID = sc.SALA_ID
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			WHERE c.id = @id_cliente_ AND m.id = ?
+			GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
+			) AS B on A.ID = B.id2
+			ORDER BY quiebre {$orderby_sala}";
+		$param = array($id_cliente, $id_medicion_actual, $array_comuna, $id_medicion_anterior);
+		$tipo_param = array(\PDO::PARAM_INT, \PDO::PARAM_INT, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY, \PDO::PARAM_INT);
+		$ranking_sala = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
 		
-		$responseA = array(
-				'cobertura' =>	array(
-					'type' => 'pie',
-					'name' => 'Cobertura',
-					'data' => array(
-							array('name' => 'Cumple', 'y' => 20, 'color' => '#83A931'),
-							array('name' => 'No cumple', 'y' => 80, 'color' => '#EB3737')
-						)
-				),
-				'atributo' =>	array(
-					'type' => 'pie',
-					'name' => 'Atributo',
-					'data' => array(
-							array('name' => 'Cumple', 'y' => 35.5, 'color' => '#83A931'),
-							array('name' => 'No cumple', 'y' => 64.5, 'color' => '#EB3737')
-						)
-				),
-				'quiebre' =>	array(
-					'type' => 'pie',
-					'name' => 'Quiebre',
-					'data' => array(
-							array('name' => 'Cumple', 'y' => 55.5, 'color' => '#83A931'),
-							array('name' => 'No cumple', 'y' => 44.5, 'color' => '#EB3737')
-						)
-				),
-				'precio' =>	array(
-					'type' => 'pie',
-					'name' => 'Presencia',
-					'data' => array(
-							array('name' => 'Cumple', 'y' => 44.5, 'color' => '#83A931'),
-							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
-						)
-				),
-				'evo_quiebre_precio' => array(
-					'precio' => array(
-						'name' => 'Promedio Precio',
-						'color' => '#89A54E',
-						'yAxis' => 1,
-						'type' => 'spline',
-						'data' => array(1300.0, 1100.9, 1000.5, 4490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6),
-						'tooltip' => array(
-							'valuePrefix' => '$'
-						)
-					),
-					'quiebre' => array(
-						'name' => '% Quiebre',
-						'color' => '#4572A7',
-						'type' => 'spline',
-						'data' => array(73.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 39.6),
-						'tooltip' => array(
-							'valueSuffix' => ' %'
-						)
-					)
-				),
-				'evo_cobertura' => array(
-					'cobertura' => array(
-						'name' => '% de Cobertura',
-						'color' => '#4572A7',
-						'type' => 'spline',
-						'data' => array(13.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 13.3, 18.3, 13.9, 39.6),
-						'tooltip' => array(
-							'valueSuffix' => ' %'
-						)
-					)
-				)
-				
-		);
-		$responseB = array( 
-				'cobertura' =>	array(
-					'type' => 'pie',
-					'name' => 'Cobertura',
-					'data' => array(
-							array('name' => 'Cumple', 'y' => 60, 'color' => '#83A931'),
-							array('name' => 'No cumple', 'y' => 40, 'color' => '#EB3737')
-						)
-				),
-				'atributo' =>	array(
-					'type' => 'pie',
-					'name' => 'Atributo',
-					'data' => array(
-							array('name' => 'Cumple', 'y' => 15.5, 'color' => '#83A931'),
-							array('name' => 'No cumple', 'y' => 84.5, 'color' => '#EB3737')
-						)
-				),
-				'quiebre' =>	array(
-					'type' => 'pie',
-					'name' => 'Quiebre',
-					'data' => array(
-							array('name' => 'Cumple', 'y' => 5, 'color' => '#83A931'),
-							array('name' => 'No cumple', 'y' => 95, 'color' => '#EB3737')
-						)
-				),
-				'precio' =>	array(
-					'type' => 'pie',
-					'name' => 'Presencia',
-					'data' => array(
-							array('name' => 'Cumple', 'y' => 44.5, 'color' => '#83A931'),
-							array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
-						)
-				),
-				'evo_quiebre_precio' => array(
-					'precio' => array(
-						'name' => 'Promedio Precio',
-						'color' => '#89A54E',
-						'yAxis' => 1,
-						'type' => 'spline',
-						'data' => array(1300.0, 1100.9, 1000.5, 4490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6),
-						'tooltip' => array(
-							'valuePrefix' => '$'
-						)
-					),
-					'quiebre' => array(
-						'name' => '% Quiebre',
-						'color' => '#4572A7',
-						'type' => 'spline',
-						'data' => array(73.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 39.6),
-						'tooltip' => array(
-							'valueSuffix' => ' %'
-						)
-					)
-				),
-				'evo_cobertura' => array(
-					'cobertura' => array(
-						'name' => '% de Cobertura',
-						'color' => '#4572A7',
-						'type' => 'spline',
-						'data' => array(73.0, 11.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 19.6),
-						'tooltip' => array(
-							'valueSuffix' => ' %'
-						)
-					)
-				)
-		);
 		
 		//RESPONSE
-		if('1' === $data['form']['Estudio']) $response = new JsonResponse($responseA);
-		else $response = new JsonResponse($responseB);
+		$response = array(
+			'ranking_sala' => $ranking_sala,
+		);
+		$response = new JsonResponse($response);
 		
 		//CACHE
 		$response->setPrivate();
@@ -474,4 +336,132 @@ class RankingController extends Controller
 
 		return $response;
     }
+	
+	public function regionAction(Request $request)
+    {
+		$user = $this->getUser();
+		$em = $this->getDoctrine()->getManager();
+		$data = $request->query->all();
+		$dataform = $data['f_region'];
+		//CLIENTE
+		$query = $em->createQuery(
+			'SELECT c FROM CademReporteBundle:Cliente c
+			JOIN c.usuarios u
+			WHERE u.id = :id AND c.activo = 1')
+			->setParameter('id', $user->getId());
+		$clientes = $query->getResult();
+		$cliente = $clientes[0];
+		
+		foreach($dataform['Region'] as $r) $region[] = intval($r);
+
+		//PROVINCIA
+		$qb = $em->createQueryBuilder();
+		$qb->select('DISTINCT p')
+		   ->from('CademReporteBundle:Provincia', 'p')
+		   ->innerJoin('p.comunas', 'c')
+		   ->innerJoin('c.salas', 's')
+		   ->innerJoin('s.salaclientes', 'sc')
+		   ->innerJoin('sc.cliente', 'cl')
+		   ->where($qb->expr()->andX($qb->expr()->eq('cl.id', ':id'), $qb->expr()->in('p.region_id', $region)))
+		   ->orderBy('p.nombre', 'ASC')
+		   ->setParameter('id', $cliente->getId());
+		$query = $qb->getQuery();
+		$provincias = $query->getResult();
+		
+		
+		$choices_provincias = array();
+		foreach($provincias as $r)
+		{
+			$choices_provincias[$r->getId()] = strtoupper($r->getNombre());
+		}
+		
+		
+		$form_provincia =  $this->get('form.factory')->createNamedBuilder('f_provincia', 'form')
+			->add('Provincia', 'choice', array(
+				'choices'   => $choices_provincias,
+				'required'  => true,
+				'multiple'  => true,
+				'data' => array_keys($choices_provincias),
+				
+			))
+			->getForm();
+		
+		
+		
+		//RESPONSE
+		$response = $this->render(
+			'CademReporteBundle::form.html.twig',
+			array('form' => $form_provincia->createView())
+		);
+		
+		//CACHE
+		$response->setPrivate();
+		$response->setMaxAge(1);
+		
+		return $response;
+	}
+	
+	
+	public function provinciaAction(Request $request)
+    {
+		$user = $this->getUser();
+		$em = $this->getDoctrine()->getManager();
+		$data = $request->query->all();
+		$dataform = $data['f_provincia'];
+		//CLIENTE
+		$query = $em->createQuery(
+			'SELECT c FROM CademReporteBundle:Cliente c
+			JOIN c.usuarios u
+			WHERE u.id = :id AND c.activo = 1')
+			->setParameter('id', $user->getId());
+		$clientes = $query->getResult();
+		$cliente = $clientes[0];
+		
+		foreach($dataform['Provincia'] as $r) $provincia[] = intval($r);
+
+		//COMUNA
+		$qb = $em->createQueryBuilder();
+		$qb->select('DISTINCT c')
+		   ->from('CademReporteBundle:Comuna', 'c')
+		   ->innerJoin('c.salas', 's')
+		   ->innerJoin('s.salaclientes', 'sc')
+		   ->innerJoin('sc.cliente', 'cl')
+		   ->where($qb->expr()->andX($qb->expr()->eq('cl.id', ':id'), $qb->expr()->in('c.provincia_id', $provincia)))
+		   ->orderBy('c.nombre', 'ASC')
+		   ->setParameter('id', $cliente->getId());
+		$query = $qb->getQuery();
+		$comunas = $query->getResult();
+		
+		
+		$choices_comunas = array();
+		foreach($comunas as $r)
+		{
+			$choices_comunas[$r->getId()] = strtoupper($r->getNombre());
+		}
+		
+		
+		$form_comuna =  $this->get('form.factory')->createNamedBuilder('f_comuna', 'form')
+			->add('Comuna', 'choice', array(
+				'choices'   => $choices_comunas,
+				'required'  => true,
+				'multiple'  => true,
+				'data' => array_keys($choices_comunas),
+				
+			))
+			->getForm();
+		
+		
+		
+		//RESPONSE
+		$response = $this->render(
+			'CademReporteBundle::form.html.twig',
+			array('form' => $form_comuna->createView())
+		);
+		
+		//CACHE
+		$response->setPrivate();
+		$response->setMaxAge(1);
+		
+		return $response;
+	}
 }

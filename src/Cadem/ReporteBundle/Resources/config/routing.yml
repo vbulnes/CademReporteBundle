@@ -1,9 +1,3 @@
-# cadem_reporte_homepage:
-    # pattern:  /
-    # defaults: { _controller: CademReporteBundle:Default:index }
-# cadem_reporte_indicadores:
-    # pattern:  /indicadores
-    # defaults: { _controller: CademReporteBundle:Default:indicadores }
 root:
     path:     /
     defaults:
@@ -28,6 +22,18 @@ resumen_periodo:
 ranking_index:
     pattern:  /ranking
     defaults: { _controller: CademReporteBundle:Ranking:index }
+ranking_filtros:
+    pattern:  /ranking/filtros
+    defaults: { _controller: CademReporteBundle:Ranking:filtros }
+    methods:  [GET]
+ranking_filtros_region:
+    pattern:  /ranking/filtros/region
+    defaults: { _controller: CademReporteBundle:Ranking:region }
+    methods:  [GET]
+ranking_filtros_provincia:
+    pattern:  /ranking/filtros/provincia
+    defaults: { _controller: CademReporteBundle:Ranking:provincia }
+    methods:  [GET]
 detalle_index:
     pattern:  /detalle
     defaults: { _controller: CademReporteBundle:Detalle:index }
