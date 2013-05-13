@@ -21,6 +21,13 @@ class Comuna
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
+	
+	/**
+     * @var integer
+     *
+     * @ORM\Column(name="PROVINCIA_ID", type="integer", nullable=false)
+     */
+    private $provincia_id;
 
     /**
      * @var string
@@ -67,6 +74,29 @@ class Comuna
     public function getId()
     {
         return $this->id;
+    }
+	
+	/**
+     * Set provincia_id
+     *
+     * @param integer $provincia_id
+     * @return Provincia
+     */
+    public function setProvinciaId($provincia_id)
+    {
+        $this->provincia_id = $provincia_id;
+    
+        return $this;
+    }
+
+    /**
+     * Get provincia_id
+     *
+     * @return integer 
+     */
+    public function getProvinciaId()
+    {
+        return $this->provincia_id;
     }
 
     /**
