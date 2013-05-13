@@ -342,10 +342,6 @@ $tabla_resumen = array(
 					// );
 					
 					
-					
-		$em = $this->getDoctrine()->getManager();
-
-		$user = $this->getUser();
 		
 		//medicion join estudio
 		$query = $em->createQuery(
