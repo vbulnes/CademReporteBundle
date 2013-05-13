@@ -48,15 +48,15 @@ class DashboardController extends Controller
 		
 		//QUIEBRE ULTIMA MEDICION |||| OCUPANDO CASE Y DBAL SE PUEDE HACER CON UNA SOLA CONSULTA
 		$query = $em->createQuery(
-			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q
-			WHERE q.hayquiebre = 1');
+			'SELECT (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q) FROM CademReporteBundle:Quiebre q
+			JOIN q.salamedicion sm
+			JOIN sm.salacliente sc
+			JOIN sc.cliente c
+			WHERE c.id = :idcliente')
+			->setParameter('idcliente', $cliente->getId());
 		$quiebre = $query->getSingleScalarResult();
 		
-		$query = $em->createQuery(
-			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q');
-		$cantidad_total = $query->getSingleScalarResult();
-		
-		$porc_quiebre = round($quiebre/$cantidad_total*100,1);
+		$porc_quiebre = round($quiebre,1);
 		
 		
 		//RESPONSE
@@ -110,15 +110,19 @@ class DashboardController extends Controller
 		
 		//medicion join estudio
 		$query = $em->createQuery(
-			'SELECT m.nombre FROM CademReporteBundle:Medicion m
+			'SELECT m.nombre, m.fechainicio, m.fechafin FROM CademReporteBundle:Medicion m
 			JOIN m.estudio e
 			JOIN e.cliente c
 			JOIN c.usuarios u
-			WHERE u.id = :id')
+			WHERE u.id = :id
+			ORDER BY m.fechainicio ASC')
 			->setParameter('id', $user->getId());
 		$mediciones_q = $query->getArrayResult();
 		
-		foreach($mediciones_q as $m) $mediciones[] = $m['nombre'];
+		foreach($mediciones_q as $m){
+			$mediciones[] = $m['fechainicio']->format('d/m').'-'.$m['fechafin']->format('d/m');
+			$mediciones_tooltip[] = $m['nombre'];
+		}
 		
 		//quiebre join salamedicion join medicion
 		$query = $em->createQuery(
@@ -129,7 +133,8 @@ class DashboardController extends Controller
 			JOIN e.cliente c
 			JOIN c.usuarios u
 			WHERE u.id = :id
-			GROUP BY m.id')
+			GROUP BY m.id, m.fechainicio
+			ORDER BY m.fechainicio ASC')
 			->setParameter('id', $user->getId());
 		$quiebres_totales = $query->getResult();
 
@@ -142,7 +147,8 @@ class DashboardController extends Controller
 			JOIN c.usuarios u
 			WHERE u.id = :id
 			AND q.hayquiebre = 1
-			GROUP BY m.id')
+			GROUP BY m.id, m.fechainicio
+			ORDER BY m.fechainicio ASC')
 			->setParameter('id', $user->getId());
 		$quiebres = $query->getResult();
 		
@@ -153,6 +159,7 @@ class DashboardController extends Controller
 		$response = array(
 			'evolutivo' => array(
 				'mediciones' => $mediciones,
+				'mediciones_tooltip' => $mediciones_tooltip,
 				'serie_quiebre' => array(
 					'name' => '% Quiebre',
 					'color' => '#4572A7',

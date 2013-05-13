@@ -239,12 +239,12 @@ $(document).ready(function () {
 				xAxis: {
 					categories: data.evolutivo.mediciones
 					//type: 'category'
-					/*labels: {
-						formatter: function() {
-						alert(this.value);
-							return this.value;
-						}
-					}*/
+					// labels: {
+						// formatter: function() {
+							// alert(this.value);
+								// return this.value;
+						// // }
+					// }
 				},
 				yAxis: [{
 					title: {
@@ -252,19 +252,23 @@ $(document).ready(function () {
 						style: {
 							color: '#4572A7'
 						}
-					},
-					min: 0,
-					max: 100
+					}
+					// min: 0,
+					// max: 100
 				}],
 				tooltip: {
-					shared: true
+					// shared: true,
+					formatter: function() {
+						return 'Medición: <b>'+ this.x +
+							'</b> <br/> Valor: <b>'+ this.y +'%</b>';
+					}
 				},
 				legend: {
 					layout: 'vertical',
 					align: 'center',
 					x: 100,
 					verticalAlign: 'top',
-					y: 60,
+					y: 30,
 					floating: true,
 					backgroundColor: '#FFFFFF'
 				},
