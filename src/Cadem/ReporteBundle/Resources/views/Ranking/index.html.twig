@@ -15,7 +15,7 @@
 {% block body %}
 		<div class="span9">
 			<div class="container-fluid well" style="padding-top:0">
-				<h4>Estudio Quiebre y precio</h4>
+				<h4>Ranking de {{estudios[0].getNombre}}</h4>
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px;">
 						<h5 style="float:left">Ranking por Sala</h5>
 						<form style="float:right" id="topbottom_sala" class="tb">
@@ -386,6 +386,9 @@
 <script>
 
 var oTables = [];
+
+var fechaup = '<div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/up_arrow.png') }}" alt="Cadem"><div>';
+var fechadown = '<div style="height:20px;display:inline"><img style="height:inherit" src="{{ asset('bundles/cademreporte/images/down_arrow.png') }}" alt="Cadem"><div>';
 $(document).ready(function () {
 	
 	var lang_es = {
@@ -447,14 +450,14 @@ $(document).ready(function () {
 	$('form#filtros').submit(function(event) {
 		if($boton_presionado.attr("value") === "Limpiar Filtros"){
 			$('form#filtros select[multiple="multiple"] option').prop('selected',true);
+			$('#f_region_Region').change();
 		}
-		
-		procesarform();
-
+		else procesarform();
 		return false;
 	});
 	
 	$("form.tb").change(function(){
+		$(this).after('<img class="loader" alt="" style="float:left;margin-left:20px" src="/bundles/cademreporte/images/loader-minitrans.gif">');
 		procesarform();
 	});
 	
@@ -462,7 +465,7 @@ $(document).ready(function () {
 	$(document).on('change', '#f_region_Region', function(){
 		//RECARGAR PROVINCIA
 		var datos = $(this).serialize();
-		$('#f_provincia_Provincia').before('<img id="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
+		$('#f_provincia_Provincia').before('<img class="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
 		$.get( "{{ path('ranking_filtros_region') }}", datos, function(data) {
 			$('#f_provincia').html(data);
 		},'html')
@@ -475,7 +478,7 @@ $(document).ready(function () {
 	$(document).on('change', '#f_provincia_Provincia', function(){
 		//RECARGAR COMUNA
 		var datos = $(this).serialize();
-		$('#f_comuna_Comuna').before('<img id="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
+		$('#f_comuna_Comuna').before('<img class="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
 		$.get( "{{ path('ranking_filtros_provincia') }}", datos, function(data) {
 			$('#f_comuna').html(data);
 		},'html')
@@ -496,7 +499,7 @@ $(document).ready(function () {
 		var topbottom_sala = $('#topbottom_sala').serialize();
 		var senddata = dataform + "&" + topbottom_empleado + "&" + topbottom_producto + "&" + topbottom_sala;
 		
-	
+		$('form#filtros input').last().after('<img class="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
 		$.get( "{{ path('ranking_filtros') }}", senddata, function(data) {
 				//RANKING SALAS
 				oTables[0].fnClearTable();
@@ -506,20 +509,59 @@ $(document).ready(function () {
 				{
 					oTables[0].fnAddData([
 						cont,
-						"["+row[i].codigosala+"] "+row[i].calle+" "+row[i].numerocalle,
+						"["+row[i].codigosala+"] "+row[i].calle.substring(0, 35)+" "+row[i].numerocalle,
 						(row[i].quiebre_anterior != null)?parseFloat(row[i].quiebre_anterior).toFixed(1):"NO",
 						(row[i].quiebre != null)?parseFloat(row[i].quiebre).toFixed(1):"NO",
-						(row[i].diferencia != null)?parseFloat(row[i].diferencia).toFixed(1):"NO"
+						(row[i].diferencia != null)?parseFloat(row[i].diferencia).toFixed(1)+(
+						(parseFloat(row[i].diferencia) > 0)?fechaup:(parseFloat(row[i].diferencia) < 0)?fechadown:""
+						):"NO"
+					]);
+					cont++;
+				}
+				//RANKING ITEM
+				oTables[1].fnClearTable();
+				var row = data.ranking_item;
+				var cont = 1;
+				for(var i in row)
+				{
+					oTables[1].fnAddData([
+						cont,
+						"["+row[i].codigoitem+"] "+row[i].nombre.substring(0, 42),
+						(row[i].quiebre_anterior != null)?parseFloat(row[i].quiebre_anterior).toFixed(1):"NO",
+						(row[i].quiebre != null)?parseFloat(row[i].quiebre).toFixed(1):"NO",
+						(row[i].diferencia != null)?parseFloat(row[i].diferencia).toFixed(1)+(
+						(parseFloat(row[i].diferencia) > 0)?fechaup:(parseFloat(row[i].diferencia) < 0)?fechadown:""
+						):"NO"
+					]);
+					cont++;
+				}
+				//RANKING EMPLEADO
+				oTables[2].fnClearTable();
+				var row = data.ranking_empleado;
+				var cont = 1;
+				for(var i in row)
+				{
+					oTables[2].fnAddData([
+						cont,
+						row[i].nombre,
+						(row[i].quiebre_anterior != null)?parseFloat(row[i].quiebre_anterior).toFixed(1):"NO",
+						(row[i].quiebre != null)?parseFloat(row[i].quiebre).toFixed(1):"NO",
+						(row[i].diferencia != null)?parseFloat(row[i].diferencia).toFixed(1)+(
+						(parseFloat(row[i].diferencia) > 0)?fechaup:(parseFloat(row[i].diferencia) < 0)?fechadown:""
+						):"NO"
 					]);
 					cont++;
 				}
 				
 			},
-		'json');
+		'json')
+		.done(function() {})
+		.fail(function() { alert("Se produjo un error al cargar las tablas de ranking");})
+		.always(function() { quitarloader();});
 	}
 	
 	function quitarloader(){
-		if($('#loader').length > 0) $('#loader').remove();
+		if($('.loader').length > 0) $('.loader').remove();
 	}
 
  </script>

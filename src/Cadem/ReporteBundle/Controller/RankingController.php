@@ -26,6 +26,7 @@ class RankingController extends Controller
 			->setParameter('id', $user->getId());
 		$clientes = $query->getResult();
 		$cliente = $clientes[0];
+		$id_cliente = $cliente->getId();
 		$estudios = $cliente->getEstudios();
 		
 		$choices_estudio = array('0' => 'TODOS');
@@ -101,7 +102,12 @@ class RankingController extends Controller
 		
 		foreach($mediciones_q as $m) $mediciones[$m['id']] = $m['nombre'];
 		
-		if(count($mediciones) > 0) $ultima_medicion = array_keys($mediciones)[0];
+		if(count($mediciones) > 0){
+			$ultima_medicion = array_keys($mediciones)[0];
+			$id_medicion_actual = $ultima_medicion;
+			if(count($mediciones) > 1) $id_medicion_anterior = array_keys($mediciones)[1];
+			else $id_medicion_anterior = $id_medicion_actual;
+		}
 		else $ultima_medicion = null;
 		
 		
@@ -176,7 +182,7 @@ class RankingController extends Controller
 			GROUP BY sc.id, s.id, s.calle, s.numerocalle, sc.codigosala
 			) AS B on A.ID = B.id2
 			ORDER BY quiebre ASC";
-		$param = array('id_cliente' => 14, 'id_medicion_actual' => 1, 'id_medicion_anterior' => 2);
+		$param = array('id_cliente' => $id_cliente, 'id_medicion_actual' => $id_medicion_actual, 'id_medicion_anterior' => $id_medicion_anterior);
 		$ranking_sala = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
 		//RANKING POR PRODUCTO-----------------------------------------------
@@ -203,7 +209,7 @@ class RankingController extends Controller
 			GROUP BY ic.id
 			) AS B on A.ID = B.ID2
 			ORDER BY quiebre ASC";
-		$param = array('id_cliente' => 14, 'id_medicion_actual' => 1, 'id_medicion_anterior' => 2);
+		$param = array('id_cliente' => $id_cliente, 'id_medicion_actual' => $id_medicion_actual, 'id_medicion_anterior' => $id_medicion_anterior);
 		$ranking_item = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
 		
@@ -231,11 +237,9 @@ class RankingController extends Controller
 			) AS B on A.ID = B.ID2
 			ORDER BY quiebre ASC";
 			
-		$param = array('id_cliente' => 14, 'id_medicion_actual' => 1, 'id_medicion_anterior' => 2);
+		$param = array('id_cliente' => $id_cliente, 'id_medicion_actual' => $id_medicion_actual, 'id_medicion_anterior' => $id_medicion_anterior);
 		$ranking_empleado = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
-
-
 		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Ranking:index.html.twig',
@@ -252,6 +256,7 @@ class RankingController extends Controller
 				'ranking_sala' => $ranking_sala,
 				'ranking_empleado' => $ranking_empleado,
 				'ranking_item' => $ranking_item,
+				'estudios' => $estudios,
 			)
 		);
 
@@ -287,13 +292,36 @@ class RankingController extends Controller
 		$array_comuna = $data['f_comuna']['Comuna'];
 		foreach($array_comuna as $k => $v) $array_comuna[$k] = intval($v);
 		
-		$id_medicion_anterior = 1;//BUSCAR FORMA DE OBTENER LA MED ANTERIOR
-		if($data['tb_sala'] === 't') $orderby_sala = "ASC";
-		else $orderby_sala = "DESC";
+		//SE BUSCA MEDICION ANTERIOR
+		$query = $em->createQuery(
+			'SELECT m.id FROM CademReporteBundle:Medicion m
+			JOIN m.estudio e
+			JOIN e.cliente c
+			WHERE c.id = :idc
+			ORDER BY m.fechainicio DESC')
+			->setParameter('idc', $id_cliente);
+		$mediciones = $query->getArrayResult();
+		$listo = false;
+		foreach($mediciones as $m)
+		{
+			if($listo)
+			{
+				$id_medicion_anterior = $m['id'];
+				break;
+			}
+			if($m['id'] === $id_medicion_actual) $listo = true;
+		}
+		if($listo === false) $id_medicion_anterior = $id_medicion_actual;
 		
 		
 
-		// return print_r($data, true);
+		if($data['tb_sala'] === 't') $orderby_sala = "ASC";
+		else $orderby_sala = "DESC";
+		if($data['tb_producto'] === 't') $orderby_producto = "ASC";
+		else $orderby_producto = "DESC";
+		if($data['tb_empleado'] === 't') $orderby_empleado = "ASC";
+		else $orderby_empleado = "DESC";
+		
 		
 		//RANKING POR SALA--------------------------------------------------------------------
 		$sql = "DECLARE @id_cliente_ integer = ? ;
@@ -322,10 +350,73 @@ class RankingController extends Controller
 		$tipo_param = array(\PDO::PARAM_INT, \PDO::PARAM_INT, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY, \PDO::PARAM_INT);
 		$ranking_sala = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
 		
+		//RANKING POR PRODUCTO-----------------------------------------------
+		$sql = "DECLARE @id_cliente integer = ? ;
+		SELECT TOP(20)*, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+(SELECT ic.id, ic.codigoitem, i.nombre,(SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALACLIENTE sc
+			INNER JOIN SALA s on s.ID = sc.SALA_ID
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			INNER JOIN ITEMCLIENTE ic on q.ITEMCLIENTE_ID = ic.ID
+			INNER JOIN ITEM i on i.ID = ic.ITEM_ID
+			WHERE c.ID = @id_cliente AND m.ID = ? AND s.COMUNA_ID IN ( ? )
+			GROUP BY ic.id, ic.codigoitem, i.nombre
+			) AS A LEFT JOIN
+			
+(SELECT ic.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre_anterior FROM SALACLIENTE sc
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			INNER JOIN ITEMCLIENTE ic on q.ITEMCLIENTE_ID = ic.ID
+			WHERE c.ID = @id_cliente AND m.ID = ?
+			GROUP BY ic.id
+			) AS B on A.ID = B.ID2
+			ORDER BY quiebre {$orderby_producto}";
+		$param = array($id_cliente, $id_medicion_actual, $array_comuna, $id_medicion_anterior);
+		$tipo_param = array(\PDO::PARAM_INT, \PDO::PARAM_INT, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY, \PDO::PARAM_INT);
+		$ranking_item = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+		
+		
+		// RANKING POR VENDEDOR--------------------------------------------------
+		$sql = "DECLARE @id_cliente integer = ?;
+		SELECT *, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
+(SELECT e.id, e.nombre,(SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre FROM SALACLIENTE sc
+			INNER JOIN SALA s on s.ID = sc.SALA_ID
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			INNER JOIN EMPLEADO e on e.ID = sc.EMPLEADO_ID
+			WHERE c.ID = @id_cliente AND m.ID = ? AND s.COMUNA_ID IN ( ? )
+			GROUP BY e.ID, e.NOMBRE
+			) AS A LEFT JOIN
+			
+(SELECT e.id as id2, (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre_anterior FROM SALACLIENTE sc
+			INNER JOIN SALAMEDICION sm on sm.SALACLIENTE_ID = sc.ID
+			INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+			INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+			INNER JOIN QUIEBRE q on q.SALAMEDICION_ID = sm.ID
+			INNER JOIN EMPLEADO e on e.ID = sc.EMPLEADO_ID
+			WHERE c.ID = @id_cliente AND m.ID = ?
+			GROUP BY e.ID
+			) AS B on A.ID = B.ID2
+			ORDER BY quiebre {$orderby_empleado}";
+			
+		$param = array($id_cliente, $id_medicion_actual, $array_comuna, $id_medicion_anterior);
+		$tipo_param = array(\PDO::PARAM_INT, \PDO::PARAM_INT, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY, \PDO::PARAM_INT);
+		$ranking_empleado = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+		
 		
 		//RESPONSE
 		$response = array(
 			'ranking_sala' => $ranking_sala,
+			'ranking_item' => $ranking_item,
+			'ranking_empleado' => $ranking_empleado,
+			'id_medicion_actual' => $id_medicion_actual,
+			'id_medicion_anterior' => $id_medicion_anterior,
 		);
 		$response = new JsonResponse($response);
 		
