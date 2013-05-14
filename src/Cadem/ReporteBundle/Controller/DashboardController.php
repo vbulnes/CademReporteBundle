@@ -115,9 +115,11 @@ class DashboardController extends Controller
 			JOIN e.cliente c
 			JOIN c.usuarios u
 			WHERE u.id = :id
-			ORDER BY m.fechainicio ASC')
+			ORDER BY m.fechainicio DESC')
+			->setMaxResults(12)
 			->setParameter('id', $user->getId());
 		$mediciones_q = $query->getArrayResult();
+		$mediciones_q = array_reverse($mediciones_q);
 		
 		foreach($mediciones_q as $m){
 			$mediciones[] = $m['fechainicio']->format('d/m').'-'.$m['fechafin']->format('d/m');
@@ -126,7 +128,7 @@ class DashboardController extends Controller
 		
 		//quiebre join salamedicion join medicion
 		$query = $em->createQuery(
-			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q
+			'SELECT (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*1.0)/COUNT(q.id) as quiebre FROM CademReporteBundle:Quiebre q
 			JOIN q.salamedicion sm
 			JOIN sm.medicion m
 			JOIN m.estudio e
@@ -134,25 +136,13 @@ class DashboardController extends Controller
 			JOIN c.usuarios u
 			WHERE u.id = :id
 			GROUP BY m.id, m.fechainicio
-			ORDER BY m.fechainicio ASC')
+			ORDER BY m.fechainicio DESC')
+			->setMaxResults(12)
 			->setParameter('id', $user->getId());
-		$quiebres_totales = $query->getResult();
-
-		$query = $em->createQuery(
-			'SELECT COUNT(q) FROM CademReporteBundle:Quiebre q
-			JOIN q.salamedicion sm
-			JOIN sm.medicion m
-			JOIN m.estudio e
-			JOIN e.cliente c
-			JOIN c.usuarios u
-			WHERE u.id = :id
-			AND q.hayquiebre = 1
-			GROUP BY m.id, m.fechainicio
-			ORDER BY m.fechainicio ASC')
-			->setParameter('id', $user->getId());
-		$quiebres = $query->getResult();
+		$quiebres = $query->getArrayResult();
+		$quiebres = array_reverse($quiebres);
 		
-		foreach ($quiebres_totales as $key => $value) $porc_quiebre[] = round($quiebres[$key][1]/$quiebres_totales[$key][1]*100,1);
+		foreach ($quiebres as $q) $porc_quiebre[] = round($q['quiebre']*100,1);
 		
 		$time_taken = microtime(true) - $start;
 		
@@ -174,73 +164,7 @@ class DashboardController extends Controller
 		);
 		
 		
-		// $responseA = array(
-				// 'cobertura' =>	array(
-					// 'type' => 'pie',
-					// 'name' => 'Cobertura',
-					// 'data' => array(
-							// array('name' => 'Cumple', 'y' => 20, 'color' => '#83A931'),
-							// array('name' => 'No cumple', 'y' => 80, 'color' => '#EB3737')
-						// )
-				// ),
-				// 'atributo' =>	array(
-					// 'type' => 'pie',
-					// 'name' => 'Atributo',
-					// 'data' => array(
-							// array('name' => 'Cumple', 'y' => 35.5, 'color' => '#83A931'),
-							// array('name' => 'No cumple', 'y' => 64.5, 'color' => '#EB3737')
-						// )
-				// ),
-				// 'quiebre' =>	array(
-					// 'type' => 'pie',
-					// 'name' => 'Quiebre',
-					// 'data' => array(
-							// array('name' => 'Cumple', 'y' => 55.5, 'color' => '#83A931'),
-							// array('name' => 'No cumple', 'y' => 44.5, 'color' => '#EB3737')
-						// )
-				// ),
-				// 'precio' =>	array(
-					// 'type' => 'pie',
-					// 'name' => 'Presencia',
-					// 'data' => array(
-							// array('name' => 'Cumple', 'y' => 44.5, 'color' => '#83A931'),
-							// array('name' => 'No cumple', 'y' => 55.5, 'color' => '#EB3737')
-						// )
-				// ),
-				// 'evo_quiebre_precio' => array(
-					// 'precio' => array(
-						// 'name' => 'Promedio Precio',
-						// 'color' => '#89A54E',
-						// 'yAxis' => 1,
-						// 'type' => 'spline',
-						// 'data' => array(1300.0, 1100.9, 1000.5, 4490.5, 1889.2, 1198.5, 1500.2, 1612.5, 1332.3, 845.3, 1753.9, 1798.6),
-						// 'tooltip' => array(
-							// 'valuePrefix' => '$'
-						// )
-					// ),
-					// 'quiebre' => array(
-						// 'name' => '% Quiebre',
-						// 'color' => '#4572A7',
-						// 'type' => 'spline',
-						// 'data' => array(73.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 39.6),
-						// 'tooltip' => array(
-							// 'valueSuffix' => ' %'
-						// )
-					// )
-				// ),
-				// 'evo_cobertura' => array(
-					// 'cobertura' => array(
-						// 'name' => '% de Cobertura',
-						// 'color' => '#4572A7',
-						// 'type' => 'spline',
-						// 'data' => array(13.0, 61.9, 20.5, 14.5, 18.2, 21.5, 25.2, 26.5, 13.3, 18.3, 13.9, 39.6),
-						// 'tooltip' => array(
-							// 'valueSuffix' => ' %'
-						// )
-					// )
-				// )
-				
-		// );
+		
 		// $responseB = array( 
 				// 'cobertura' =>	array(
 					// 'type' => 'pie',
