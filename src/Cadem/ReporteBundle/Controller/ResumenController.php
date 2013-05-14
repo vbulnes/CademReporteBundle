@@ -156,20 +156,25 @@ class ResumenController extends Controller
 			))
 			->getForm();
 			
-		//PARAMETROS
+		//CONSULTA
 		
-		// $query = $em->createQuery(
-			// 'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
-            // JOIN c.variables_clientes vc
-			// JOIN vc.variable v
-			// JOIN c.logos l
-			// JOIN c.usuarios u
-            // WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
-		// )->setParameter('id', $user->getId());
+		$sql = "SELECT (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre, ni.NOMBRE as SEGMENTO, ni2.NOMBRE as CATEGORIA, cad.NOMBRE as CADENA FROM QUIEBRE q
+		INNER JOIN SALAMEDICION sm on sm.ID = q.SALAMEDICION_ID
+		INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
+		INNER JOIN SALACLIENTE sc on sc.ID = sm.SALACLIENTE_ID
+		INNER JOIN SALA s on s.ID = sc.SALA_ID
+		INNER JOIN CADENA cad on cad.ID = s.CADENA_ID
+		INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
+		INNER JOIN ITEMCLIENTE ic on ic.ID = q.ITEMCLIENTE_ID AND ic.CLIENTE_ID = c.ID
+		INNER JOIN NIVELITEM ni on ni.ID = ic.NIVELITEM_ID
+		INNER JOIN NIVELITEM ni2 on ni2.ID = ic.NIVELITEM_ID2
+
+		WHERE c.ID = 12 AND m.ID = 20
+
+		GROUP BY ni.NOMBRE, ni2.NOMBRE, cad.NOMBRE";
+		$datos_tabla = $em->getConnection()->executeQuery($sql)->fetchAll();
 		
-		// $cliente = $query->getSingleResult();
-		// $logos = $cliente->getLogos();
-		// $variables_clientes = $cliente->getVariablesClientes();
+		// return print_r($datos_tabla);
 		
 		$min = 0;
 		$max = 100;
