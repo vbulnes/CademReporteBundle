@@ -15,6 +15,7 @@ class RankingController extends Controller
     
 	public function indexAction()
     {
+		
 		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
 		//CLIENTE Y ESTUDIO, LOGO
@@ -241,6 +242,7 @@ class RankingController extends Controller
 		$ranking_empleado = $em->getConnection()->executeQuery($sql,$param)->fetchAll();
 		
 		
+		
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Ranking:index.html.twig',
 			array(
@@ -257,6 +259,7 @@ class RankingController extends Controller
 				'ranking_empleado' => $ranking_empleado,
 				'ranking_item' => $ranking_item,
 				'estudios' => $estudios,
+				
 			)
 		);
 
@@ -270,6 +273,9 @@ class RankingController extends Controller
 	
 	public function filtrosAction(Request $request)
     {
+		$cacheDriver = new \Doctrine\Common\Cache\ApcCache();
+		$cacheseg = 1;
+		$start = microtime(true);
 		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
 		$data = $request->query->all();
@@ -283,6 +289,7 @@ class RankingController extends Controller
 			->setParameter('id', $user->getId());
 		$clientes = $query->getResult();
 		$cliente = $clientes[0];
+		
 		//DATOS
 		$id_cliente = $cliente->getId();
 		$id_medicion_actual = intval($data['f_periodo']['Periodo']);
@@ -291,6 +298,7 @@ class RankingController extends Controller
 		$array_provincia = $data['f_provincia']['Provincia'];
 		$array_comuna = $data['f_comuna']['Comuna'];
 		foreach($array_comuna as $k => $v) $array_comuna[$k] = intval($v);
+		
 		
 		//SE BUSCA MEDICION ANTERIOR
 		$query = $em->createQuery(
@@ -323,6 +331,7 @@ class RankingController extends Controller
 		else $orderby_empleado = "DESC";
 		
 		
+		
 		//RANKING POR SALA--------------------------------------------------------------------
 		$sql = "DECLARE @id_cliente_ integer = ? ;
 		SELECT TOP(20)*, ROUND(quiebre-quiebre_anterior, 1) as diferencia FROM 
@@ -348,7 +357,18 @@ class RankingController extends Controller
 			ORDER BY quiebre {$orderby_sala}";
 		$param = array($id_cliente, $id_medicion_actual, $array_comuna, $id_medicion_anterior);
 		$tipo_param = array(\PDO::PARAM_INT, \PDO::PARAM_INT, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY, \PDO::PARAM_INT);
-		$ranking_sala = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+		// $ranking_sala = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+		//CACHE
+		$s1 = sha1($sql.print_r($param,true));
+		if($cacheDriver->contains($s1)) $ranking_sala = $cacheDriver->fetch($s1);
+		else
+		{
+			$ranking_sala = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+			$cacheDriver->save($s1, $ranking_sala, $cacheseg);
+		}
+		
+		
+		
 		
 		//RANKING POR PRODUCTO-----------------------------------------------
 		$sql = "DECLARE @id_cliente integer = ? ;
@@ -377,7 +397,15 @@ class RankingController extends Controller
 			ORDER BY quiebre {$orderby_producto}";
 		$param = array($id_cliente, $id_medicion_actual, $array_comuna, $id_medicion_anterior);
 		$tipo_param = array(\PDO::PARAM_INT, \PDO::PARAM_INT, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY, \PDO::PARAM_INT);
-		$ranking_item = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+		// $ranking_item = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+		//CACHE
+		$s1 = sha1($sql.print_r($param,true));
+		if($cacheDriver->contains($s1)) $ranking_item = $cacheDriver->fetch($s1);
+		else
+		{
+			$ranking_item = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+			$cacheDriver->save($s1, $ranking_item, $cacheseg);
+		}
 		
 		
 		// RANKING POR VENDEDOR--------------------------------------------------
@@ -407,9 +435,19 @@ class RankingController extends Controller
 			
 		$param = array($id_cliente, $id_medicion_actual, $array_comuna, $id_medicion_anterior);
 		$tipo_param = array(\PDO::PARAM_INT, \PDO::PARAM_INT, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY, \PDO::PARAM_INT);
-		$ranking_empleado = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+		// $ranking_empleado = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+		//CACHE
+		$s1 = sha1($sql.print_r($param,true));
+		if($cacheDriver->contains($s1)) $ranking_empleado = $cacheDriver->fetch($s1);
+		else
+		{
+			$ranking_empleado = $em->getConnection()->executeQuery($sql,$param,$tipo_param)->fetchAll();
+			$cacheDriver->save($s1, $ranking_empleado, $cacheseg);
+		}
 		
 		
+		
+		$time_taken = microtime(true) - $start;
 		//RESPONSE
 		$response = array(
 			'ranking_sala' => $ranking_sala,
@@ -417,6 +455,7 @@ class RankingController extends Controller
 			'ranking_empleado' => $ranking_empleado,
 			'id_medicion_actual' => $id_medicion_actual,
 			'id_medicion_anterior' => $id_medicion_anterior,
+			'time_taken' => $time_taken*1000,
 		);
 		$response = new JsonResponse($response);
 		

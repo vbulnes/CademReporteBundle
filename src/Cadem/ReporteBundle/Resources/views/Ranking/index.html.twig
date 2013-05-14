@@ -433,8 +433,10 @@ $(document).ready(function () {
 			"aoColumnDefs": [
 			  { "sClass": "text-center", "aTargets": [ 2,3,4 ] }
 			],
-			"sDom": '<"H"<"toolbar">Cfr>t<"F"ip>'
+			"sDom": '<"H"<"toolbar">Cfr>t<"F"ip>',
+			"bAutoWidth": true
 		});
+		
 		$this.prev().find('div.toolbar').append(h5.css({'margin':'0', 'float':'left'}));
 		$this.prev().find('div.toolbar').after(form.css({'margin':'0', 'float':'left', 'margin-left':'20px'}));
 		oTables.push(d);
@@ -518,6 +520,7 @@ $(document).ready(function () {
 					]);
 					cont++;
 				}
+				oTables[0].fnAdjustColumnSizing();
 				//RANKING ITEM
 				oTables[1].fnClearTable();
 				var row = data.ranking_item;
@@ -535,6 +538,7 @@ $(document).ready(function () {
 					]);
 					cont++;
 				}
+				oTables[1].fnAdjustColumnSizing();
 				//RANKING EMPLEADO
 				oTables[2].fnClearTable();
 				var row = data.ranking_empleado;
@@ -552,7 +556,7 @@ $(document).ready(function () {
 					]);
 					cont++;
 				}
-				
+				oTables[2].fnAdjustColumnSizing();
 			},
 		'json')
 		.done(function() {})
