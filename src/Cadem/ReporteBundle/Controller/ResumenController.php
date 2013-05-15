@@ -172,10 +172,10 @@ class ResumenController extends Controller
 		INNER JOIN CADENA cad on cad.ID = s.CADENA_ID
 		INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
 		INNER JOIN ITEMCLIENTE ic on ic.ID = q.ITEMCLIENTE_ID AND ic.CLIENTE_ID = c.ID
-		INNER JOIN NIVELITEM ni on ni.ID = ic.NIVELITEM_ID
-		INNER JOIN NIVELITEM ni2 on ni2.ID = ic.NIVELITEM_ID2
+		INNER JOIN NIVELITEM ni on ni.ID = ic.NIVELITEM_ID2
+		INNER JOIN NIVELITEM ni2 on ni2.ID = ic.NIVELITEM_ID3
 
-		WHERE c.ID = 12 AND m.ID =20
+		WHERE c.ID = 14 AND m.ID =1
 
 		GROUP BY ni2.NOMBRE, ni.NOMBRE, cad.NOMBRE";
 		$resumen_quiebre = $em->getConnection()->executeQuery($sql)->fetchAll();
@@ -191,21 +191,42 @@ class ResumenController extends Controller
 			$head=array('CATEGORIA/CADENA','SEGMENTO');
 				
 		$cadenas=array();
+		$agregaciones=array();
 		
+		// Generamos el head de la tabla, y las cadenas
 		foreach($resumen_quiebre as $registro)
 		{
 			// print_r($resumen_quiebre);
 			if(!in_array($registro['CADENA'],$head))
 			{
 				array_push($head,$registro['CADENA']);
-				array_push($cadenas,$registro['CADENA']);				
+				array_push($cadenas,$registro['CADENA']);
 			}
-		}				
+			if($niveles!=1)
+			{
+				if(!array_key_exists($registro['SEGMENTO'],$agregaciones))
+					$agregaciones[$registro['SEGMENTO']]=array_fill(0,11,0);					
+			}			
+		}			
+
+		$num_agregaciones=count($cadenas)+1;
+		
+		// Generamos matriz de totales por agregacion
+		// foreach($resumen_quiebre as $registro)
+		// {
+			// if($niveles!=1)
+			// {
+				// if(!array_key_exists($registro['SEGMENTO'],$agregaciones))
+					// $agregaciones[$registro['SEGMENTO']]=array_fill(0,$num_agregaciones,0);					
+			// }			
+		// }						
 		
 		array_push($head,'TOTAL');
 		
+		// Guardamos resultado de consulta en variable de sesión para reusarlas en un action posterior
 		$session->set("cadenas",$cadenas);
-		// $session->set("resumen_quiebre",$resumen_quiebre);
+		// $session->set("agregaciones",$agregaciones);
+		$session->set("resumen_quiebre",$resumen_quiebre);		
 		// print_r($tabla_resumen);						
 		
 		//medicion join estudio
@@ -287,9 +308,10 @@ class ResumenController extends Controller
 
 		$session=$this->get("session");
 		
-		$cadenas=$session->get("cadenas");
-				
+		$cadenas=$session->get("cadenas");		
 		$resumen_quiebre=$session->get("resumen_quiebre");
+		// $agregaciones=$session->get("agregaciones");
+		// print_r($resumen_quiebre);	
 			
 		$body=array();				
 		
@@ -300,45 +322,46 @@ class ResumenController extends Controller
 		$cont_cads=0;
 		$cont_regs=0;
 		$num_cads=count($cadenas);		
+		// Estructura que almacena los sumarizados		
 		
 		while($cont_regs<$num_regs)
-		{
-			// echo "cont_regs=".$cont_regs." contador_cads=".$cont_cads."<br>";
-			$fila=array();
+		{			
+			$fila=array();			
 			
-			$fila['categoria']=$resumen_quiebre[$cont_regs]['CATEGORIA'];		
-			$fila['segmento']=$resumen_quiebre[$cont_regs]['SEGMENTO'];
+			$fila[0]=$resumen_quiebre[$cont_regs]['CATEGORIA'];		
+			$fila[1]=$resumen_quiebre[$cont_regs]['SEGMENTO'];					
 			
 			while($cont_cads<$num_cads)
 			{
 				// Si el contador de registros excede su numero de elementos, aun pueden haber cadenas que no hagan match
 				if($cont_regs>=$num_regs)
 				{
-					$fila[$cadenas[$cont_cads]]='-';					
+					$fila[$cont_cads+2]='-';										
 					$cont_cads++;
 				}	
 				else
 				{
 					if($cadenas[$cont_cads]==$resumen_quiebre[$cont_regs]['CADENA'])
 					{
-						$fila[$cadenas[$cont_cads]]=round($resumen_quiebre[$cont_regs]['quiebre'],1);	
+						$fila[$cont_cads+2]=round($resumen_quiebre[$cont_regs]['quiebre'],1);		
+						// $agregaciones[$resumen_quiebre[$cont_regs]['SEGMENTO']][$cont_cads]+=round($resumen_quiebre[$cont_regs]['quiebre'],1);
 						$cont_cads++;
 						$cont_regs++;
 					}
 					else
 					{
-						$fila[$cadenas[$cont_cads]]='-';	
+						$fila[$cont_cads+2]='-';	
 						$cont_cads++;					
 					}
 				}
-			}
+			}			
+			$fila[27]=0;
 			// Si se recorrieron todas las cadenas, agrego la fila al body y reseteo el contador de cadenas
 			$cont_cads=0;
-			array_push($body,$fila);
-		}			
-		// $session->close();	
-		$tabla_resumen= array('niveles'=>$niveles,'head'=>$head,'body'=>$body);	
-		
+			array_push($body,(object)$fila);
+		}				
+		// print_r($agregaciones);
+		// $session->close();					
 		/*
 		 * Output
 		 */
@@ -348,7 +371,7 @@ class ResumenController extends Controller
 			"iTotalDisplayRecords" => $num_regs,
 			"aaData" => $body
 		);		
-		return json_encode($output);
+		return new JsonResponse($output);
 	}
 	
 	public function periodoAction(Request $request)
