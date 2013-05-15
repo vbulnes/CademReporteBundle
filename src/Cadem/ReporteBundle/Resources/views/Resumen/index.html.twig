@@ -18,9 +18,9 @@
 				<div class="hero-unit" style="padding:15px;margin-bottom:10px">
 					<div id='container' class="row-fluid">
 							<table id="tabla_resumen" class="table table-bordered display" cellpadding="0" cellspacing="0" border="0">                      
-								<thead style='position:static'>
+								<thead>
 									<tr>
-										{% for item in tabla_resumen.head %}
+										{% for item in head %}
 										<th title="{{item|upper}}" tag="{{item|upper}}">
 											{% if item|replace({' ':'_'})|length>8 %}
 												{{item|replace({' ':'_'})[0:8]|upper}}...
@@ -31,35 +31,7 @@
 										{% endfor %}
 									</tr>
 								</thead>
-								<tbody>
-									{% for item in tabla_resumen.body %}
-										{% set acum = 0 %}
-										<tr class='{{item['segmento']|trim}} head' data-tt-id="{{loop.index}}" data-tt-parent-id="{{item['segmento']}}">
-											{% for item2 in item %}
-											{% if loop.index > 2 %}
-											<td value={{item2}} class='{{item['segmento']|trim}}'>  
-												{{item2}}
-											</td>
-											{% elseif loop.index==1 %}
-											<td class='{{item['segmento']|trim}} tag' title="{{item['categoria']|upper}}" title="{{item['categoria']|upper}}" tag="{{item['categoria']|upper}}">  
-												{% if item2|replace({' ':'_'})|length>15 %}
-												{{item2|replace({' ':'_'})[0:15]|upper}}...
-												{% else %}
-												{{item2|upper}}
-												{% endif %}											
-											</td>
-											{% else %}
-											<td value={{item2}} class='{{item['segmento']|trim}}' > 
-												{{item2}}												
-											</td>
-											{% endif %}
-											{% set acum = acum + item2 %}
-											{% endfor %}
-											<td class='total' value={{ acum }}>
-												{{'%.1f'|format(acum/((item|length)-2))}}%
-											</td>
-										</tr>
-									{% endfor %}
+								<tbody>									
 								</tbody>                        					                   
 							</table>			
 					</div><!--/row-->   
@@ -149,7 +121,7 @@ var maxWidth;
 function calcularAnchoMaximo()
 {
 	// Calcula el ancho máximo de la tabla	
-	var extension={{tabla_resumen.head|length*10-100}};
+	var extension={{head|length*10-100}};
 	
 	if(extension<0)
 		extension=0;
@@ -163,6 +135,9 @@ function calcularAnchoMaximo()
 function construirTabla()
 {
 	oTable = $('#tabla_resumen').dataTable({
+		"bProcessing": true,
+		"bServerSide": true,
+		"sAjaxSource": "{{ path('tabla') }}",
 		"sScrollY": "300px",
 		"sScrollX": "100%",
  		"sScrollXInner": maxWidth+'%',
@@ -246,58 +221,61 @@ function fixedColumn()
 			}
 			//////////////// Esta parte calcula los valores de las agregaciones (SEGMENTO Y TOTAL) //////////////////////
 					
-				var totalesGlobales=new Array();
-				var contGlobal=0;
-				for (var i = 0; i < cols ; i++) totalesGlobales[i] = 0;
-				$('#tabla_resumen tbody tr.parent').each(function(){						
-					var totalesParciales= new Array();
-					for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
-					var cont=0;
-					$('#tabla_resumen tbody tr[data-tt-parent-id="'+$(this).attr('data-tt-id')+'"]').each(function(){
-						contGlobal++;
-						var j=0;
-						$(this).children().each(function(){
-							totalesParciales[j]=totalesParciales[j]+parseInt($(this).attr('value'));
-							j++;
-						});
-						cont++;
-					});
-					var j=0;
-					$(this).children().each(function(){
-						$(this).text(parseFloat((totalesParciales[j]/cont)).toFixed(1));
-						totalesGlobales[j]=totalesGlobales[j]+totalesParciales[j];							
-						j++;
-					});
-				});	
-				var nTrs = $('#tabla_resumen tbody tr');
-				var nGroup = document.createElement( 'tr' );
+				// var totalesGlobales=new Array();
+				// var contGlobal=0;
+				// for (var i = 0; i < cols ; i++) totalesGlobales[i] = 0;
+				// $('#tabla_resumen tbody tr.parent').each(function(){						
+					// var totalesParciales= new Array();
+					// for (var i = 0; i < cols; i++) totalesParciales[i] = 0;
+					// var cont=0;
+					// $('#tabla_resumen tbody tr[data-tt-parent-id="'+$(this).attr('data-tt-id')+'"]').each(function(){
+						// contGlobal++;
+						// var j=0;
+						// $(this).children().each(function(){
+							// if($(this).attr('value')=='-')
+								// totalesParciales[j]=totalesParciales[j]+0;
+							// else
+								// totalesParciales[j]=totalesParciales[j]+parseInt($(this).attr('value'));
+							// j++;
+						// });
+						// cont++;
+					// });
+					// var j=0;
+					// $(this).children().each(function(){
+						// $(this).text(parseFloat((totalesParciales[j]/cont)).toFixed(1));
+						// totalesGlobales[j]=totalesGlobales[j]+totalesParciales[j];							
+						// j++;
+					// });
+				// });	
+				// var nTrs = $('#tabla_resumen tbody tr');
+				// var nGroup = document.createElement( 'tr' );
 						
-				var nCells= new Array();
+				// var nCells= new Array();
 				
-				for(var j=0 ; j<cols ; j++)
-				{
-					nCells[j] = document.createElement( 'td' );					
-					nCells[j].className = "group";							
+				// for(var j=0 ; j<cols ; j++)
+				// {
+					// nCells[j] = document.createElement( 'td' );					
+					// nCells[j].className = "group";							
 						
-					nCells[j].innerHTML = parseFloat((totalesGlobales[j])/contGlobal).toFixed(1);//totales[j];					
-					nGroup.appendChild( nCells[j] );
-				}			
-				nTrs[0].parentNode.insertBefore( nGroup, nTrs[0] );
-				var att=document.createAttribute("class");
-				att.value="parent head";
-				// Se añade fila de agregacion para tabla principal
-				nTrs[0].previousSibling.setAttributeNode(att);		
+					// nCells[j].innerHTML = parseFloat((totalesGlobales[j])/contGlobal).toFixed(1);//totales[j];					
+					// nGroup.appendChild( nCells[j] );
+				// }			
+				// nTrs[0].parentNode.insertBefore( nGroup, nTrs[0] );
+				// var att=document.createAttribute("class");
+				// att.value="parent head";
+				// // Se añade fila de agregacion para tabla principal
+				// nTrs[0].previousSibling.setAttributeNode(att);		
 				
-                nGroup = document.createElement( 'tr' );
-				nCell = document.createElement( 'td' );
-				nCell.className = "group tag";
-				nCell.innerHTML = "QUIEBRE GENERAL";
-				nGroup.appendChild( nCell );
-                // Se añade fila de agregacion para tabla fija
-				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );				
+                // nGroup = document.createElement( 'tr' );
+				// nCell = document.createElement( 'td' );
+				// nCell.className = "group tag";
+				// nCell.innerHTML = "QUIEBRE GENERAL";
+				// nGroup.appendChild( nCell );
+                // // Se añade fila de agregacion para tabla fija
+				// $(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );				
 								
-                // Se añade fila de agregacion para tabla fija
-				$(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );					
+                // // Se añade fila de agregacion para tabla fija
+				// $(nGroup).insertBefore( $('tbody tr:eq('+(0)+')', left.body)[0] );					
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////
 		}
 	});
@@ -309,7 +287,7 @@ $(document).ready(function () {
 
 	callbacks.add( calcularAnchoMaximo() );
 	callbacks.add( construirTabla() );
-	callbacks.add( fixedColumn() );
+	// callbacks.add( fixedColumn() );
 	
 	{#% for item in variables_clientes %#}
         {#% if loop.index == 1 %#}
@@ -370,8 +348,7 @@ $(document).ready(function () {
 	
 	cargartooltip();
 	});						
-		
-		
+				
 		// $("#tabla_resumen").treetable({ 
 			// expandable: true, 
 			// onNodeExpand: function () {			
@@ -393,8 +370,7 @@ $(document).ready(function () {
 				{#% endfor %#}
 				cargartooltip();
 			});
-		});
-		
+		});		
 		
 		//GUARDA QUE BOTON SE PRESIONA EN EL FORMULARIO
 		var $boton_presionado;
