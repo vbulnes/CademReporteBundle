@@ -468,7 +468,7 @@ $(document).ready(function () {
 		//RECARGAR PROVINCIA
 		var datos = $(this).serialize();
 		$('#f_provincia_Provincia').before('<img class="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
-		$.get( "{{ path('ranking_filtros_region') }}", datos, function(data) {
+		$.get( "{{ path('helper_filtro_region') }}", datos, function(data) {
 			$('#f_provincia').html(data);
 		},'html')
 		.done(function() {quitarloader(); $('#f_provincia_Provincia').change();})
@@ -481,7 +481,7 @@ $(document).ready(function () {
 		//RECARGAR COMUNA
 		var datos = $(this).serialize();
 		$('#f_comuna_Comuna').before('<img class="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
-		$.get( "{{ path('ranking_filtros_provincia') }}", datos, function(data) {
+		$.get( "{{ path('helper_filtro_provincia') }}", datos, function(data) {
 			$('#f_comuna').html(data);
 		},'html')
 		.done(function() { /*alert("second success");*/ })
