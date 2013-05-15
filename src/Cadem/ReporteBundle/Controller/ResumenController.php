@@ -7,11 +7,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use Symfony\Component\HttpFoundation\Session;
+
+
 class ResumenController extends Controller
-{
-    
+{		
+	
 	public function indexAction()
     {
+		$session = $this->get("session");
+	
 		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
 		//CLIENTE Y ESTUDIO, LOGO
@@ -154,11 +159,12 @@ class ResumenController extends Controller
 				'multiple'  => true,
 				'data' => array_keys($choices_comunas)
 			))
-			->getForm();
-			
+			->getForm();					
+		
+		
 		//CONSULTA
 		
-		$sql = "SELECT (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre, ni.NOMBRE as SEGMENTO, ni2.NOMBRE as CATEGORIA, cad.NOMBRE as CADENA FROM QUIEBRE q
+		$sql = "SELECT (SUM(case when q.hayquiebre = 1 then 1 else 0 END)*100.0)/COUNT(q.id) as quiebre, ni.NOMBRE as CATEGORIA, ni2.NOMBRE as SEGMENTO, cad.NOMBRE as CADENA FROM QUIEBRE q
 		INNER JOIN SALAMEDICION sm on sm.ID = q.SALAMEDICION_ID
 		INNER JOIN MEDICION m on m.ID = sm.MEDICION_ID
 		INNER JOIN SALACLIENTE sc on sc.ID = sm.SALACLIENTE_ID
@@ -166,187 +172,62 @@ class ResumenController extends Controller
 		INNER JOIN CADENA cad on cad.ID = s.CADENA_ID
 		INNER JOIN CLIENTE c on c.ID = sc.CLIENTE_ID
 		INNER JOIN ITEMCLIENTE ic on ic.ID = q.ITEMCLIENTE_ID AND ic.CLIENTE_ID = c.ID
-		INNER JOIN NIVELITEM ni on ni.ID = ic.NIVELITEM_ID
-		INNER JOIN NIVELITEM ni2 on ni2.ID = ic.NIVELITEM_ID2
+		INNER JOIN NIVELITEM ni on ni.ID = ic.NIVELITEM_ID2
+		INNER JOIN NIVELITEM ni2 on ni2.ID = ic.NIVELITEM_ID3
 
-		WHERE c.ID = 12 AND m.ID = 20
+		WHERE c.ID = 14 AND m.ID =1
 
-		GROUP BY ni.NOMBRE, ni2.NOMBRE, cad.NOMBRE";
-		$datos_tabla = $em->getConnection()->executeQuery($sql)->fetchAll();
+		GROUP BY ni2.NOMBRE, ni.NOMBRE, cad.NOMBRE";
+		$resumen_quiebre = $em->getConnection()->executeQuery($sql)->fetchAll();
+		$niveles=2;
+				
+		// print_r($resumen_quiebre);
 		
-		// return print_r($datos_tabla);
+		// CONSTRUIR EL ENCABEZADO DE LA TABLA
 		
-		$min = 0;
-		$max = 100;
+		if($niveles==1)
+			$head=array('CATEGORIA/CADENA');
+		else
+			$head=array('CATEGORIA/CADENA','SEGMENTO');
+				
+		$cadenas=array();
+		$agregaciones=array();
 		
-$tabla_resumen = array(
-		'head' => array('CATEGORIA/CADENA','SEGMENTO','LIDER','JUMBO','TOTTUS','SANTA ISABEL','SMU','TOTAL'),
-		'body' => array(	
-						array(/////////////////////////// AIR CARE //////////////////////////////////////
-								'categoria'=> 'continuo electrico',
-								'segmento' => 'air care',								
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),
-						array(							
-								'categoria'=> 'continuo no electrico',
-								'segmento' => 'air care',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),		
-						array(
-								'categoria'=> 'desinfectante',
-								'segmento' => 'air care',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),
-						array(								
-								'categoria'=> 'ambientales auto',
-								'segmento' => 'air care',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),
-						array( /////////////////////////// HOME CLEANING //////////////////////////////////////								
-								'categoria'=> 'baño',
-								'segmento' => 'home cleaning',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),		
-						array(								
-								'categoria'=> 'baño-crema',
-								'segmento' => 'home cleaning',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),
-						array(								
-								'categoria'=> 'cocina',
-								'segmento' => 'home cleaning',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),								
-						array( /////////////////////////// HOME STORAGE //////////////////////////////////////																
-								'categoria'=> 'bolsas',
-								'segmento' => 'home storage',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),		
-						array(								
-								'categoria'=> 'potes',
-								'segmento' => 'home storage',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),
-						array( /////////////////////////// pest control //////////////////////////////////////								
-								'categoria'=> 'electricos',
-								'segmento' => 'pest control',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),		
-						array(								
-								'categoria'=> 'continuos',
-								'segmento' => 'pest control',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),
-						array(								
-								'categoria'=> 'instantaneos',
-								'segmento' => 'pest control',
-								'lider' => mt_rand($min, $max),
-								'jumbo' => mt_rand($min, $max),
-								'tottus' => mt_rand($min, $max),
-								'sta isabel' => mt_rand($min, $max),
-								'smu' => mt_rand($min, $max),
-							),
-						)
-					);
+		// Generamos el head de la tabla, y las cadenas
+		foreach($resumen_quiebre as $registro)
+		{
+			// print_r($resumen_quiebre);
+			if(!in_array($registro['CADENA'],$head))
+			{
+				array_push($head,$registro['CADENA']);
+				array_push($cadenas,$registro['CADENA']);
+			}
+			if($niveles!=1)
+			{
+				if(!array_key_exists($registro['SEGMENTO'],$agregaciones))
+					$agregaciones[$registro['SEGMENTO']]=array_fill(0,11,0);					
+			}			
+		}			
+
+		$num_agregaciones=count($cadenas)+1;
 		
-	
-		// $tabla_resumen = array(
-		// 'cadenas' => array('LIDER','JUMBO','SANTA ISABEL','SMU','SODIMAC','MAYORISTA 10','ALVI','TOTAL'),
-		// 'totales' => array('nombre'=>'QUIEBRE SC JOHNSON',
-						   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
-					 // ),
-		// 'segmento' => array(array('nombre'=>'AIR CARE',
-								  // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  // 'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
-														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-											
-															// ),		
-													 // array('nombre'=>'CONTINUO ELECTRICO',
-														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-											
-															// ),					
-													 // array('nombre'=>'CONTINUO NO ELECTRICO',
-														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-											
-															// )			
-													 // ),		
-																													 
-								 // ),
-							// array('nombre'=>'AUTO CARE',
-								  // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  // 'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
-														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-											
-															// ),									
-													 // ),		
-																													 
-								 // ), 
-							// array('nombre'=>' HOME CLEANING',
-								  // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  // 'categoria'=>array(array('nombre'=>'BAÑO',
-														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															// ),																						
-													 // array('nombre'=>'BAÑO-CREMA',
-														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															// ),																						 
-													 // array('nombre'=>'COCINA',
-														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															// ),																						 
-													 // array('nombre'=>'LIMPIAHORNOS',
-														   // 'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															// ),									
-																										 
-																													 
-								 // ), 								 
-							// ),
-						// ),
-					// );
-					
-					
+		// Generamos matriz de totales por agregacion
+		// foreach($resumen_quiebre as $registro)
+		// {
+			// if($niveles!=1)
+			// {
+				// if(!array_key_exists($registro['SEGMENTO'],$agregaciones))
+					// $agregaciones[$registro['SEGMENTO']]=array_fill(0,$num_agregaciones,0);					
+			// }			
+		// }						
+		
+		array_push($head,'TOTAL');
+		
+		// Guardamos resultado de consulta en variable de sesión para reusarlas en un action posterior
+		$session->set("cadenas",$cadenas);
+		// $session->set("agregaciones",$agregaciones);
+		$session->set("resumen_quiebre",$resumen_quiebre);		
+		// print_r($tabla_resumen);						
 		
 		//medicion join estudio
 		$query = $em->createQuery(
@@ -391,20 +272,13 @@ $tabla_resumen = array(
 		$quiebres = $query->getResult();
 		
 		foreach ($quiebres_totales as $key => $value) $porc_quiebre[] = $quiebres[$key][1]/$quiebres_totales[$key][1]*100;
-		
-		
-		
-		
+								
 		$periodos= array(
 			'tooltip' => $mediciones,
 			'data' => $mediciones_corta,
 		);
-		$evolutivo= $porc_quiebre;	
-		
-		
-		
-		
-		
+		$evolutivo= $porc_quiebre;							
+			
 		//RESPONSE
 		$response = $this->render('CademReporteBundle:Resumen:index.html.twig',
 		array(
@@ -414,79 +288,97 @@ $tabla_resumen = array(
 				'form_provincia' => $form_provincia->createView(),
 				'form_comuna' 	=> $form_comuna->createView(),
 			),
-			'tabla_resumen' => $tabla_resumen,
+			'head' => $head,
 			'logofilename' => $logofilename,
 			'logostyle' => $logostyle,
 			'evolutivo' => json_encode($evolutivo),
 			'periodos' => json_encode($periodos)
 			)
-		);
-
+		);		
 		//CACHE
 		$response->setPrivate();
 		$response->setMaxAge(1);
 
-
 		return $response;
     }
+	
+	public function tablaAction(Request $request)
+	{		
+		// CONSTRUIR EL CUERPO DE LA TABLA
+
+		$session=$this->get("session");
+		
+		$cadenas=$session->get("cadenas");		
+		$resumen_quiebre=$session->get("resumen_quiebre");
+		// $agregaciones=$session->get("agregaciones");
+		// print_r($resumen_quiebre);	
+			
+		$body=array();				
+		
+		/* Recorrer vector de cadenas, y resultado de la consulta de forma sincrona; cada vez que se encuentre coincidencia hacer 
+		fetch en resultado consulta, si no, asignar vacio */
+				
+		$num_regs=count($resumen_quiebre);
+		$cont_cads=0;
+		$cont_regs=0;
+		$num_cads=count($cadenas);		
+		// Estructura que almacena los sumarizados		
+		
+		while($cont_regs<$num_regs)
+		{			
+			$fila=array();			
+			
+			$fila[0]=$resumen_quiebre[$cont_regs]['CATEGORIA'];		
+			$fila[1]=$resumen_quiebre[$cont_regs]['SEGMENTO'];					
+			
+			while($cont_cads<$num_cads)
+			{
+				// Si el contador de registros excede su numero de elementos, aun pueden haber cadenas que no hagan match
+				if($cont_regs>=$num_regs)
+				{
+					$fila[$cont_cads+2]='-';										
+					$cont_cads++;
+				}	
+				else
+				{
+					if($cadenas[$cont_cads]==$resumen_quiebre[$cont_regs]['CADENA'])
+					{
+						$fila[$cont_cads+2]=round($resumen_quiebre[$cont_regs]['quiebre'],1);		
+						// $agregaciones[$resumen_quiebre[$cont_regs]['SEGMENTO']][$cont_cads]+=round($resumen_quiebre[$cont_regs]['quiebre'],1);
+						$cont_cads++;
+						$cont_regs++;
+					}
+					else
+					{
+						$fila[$cont_cads+2]='-';	
+						$cont_cads++;					
+					}
+				}
+			}			
+			$fila[27]=0;
+			// Si se recorrieron todas las cadenas, agrego la fila al body y reseteo el contador de cadenas
+			$cont_cads=0;
+			array_push($body,(object)$fila);
+		}				
+		// print_r($agregaciones);
+		// $session->close();					
+		/*
+		 * Output
+		 */
+		$output = array(
+			"sEcho" => intval($_GET['sEcho']),
+			"iTotalRecords" => $num_regs,
+			"iTotalDisplayRecords" => $num_regs,
+			"aaData" => $body
+		);		
+		return new JsonResponse($output);
+	}
 	
 	public function periodoAction(Request $request)
 	{
 	
 		$min = 0;
 		$max = 100;				
-	
-	$tabla_resumen = array(
-		'cadenas' => array('LIDER','JUMBO','SANTA ISABEL','SMU','SODIMAC','MAYORISTA 10','ALVI','TOTAL'),
-		'totales' => array('nombre'=>'QUIEBRE SC JOHNSON',
-						   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
-					 ),
-		'segmento' => array(array('nombre'=>'AIR CARE',
-								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-											
-															),		
-													 array('nombre'=>'CONTINUO ELECTRICO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-											
-															),					
-													 array('nombre'=>'CONTINUO NO ELECTRICO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-											
-															)			
-													 ),		
-																													 
-								 ),
-							array('nombre'=>'AUTO CARE',
-								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  'categoria'=>array(array('nombre'=>'AMBIENTALES AUTO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-											
-															),									
-													 ),		
-																													 
-								 ), 
-							array('nombre'=>' HOME CLEANING',
-								  'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-								  'categoria'=>array(array('nombre'=>'BAÑO',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															),																						
-													 array('nombre'=>'BAÑO-CREMA',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															),																						 
-													 array('nombre'=>'COCINA',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															),																						 
-													 array('nombre'=>'LIMPIAHORNOS',
-														   'valores'=>array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max)),
-															),									
-																										 
-																													 
-								 ), 								 
-							),
-						),
-					);
 					
 		
 		$evolutivo= array(mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max));	
@@ -562,8 +454,7 @@ $tabla_resumen = array(
 				array("RON", mt_rand($min, $max), mt_rand($min, $max),mt_rand($min, $max),mt_rand($min, $max))
 			)
 		);
-		
-		
+				
 		$responseA = array(
 				'cobertura' =>	array(
 					'type' => 'pie',
