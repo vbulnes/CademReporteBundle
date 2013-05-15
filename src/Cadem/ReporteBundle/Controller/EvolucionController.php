@@ -88,25 +88,7 @@ class EvolucionController extends Controller
 		}
 		
 		
-		//MEDICION
-		$query = $em->createQuery(
-			'SELECT m.id, m.nombre FROM CademReporteBundle:Medicion m
-			JOIN m.estudio e
-			JOIN e.cliente c
-			WHERE c.id = :id
-			ORDER BY m.fechainicio DESC')
-			->setParameter('id', $cliente->getId());
-		$mediciones_q = $query->getArrayResult();
 		
-		foreach($mediciones_q as $m) $mediciones[$m['id']] = $m['nombre'];
-		
-		if(count($mediciones) > 0){
-			$ultima_medicion = array_keys($mediciones)[0];
-			$id_medicion_actual = $ultima_medicion;
-			if(count($mediciones) > 1) $id_medicion_anterior = array_keys($mediciones)[1];
-			else $id_medicion_anterior = $id_medicion_actual;
-		}
-		else $ultima_medicion = null;
 		
 		
 		
@@ -117,14 +99,6 @@ class EvolucionController extends Controller
 				'multiple'  => false,
 				'data' => '0',
 				'attr' => array('id' => 'myValue')
-			))
-			->getForm();
-		$form_periodo = $this->get('form.factory')->createNamedBuilder('f_periodo', 'form')
-			->add('Periodo', 'choice', array(
-				'choices'   => $mediciones,
-				'required'  => true,
-				'multiple'  => false,
-				'data' => $ultima_medicion			
 			))
 			->getForm();
 			
@@ -409,7 +383,6 @@ class EvolucionController extends Controller
 		array(
 			'forms' => array(
 				'form_estudio' 	=> $form_estudio->createView(),
-				'form_periodo' 	=> $form_periodo->createView(),
 				'form_region' 	=> $form_region->createView(),
 				'form_provincia' => $form_provincia->createView(),
 				'form_comuna' 	=> $form_comuna->createView(),
