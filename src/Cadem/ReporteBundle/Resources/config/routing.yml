@@ -26,17 +26,19 @@ ranking_filtros:
     pattern:  /ranking/filtros
     defaults: { _controller: CademReporteBundle:Ranking:filtros }
     methods:  [GET]
-ranking_filtros_region:
-    pattern:  /ranking/filtros/region
-    defaults: { _controller: CademReporteBundle:Ranking:region }
-    methods:  [GET]
-ranking_filtros_provincia:
-    pattern:  /ranking/filtros/provincia
-    defaults: { _controller: CademReporteBundle:Ranking:provincia }
-    methods:  [GET]
 detalle_index:
     pattern:  /detalle
     defaults: { _controller: CademReporteBundle:Detalle:index }
 evolucion_index:
     pattern:  /evolucion
     defaults: { _controller: CademReporteBundle:Evolucion:index }
+
+#RUTAS GENERALES Y AYUDANTES
+helper_filtro_region:
+    pattern:  /h/filtro/region
+    defaults: { _controller: CademReporteBundle:Helper:filtroregion }
+    methods:  [GET]
+helper_filtro_provincia:
+    pattern:  /h/filtro/provincia
+    defaults: { _controller: CademReporteBundle:Helper:filtroprovincia }
+    methods:  [GET]
