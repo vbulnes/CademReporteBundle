@@ -77,9 +77,9 @@
 				</div>
 					<!--div class="hero-unit" style="padding:30px">
 							<div class="row-fluid">
-							{% for item in variables_clientes %}
-								<div id="i_{{item.variable.nombre}}" ></div>
-							{% endfor %}					
+							{#% for item in variables_clientes %#}
+								<div id="i_{#{item.variable.nombre}#}" ></div>
+							{#% endfor %#}					
 							</div>
 					</div-->             
 				</div><!--/span-->
@@ -126,9 +126,9 @@ span.indenter{
 <script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('bundles/cademreporte/js/dataTables.fixedColumns.js') }}"></script>
 <script>
-{% for item in variables_clientes %}
-{{"var i_"~item.variable.nombre~";"}}
-{% endfor %}
+{#% for item in variables_clientes %#}
+{#{"var i_"~item.variable.nombre~";"}#}
+{#% endfor %#}
 
 var oTable;
 var maxWidth;
@@ -304,62 +304,86 @@ $(document).ready(function () {
 	callbacks.add( construirTabla() );
 	callbacks.add( fixedColumn() );	
 			
-		/*
-		$(window).bind('resize', function () {
-			oTable.fnAdjustColumnSizing();
-		});
-		*/
+	/*
+	$(window).bind('resize', function () {
+		oTable.fnAdjustColumnSizing();
+	});
+	*/
+	
+	
+	$('#tabla_resumen_wrapper tr th').click(function() {
+		var label= $(this).text().trim();
+		$('.ui-state-active').removeClass();
+		$(this).addClass('ui-state-active');
+		$(".row_selected").removeClass("row_selected");
 		
-		
-		$('#tabla_resumen_wrapper tr th').click(function() {
-			var label= $(this).text().trim();
-			$('.ui-state-active').removeClass();
-			$(this).addClass('ui-state-active');
-			$(".row_selected").removeClass("row_selected");
-			
-			$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
-				{% for item in variables_clientes %}
-					{% if loop.index == 1 %}
-						{{"i_"~item.variable.nombre}}.series[0].setData(data); 
-						{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
-					{% endif %}
-				{% endfor %}  					
-			});	
-		});
-		
-		//GUARDA QUE BOTON SE PRESIONA EN EL FORMULARIO
-		var $boton_presionado;
-		$('form#filtros input').click(function() {
-			$boton_presionado = $(this);
-		});
-		
-		//LOGICA DEL SUBMIT DEL FORMULARIO, SE DEBERIA OCUPAR AJAX
-		$('form#filtros').submit(function() {
-			if($boton_presionado.attr("value") === "Limpiar Filtros"){
-				$('form#filtros select[multiple="multiple"] option').prop('selected',true);
-			}
-			if($boton_presionado.attr("value") === "Filtrar"){
-				$.get( "{{ path('resumen_periodo') }}", $(this).serialize(), function(data) {
-
-					$('#tabla_resumen tbody tr').each(function(){
-						var cont=0;
-						$(this).children().each(function(){
-							if(cont>0)
-								$(this).text(Math.floor((Math.random()*100)+1));
-							cont++;
-						});
-					});
-				{% for item in variables_clientes %}
-					{% if loop.index == 1 %}
-						{{"i_"~item.variable.nombre}}.series[0].setData(data.evolutivo); 
-						{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre General"});
-					{% endif %}
-				{% endfor %} 
-				},
-				'json');
-			}
+		// $.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
+			// {#% for item in variables_clientes %#}
+				// {#% if loop.index == 1 %#}
+					// {#{"i_"~item.variable.nombre}#}.series[0].setData(data); 
+					// {#{"i_"~item.variable.nombre}#}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
+				// {#% endif %#}
+			// {#% endfor %#}  					
+		// });	
+	});
+	
+	//GUARDA QUE BOTON SE PRESIONA EN EL FORMULARIO
+	var $boton_presionado;
+	$('form#filtros input').click(function() {
+		$boton_presionado = $(this);
+	});
+	
+	//LOGICA DEL SUBMIT DEL FORMULARIO, SE DEBERIA OCUPAR AJAX
+	$('form#filtros').submit(function() {
+		if($boton_presionado.attr("value") === "Limpiar Filtros"){
+			$('form#filtros select[multiple="multiple"] option').prop('selected',true);
+		}
+		else procesarform(); //SE PROCESA FORMULARIO
 		return false;
-		});		
-	});	
+	});
+	
+	//REGION
+	$(document).on('change', '#f_region_Region', function(){
+		//RECARGAR PROVINCIA
+		var datos = $(this).serialize();
+		$('#f_provincia_Provincia').before('<img class="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
+		$.get( "{{ path('helper_filtro_region') }}", datos, function(data) {
+			$('#f_provincia').html(data);
+		},'html')
+		.done(function() {quitarloader(); $('#f_provincia_Provincia').change();})
+		.fail(function() { alert("Se produjo un error al cargar las provincias");quitarloader();})
+		.always(function() { /*alert("finished");*/});
+	});
+	
+	//PROVINCIA
+	$(document).on('change', '#f_provincia_Provincia', function(){
+		//RECARGAR COMUNA
+		var datos = $(this).serialize();
+		$('#f_comuna_Comuna').before('<img class="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
+		$.get( "{{ path('helper_filtro_provincia') }}", datos, function(data) {
+			$('#f_comuna').html(data);
+		},'html')
+		.done(function() { /*alert("second success");*/ })
+		.fail(function() { alert("Se produjo un error al cargar las comunas"); })
+		.always(function() { /*alert("finished");*/ quitarloader();});
+	});
+});
+
+	//LOGICA DEL SUBMIT DEL FORMULARIO, SE DEBERIA OCUPAR AJAX
+	function procesarform(){
+	
+		//LOADER
+		$('form#filtros input').last().after('<img class="loader" alt="" style="float:right" src="/bundles/cademreporte/images/loader.gif">');
+		//GET
+		//PROCESO
+		alert('aca se hace request get/post');
+		//AL FINALIZAR
+		quitarloader();
+	}
+
+	function quitarloader(){
+		if($('.loader').length > 0) $('.loader').remove();
+	}
+	
  </script>
 {% endblock %}

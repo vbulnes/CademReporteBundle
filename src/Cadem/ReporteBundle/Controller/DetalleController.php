@@ -12,113 +12,154 @@ class DetalleController extends Controller
     
 	public function indexAction()
     {
-		$defaultData = array();
-		$form_periodo = $this->createFormBuilder($defaultData)
-			->add('Estudio', 'choice', array(
-				'choices'   => array(
-						'1' => 'QUIEBRE',
-						'2' => 'QUIEBRE Y PRECIO',
-						'3' => 'COBERTURA',
-				),
-				'required'  => true,
-				'multiple'  => false,
-				'data' => '1'			
-			))		
-			->add('Periodo', 'choice', array(
-				'choices'   => array(
-						'1' => '2013-03 SEM 1_7',
-						'2' => '2013-03 SEM 8_14',
-						'3' => '2013-03 SEM 15_24',
-						'4' => '2013-03 SEM 25_31'
-				),
-				'required'  => true,
-				'multiple'  => false,
-				'data' => '1'			
-			))
-			->getForm();
-		$form_canal = $this->createFormBuilder($defaultData)
-			->add('Canal', 'choice', array(
-				'choices'   => array(
-						'1' => 'TODOS',
-						'2' => 'SUPERMERCADO',
-						'3' => 'MAYORISTA',
-						'4' => 'MINORISTA'
-				),
-				'required'  => true,
-				'multiple'  => false,
-				'data' => '1'			
-			))
-			->getForm();
-			
-$form_region = $this->createFormBuilder($defaultData)
-			->add('Region', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Arica y Parinacota'),
-						'2' => strtoupper ('Tarapacá'),
-						'3' => strtoupper ('Antofagasta'),
-						'4' => strtoupper ('Atacama'),
-						'5' => strtoupper ('Coquimbo'),
-						'6' => strtoupper ('Valparaíso'),
-						'7' => strtoupper ('Metropolitana de Santiago'),
-						'8' => strtoupper ('Libertador General Bernardo O\'Higgins'),
-						'9' => strtoupper ('Maule'),
-				),
-				'required'  => true,
-				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6','7','8','9')			
-			))
-			->getForm();
-			
-		$form_provincia = $this->createFormBuilder($defaultData)
-			->add('Provincia', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Chacabuco'),
-						'2' => strtoupper ('Cordillera'),
-						'3' => strtoupper ('Maipo'),
-						'4' => strtoupper ('Melipilla'),
-						'5' => strtoupper ('Santiago'),
-						'6' => strtoupper ('Talagante'),
-				),
-				'required'  => true,
-				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6')			
-			))
-			->getForm();
-			
-		$form_comuna = $this->createFormBuilder($defaultData)
-			->add('Comuna', 'choice', array(
-				'choices'   => array(
-						'1' => strtoupper ('Colina'),
-						'2' => strtoupper ('Lampa'),
-						'3' => strtoupper ('Puente Alto'),
-						'4' => strtoupper ('San José de Maipo'),
-						'5' => strtoupper ('Calera de Tango'),
-						'6' => strtoupper ('Curacaví'),
-						'7' => strtoupper ('Cerrillos'),
-						'8' => strtoupper ('La Pintana'),
-						'9' => strtoupper ('Lo Barnechea'),
-				),
-				'required'  => true,
-				'multiple'  => true,
-				'data' => array('1','2','3','4','5','6','7','8','9')			
-			))
-			->getForm();			
-			
-		//PARAMETROS
+	
 		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
+		//CLIENTE Y ESTUDIO, LOGO
 		$query = $em->createQuery(
-			'SELECT c,l,v,vc FROM CademReporteBundle:Cliente c
-            JOIN c.variables_clientes vc
-			JOIN vc.variable v
-			JOIN c.logos l
+			'SELECT c,e FROM CademReporteBundle:Cliente c
+			JOIN c.estudios e
 			JOIN c.usuarios u
-            WHERE u.id = :id AND l.activo = 1 AND v.activo = 1 AND vc.activo = 1'
-		)->setParameter('id', $user->getId());
+			WHERE u.id = :id AND c.activo = 1 AND e.activo = 1')
+			->setParameter('id', $user->getId());
+		$clientes = $query->getResult();
+		$cliente = $clientes[0];
+		$estudios = $cliente->getEstudios();
 		
-		$cliente = $query->getSingleResult();
-		$logos = $cliente->getLogos();
-		$variables_clientes = $cliente->getVariablesClientes();
+		$choices_estudio = array('0' => 'TODOS');
+		foreach($estudios as $e)
+		{
+			$choices_estudio[$e->getId()] = strtoupper($e->getNombre());
+		}
+		
+		$logofilename = $cliente->getLogofilename();
+		$logostyle = $cliente->getLogostyle();
+		
+		
+			
+		//REGIONES
+		$query = $em->createQuery(
+			'SELECT DISTINCT r FROM CademReporteBundle:Region r
+			JOIN r.provincias p
+			JOIN p.comunas c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$regiones = $query->getResult();
+		
+		$choices_regiones = array();
+		foreach($regiones as $r)
+		{
+			$choices_regiones[$r->getId()] = strtoupper($r->getNombre());
+		}
+
+		//PROVINCIA
+		$query = $em->createQuery(
+			'SELECT DISTINCT p FROM CademReporteBundle:Provincia p
+			JOIN p.comunas c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$provincias = $query->getResult();
+		
+		$choices_provincias = array();
+		foreach($provincias as $r)
+		{
+			$choices_provincias[$r->getId()] = strtoupper($r->getNombre());
+		}
+		
+		//COMUNA
+		$query = $em->createQuery(
+			'SELECT DISTINCT c FROM CademReporteBundle:Comuna c
+			JOIN c.salas s
+			JOIN s.salaclientes sc
+			JOIN sc.cliente cl
+			WHERE cl.id = :id')
+			->setParameter('id', $cliente->getId());
+		$comunas = $query->getResult();
+		
+		$choices_comunas = array();
+		foreach($comunas as $r)
+		{
+			$choices_comunas[$r->getId()] = strtoupper($r->getNombre());
+		}
+		
+		
+		//MEDICION
+		$query = $em->createQuery(
+			'SELECT m.id, m.nombre FROM CademReporteBundle:Medicion m
+			JOIN m.estudio e
+			JOIN e.cliente c
+			WHERE c.id = :id
+			ORDER BY m.fechainicio DESC')
+			->setParameter('id', $cliente->getId());
+		$mediciones_q = $query->getArrayResult();
+		
+		foreach($mediciones_q as $m) $mediciones[$m['id']] = $m['nombre'];
+		
+		if(count($mediciones) > 0){
+			$ultima_medicion = array_keys($mediciones)[0];
+			$id_medicion_actual = $ultima_medicion;
+			if(count($mediciones) > 1) $id_medicion_anterior = array_keys($mediciones)[1];
+			else $id_medicion_anterior = $id_medicion_actual;
+		}
+		else $ultima_medicion = null;
+		
+		
+		
+		$form_estudio = $this->get('form.factory')->createNamedBuilder('f_estudio', 'form')
+			->add('Estudio', 'choice', array(
+				'choices'   => $choices_estudio,
+				'required'  => true,
+				'multiple'  => false,
+				'data' => '0',
+				'attr' => array('id' => 'myValue')
+			))
+			->getForm();
+			
+		$form_periodo = $this->get('form.factory')->createNamedBuilder('f_periodo', 'form')
+			->add('Periodo', 'choice', array(
+				'choices'   => $mediciones,
+				'required'  => true,
+				'multiple'  => false,
+				'data' => $ultima_medicion			
+			))
+			->getForm();
+			
+		$form_region = $this->get('form.factory')->createNamedBuilder('f_region', 'form')
+			->add('Region', 'choice', array(
+				'choices'   => $choices_regiones,
+				'required'  => true,
+				'multiple'  => true,
+				'data' => array_keys($choices_regiones)
+			))
+			->getForm();
+			
+		$form_provincia = $this->get('form.factory')->createNamedBuilder('f_provincia', 'form')
+			->add('Provincia', 'choice', array(
+				'choices'   => $choices_provincias,
+				'required'  => true,
+				'multiple'  => true,
+				'data' => array_keys($choices_provincias)
+			))
+			->getForm();
+			
+		$form_comuna = $this->get('form.factory')->createNamedBuilder('f_comuna', 'form')
+			->add('Comuna', 'choice', array(
+				'choices'   => $choices_comunas,
+				'required'  => true,
+				'multiple'  => true,
+				'data' => array_keys($choices_comunas)
+			))
+			->getForm();
+		
+			
+			
+		
 		
 		$min = 0;
 		$max = 2;
@@ -411,14 +452,15 @@ $tabla_resumen = array(
 		$response = $this->render('CademReporteBundle:Detalle:index.html.twig',
 		array(
 			'forms' => array(
-				'form_periodo' => $form_periodo->createView(),
+				'form_estudio' 	=> $form_estudio->createView(),
+				'form_periodo' 	=> $form_periodo->createView(),	
 				'form_region' 	=> $form_region->createView(),
 				'form_provincia' => $form_provincia->createView(),
 				'form_comuna' 	=> $form_comuna->createView(),	
 			),
 			'tabla_resumen' => $tabla_resumen,
-			'logo' => $logos[0],
-			'variables_clientes' => $variables_clientes,
+			'logofilename' => $logofilename,
+			'logostyle' => $logostyle,
 			'evolutivo' => json_encode($evolutivo),
 			'periodos' => json_encode($periodos)
 			)
