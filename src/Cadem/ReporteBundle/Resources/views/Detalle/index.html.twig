@@ -77,9 +77,9 @@
 				</div>
 					<!--div class="hero-unit" style="padding:30px">
 							<div class="row-fluid">
-							{% for item in variables_clientes %}
-								<div id="i_{{item.variable.nombre}}" ></div>
-							{% endfor %}					
+							{#% for item in variables_clientes %#}
+								<div id="i_{#{item.variable.nombre}#}" ></div>
+							{#% endfor %#}					
 							</div>
 					</div-->             
 				</div><!--/span-->
@@ -126,9 +126,9 @@ span.indenter{
 <script src="{{ asset('bundles/cademreporte/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('bundles/cademreporte/js/dataTables.fixedColumns.js') }}"></script>
 <script>
-{% for item in variables_clientes %}
-{{"var i_"~item.variable.nombre~";"}}
-{% endfor %}
+{#% for item in variables_clientes %#}
+{#{"var i_"~item.variable.nombre~";"}#}
+{#% endfor %#}
 
 var oTable;
 var maxWidth;
@@ -317,14 +317,14 @@ $(document).ready(function () {
 			$(this).addClass('ui-state-active');
 			$(".row_selected").removeClass("row_selected");
 			
-			$.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
-				{% for item in variables_clientes %}
-					{% if loop.index == 1 %}
-						{{"i_"~item.variable.nombre}}.series[0].setData(data); 
-						{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
-					{% endif %}
-				{% endfor %}  					
-			});	
+			// $.get( "{{ path('resumen_evolutivo') }}", $(this).text().trim(), function(data) {	
+				// {#% for item in variables_clientes %#}
+					// {#% if loop.index == 1 %#}
+						// {#{"i_"~item.variable.nombre}#}.series[0].setData(data); 
+						// {#{"i_"~item.variable.nombre}#}.setTitle({ text: "Evolucion Quiebre '"+label +"'"});
+					// {#% endif %#}
+				// {#% endfor %#}  					
+			// });	
 		});
 		
 		//GUARDA QUE BOTON SE PRESIONA EN EL FORMULARIO
@@ -339,24 +339,24 @@ $(document).ready(function () {
 				$('form#filtros select[multiple="multiple"] option').prop('selected',true);
 			}
 			if($boton_presionado.attr("value") === "Filtrar"){
-				$.get( "{{ path('resumen_periodo') }}", $(this).serialize(), function(data) {
+				// $.get( "{{ path('resumen_periodo') }}", $(this).serialize(), function(data) {
 
-					$('#tabla_resumen tbody tr').each(function(){
-						var cont=0;
-						$(this).children().each(function(){
-							if(cont>0)
-								$(this).text(Math.floor((Math.random()*100)+1));
-							cont++;
-						});
-					});
-				{% for item in variables_clientes %}
-					{% if loop.index == 1 %}
-						{{"i_"~item.variable.nombre}}.series[0].setData(data.evolutivo); 
-						{{"i_"~item.variable.nombre}}.setTitle({ text: "Evolucion Quiebre General"});
-					{% endif %}
-				{% endfor %} 
-				},
-				'json');
+					// $('#tabla_resumen tbody tr').each(function(){
+						// var cont=0;
+						// $(this).children().each(function(){
+							// if(cont>0)
+								// $(this).text(Math.floor((Math.random()*100)+1));
+							// cont++;
+						// });
+					// });
+				// {#% for item in variables_clientes %#}
+					// {#% if loop.index == 1 %#}
+						// {#{"i_"~item.variable.nombre}#}.series[0].setData(data.evolutivo); 
+						// {#{"i_"~item.variable.nombre}#}.setTitle({ text: "Evolucion Quiebre General"});
+					// {#% endif %#}
+				// {#% endfor %#} 
+				// },
+				// 'json');
 			}
 		return false;
 		});		
