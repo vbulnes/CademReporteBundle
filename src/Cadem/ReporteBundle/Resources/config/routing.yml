@@ -35,7 +35,9 @@ detalle_index:
 evolucion_index:
     pattern:  /evolucion
     defaults: { _controller: CademReporteBundle:Evolucion:index }
-
+evolucion_tabla:
+    pattern:  /evolucion/tabla
+    defaults: { _controller: CademReporteBundle:Evolucion:tabla }	
 #RUTAS GENERALES Y AYUDANTES
 helper_filtro_region:
     pattern:  /h/filtro/region
